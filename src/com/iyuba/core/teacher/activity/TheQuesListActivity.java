@@ -1,6 +1,5 @@
 package com.iyuba.core.teacher.activity;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -34,12 +33,12 @@ import com.iyuba.core.common.widget.dialog.WaittingDialog;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView.OnFooterRefreshListener;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView.OnHeaderRefreshListener;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.teacher.adapter.QuestionListAdapter;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesRequest;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesResponse;
 import com.iyuba.core.teacher.protocol.GetQuesListResponse;
 import com.iyuba.core.teacher.protocol.GetTheQuesListRequest;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 import com.iyuba.lib.R;
 
 public class TheQuesListActivity extends ListActivity implements OnHeaderRefreshListener, OnFooterRefreshListener{
@@ -53,7 +52,7 @@ public class TheQuesListActivity extends ListActivity implements OnHeaderRefresh
 	public int pageNum=1;
 	boolean isLast=false;
 	String type="0";
-	private ArrayList<Question> quesList = new ArrayList<Question>();
+	private ArrayList<QuestionListBean.QuestionDataBean> quesList = new ArrayList<QuestionListBean.QuestionDataBean>();
 	ContextMenu contextMenu;
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,9 +116,9 @@ public class TheQuesListActivity extends ListActivity implements OnHeaderRefresh
 					
 					QuestionManager.getInstance().question = quesList.get(arg2);
 					
-					if(quesList.get(arg2).uid.equals(AccountManager.Instace(mContext).userId)){
+					if(quesList.get(arg2).getUid().equals(AccountManager.Instace(mContext).userId)){
 					
-				final 	int theqid=	quesList.get(arg2).qid;
+				final 	int theqid=	quesList.get(arg2).getQuestionid();
 				final	int num=arg2;
 					
 					
@@ -169,7 +168,7 @@ public class TheQuesListActivity extends ListActivity implements OnHeaderRefresh
 				
 				Intent intent = new Intent();
 				intent.setClass(mContext, QuesDetailActivity.class);
-				intent.putExtra("qid",quesList.get(arg2).qid+"");
+				intent.putExtra("qid",quesList.get(arg2).getQuestionid()+"");
 				startActivity(intent);
 			}
 		});

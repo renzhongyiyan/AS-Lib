@@ -212,7 +212,7 @@ public class ChatAdapter extends BaseExpandableListAdapter {
 			holder.questing = convertView.findViewById(R.id.questing);
 			holder.quesContent= ((TextView)convertView.findViewById(R.id.questing_text));
 			holder.agree_icon=(ImageView) convertView.findViewById(R.id.agree_icon);
-			if(QuestionManager.getInstance().question.uid.equals(AccountManager.Instace(mContext).userId))
+			if(QuestionManager.getInstance().question.getUid().equals(AccountManager.Instace(mContext).userId))
 				{
 				
 				holder.quesContent.setText(" 追问问题");

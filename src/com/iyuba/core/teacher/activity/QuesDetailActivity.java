@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.android.agoo.client.IppFacade;
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -60,10 +61,14 @@ import com.iyuba.core.common.manager.AccountManager;
 import com.iyuba.core.common.manager.QuestionManager;
 import com.iyuba.core.common.manager.RecordManager;
 import com.iyuba.core.common.manager.SocialDataManager;
+import com.iyuba.core.common.network.ClientSession;
+import com.iyuba.core.common.network.IErrorReceiver;
+import com.iyuba.core.common.network.IResponseReceiver;
+import com.iyuba.core.common.protocol.BaseHttpRequest;
 import com.iyuba.core.common.protocol.BaseHttpResponse;
+import com.iyuba.core.common.protocol.ErrorResponse;
 import com.iyuba.core.common.thread.GitHubImageLoader;
 import com.iyuba.core.common.thread.UploadFile;
-import com.iyuba.core.common.util.Base64Coder;
 import com.iyuba.core.common.util.ExeProtocol;
 import com.iyuba.core.common.util.TextAttr;
 import com.iyuba.core.common.widget.ContextMenu;
@@ -73,6 +78,7 @@ import com.iyuba.core.common.widget.Player;
 import com.iyuba.core.common.widget.dialog.CustomDialog;
 import com.iyuba.core.common.widget.dialog.CustomToast;
 import com.iyuba.core.common.widget.dialog.WaittingDialog;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.me.activity.PersonalHome;
 import com.iyuba.core.teacher.adapter.ChatAdapter;
 import com.iyuba.core.teacher.adapter.CommentListAdapter;
@@ -89,7 +95,6 @@ import com.iyuba.core.teacher.protocol.GetCommentListResponse;
 import com.iyuba.core.teacher.sqlite.mode.AnswerInfo;
 import com.iyuba.core.teacher.sqlite.mode.AnswerType;
 import com.iyuba.core.teacher.sqlite.mode.Chat;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 import com.iyuba.lib.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -102,7 +107,8 @@ public class QuesDetailActivity extends Activity {
 	private TextView userName;
 	private TextView questInfo;
 	private TextView attention;
-	private TextView quesDisc, questiondetail;
+	private TextView quesDisc;
+//	private TextView questiondetail;
 	private ImageView quesPic;
 	private View chatView;
 	private TextView teacherTag;
@@ -122,7 +128,7 @@ public class QuesDetailActivity extends Activity {
 	private TextView takePhoto;
 	private View bottomView;
 
-	private Question question = new Question();
+	private QuestionListBean.QuestionDataBean question = new QuestionListBean.QuestionDataBean();
 	private List<List<Chat>> childChatList;
 	private List<AnswerInfo> groupChatList;
 	private List<AnswerInfo> commentList;
@@ -227,7 +233,7 @@ public class QuesDetailActivity extends Activity {
 		questInfo = (TextView) findViewById(R.id.quest_info);
 		attention = (TextView) findViewById(R.id.attention);
 		quesDisc = (TextView) findViewById(R.id.ques_disc);
-		questiondetail = (TextView) findViewById(R.id.questiondetail);
+//		questiondetail = (TextView) findViewById(R.id.questiondetail);
 		quesPic = (ImageView) findViewById(R.id.ques_detail_pic);
 		chatView = findViewById(R.id.answer_view);
 		teacherTag = (TextView) findViewById(R.id.teacher_tag);
@@ -334,6 +340,8 @@ public class QuesDetailActivity extends Activity {
 								}
 								answerQuestion(expressionInput.toString()
 										.toString(), 2);
+								expressEditText.setText("");
+								button_express.setEnabled(false);
 							}
 						} else {
 							// 发送语音
@@ -358,6 +366,8 @@ public class QuesDetailActivity extends Activity {
 								}
 								answerQuestion(expressionInput.toString()
 										.toString(), 1);
+								expressEditText.setText("");
+								button_express.setEnabled(false);
 							}
 						} else {
 							// 发送语音
@@ -382,6 +392,8 @@ public class QuesDetailActivity extends Activity {
 								// answerQuestion(expressionInput.toString().toString());
 								answerFollowQuestion(expressionInput.toString()
 										.trim());
+								expressEditText.setText("");
+								button_express.setEnabled(false);
 							}
 						} else {
 							// 发送语音
@@ -445,7 +457,7 @@ public class QuesDetailActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent();
-				SocialDataManager.Instance().userid = question.uid;
+				SocialDataManager.Instance().userid = question.getUid();
 				intent.setClass(mContext, PersonalHome.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				mContext.startActivity(intent);
@@ -465,7 +477,7 @@ public class QuesDetailActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(mContext, ShowLargePicActivity.class);
 				intent.putExtra("pic", "http://www.iyuba.com/question/"
-						+ question.img);
+						+ question.getImg());
 				mContext.startActivity(intent);
 			}
 		});
@@ -638,14 +650,15 @@ public class QuesDetailActivity extends Activity {
 		username = AccountManager.Instace(mContext).userName;
 		show = 3;
 
-		ExeProtocol.exe(
+//		ExeProtocol.exe(
+		ClientSession.Instace().asynGetResponse(
 				new AnswerQuesRequest(AccountManager.Instace(mContext).userId
 						+ "", AccountManager.Instace(mContext).userName,
-						userType, qid, answer), new ProtocolResponse() {
-
+						userType, qid, answer),
+				new IResponseReceiver() {
 					@Override
-					public void finish(BaseHttpResponse bhr) {
-						AnswerQuesResponse tr = (AnswerQuesResponse) bhr;
+					public void onResponse(BaseHttpResponse response, BaseHttpRequest request, int rspCookie) {
+						AnswerQuesResponse tr = (AnswerQuesResponse) response;
 						if ("1".equals(tr.result) || "0".equals(tr.result)) {
 							handler.sendEmptyMessage(4);
 							if(tr.jiFen != null && Integer.parseInt(tr.jiFen) > 0){
@@ -672,31 +685,77 @@ public class QuesDetailActivity extends Activity {
 							handler_chat.sendMessage(msg);
 						}
 					}
-
+				},
+				new IErrorReceiver() {
 					@Override
-					public void error() {
-						handler.sendEmptyMessage(4);
-						handler_chat.sendEmptyMessage(2);
-						Message msg = handler_chat.obtainMessage();
-						msg.obj = answer;
-						msg.what = 4;
-						handler_chat.sendMessage(msg);
+					public void onError(ErrorResponse errorResponse, BaseHttpRequest request, int rspCookie) {
+						if(errorResponse != null){
+							handler.sendEmptyMessage(4);
+							handler_chat.sendEmptyMessage(2);
+							Message msg = handler_chat.obtainMessage();
+							msg.obj = answer;
+							msg.what = 4;
+							handler_chat.sendMessage(msg);
+						}
 					}
-
 				});
+//				new ProtocolResponse() {
+//
+//					@Override
+//					public void finish(BaseHttpResponse bhr) {
+//						AnswerQuesResponse tr = (AnswerQuesResponse) bhr;
+//						if ("1".equals(tr.result) || "0".equals(tr.result)) {
+//							handler.sendEmptyMessage(4);
+//							if(tr.jiFen != null && Integer.parseInt(tr.jiFen) > 0){
+//								Message msg = new Message();
+//								msg.what = 9;
+//								msg.arg1 = Integer.parseInt(tr.jiFen);
+//								handler.sendMessage(msg);
+//							}else{
+//								handler_chat.sendEmptyMessage(1);
+//							}
+//							if (userType == 1) {
+//								new GetChatDataTask().execute();
+//							} else {
+//
+//								Log.e("iyuba", "提交--------");
+//								new GetCommentDataTask().execute();
+//							}
+//						} else {
+//							handler.sendEmptyMessage(4);
+//							handler_chat.sendEmptyMessage(2);
+//							Message msg = handler_chat.obtainMessage();
+//							msg.obj = answer;
+//							msg.what = 4;
+//							handler_chat.sendMessage(msg);
+//						}
+//					}
+//
+//					@Override
+//					public void error() {
+//						handler.sendEmptyMessage(4);
+//						handler_chat.sendEmptyMessage(2);
+//						Message msg = handler_chat.obtainMessage();
+//						msg.obj = answer;
+//						msg.what = 4;
+//						handler_chat.sendMessage(msg);
+//					}
+//
+//	});
 	}
 
 	// 提交追问或者老师的追问回答
 	public void answerFollowQuestion(final String answer) {
 
-		ExeProtocol.exe(
+//		ExeProtocol.exe(
+		ClientSession.Instace().asynGetResponse(
 				new AnswerFollowRequest(
 						AccountManager.Instace(mContext).userId, answerType.aid
-								+ "", answer), new ProtocolResponse() {
-
+						+ "", answer),
+				new IResponseReceiver() {
 					@Override
-					public void finish(BaseHttpResponse bhr) {
-						AnswerFollowResponse tr = (AnswerFollowResponse) bhr;
+					public void onResponse(BaseHttpResponse response, BaseHttpRequest request, int rspCookie) {
+						AnswerFollowResponse tr = (AnswerFollowResponse) response;
 						if ("1".equals(tr.result)) {
 							handler.sendEmptyMessage(4);
 							handler_chat.sendEmptyMessage(1);
@@ -710,17 +769,46 @@ public class QuesDetailActivity extends Activity {
 							handler_chat.sendMessage(msg);
 						}
 					}
-
+				},
+				new IErrorReceiver() {
 					@Override
-					public void error() {
+					public void onError(ErrorResponse errorResponse, BaseHttpRequest request, int rspCookie) {
 
 					}
 				});
+//				new ProtocolResponse() {
+//
+//					@Override
+//					public void finish(BaseHttpResponse bhr) {
+//						AnswerFollowResponse tr = (AnswerFollowResponse) bhr;
+//						if ("1".equals(tr.result)) {
+//							handler.sendEmptyMessage(4);
+//							handler_chat.sendEmptyMessage(1);
+//							new GetChatDataTask().execute();
+//						} else {
+//							handler.sendEmptyMessage(4);
+//							handler_chat.sendEmptyMessage(2);
+//							Message msg = handler_chat.obtainMessage();
+//							msg.obj = answer;
+//							msg.what = 4;
+//							handler_chat.sendMessage(msg);
+//						}
+//					}
+//
+//					@Override
+//					public void error() {
+//
+//					}
+//				});
 
 	}
 	
 	private void showShare() {
-		
+
+		//先隐藏软键盘
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(express.getWindowToken(), 0);
+
 		 ShareSDK.initSDK(this);
 		 OnekeyShare oks = new OnekeyShare();
 		 //关闭sso授权
@@ -741,26 +829,26 @@ public class QuesDetailActivity extends Activity {
 		 oks.setTitle("爱语吧客户端");
 		 oks.setUrl(shareCourseTitleUrl);
 		 
-		 oks.setCallback(new PlatformActionListener() {
-			
-			@Override
-			public void onError(Platform arg0, int arg1, Throwable arg2) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onComplete(Platform arg0, int arg1, HashMap<String, Object> arg2) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onCancel(Platform arg0, int arg1) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+//		 oks.setCallback(new PlatformActionListener() {
+//
+//			@Override
+//			public void onError(Platform arg0, int arg1, Throwable arg2) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void onComplete(Platform arg0, int arg1, HashMap<String, Object> arg2) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//
+//			@Override
+//			public void onCancel(Platform arg0, int arg1) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
 		 
 //		 oks.setText("测试分享文字 http://www.baidu.com");
 //		 oks.setTitle("分享");
@@ -784,14 +872,14 @@ public class QuesDetailActivity extends Activity {
 					@Override
 					public void onClick(final DialogInterface dialog, int which) {
 
-						ExeProtocol.exe(new DeleteAnswerQuesRequest(type, id,
-								AccountManager.Instace(mContext).userId),
-								new ProtocolResponse() {
-
+//						ExeProtocol.exe(
+						ClientSession.Instace().asynGetResponse(
+								new DeleteAnswerQuesRequest(type, id,
+										AccountManager.Instace(mContext).userId),
+								new IResponseReceiver() {
 									@Override
-									public void finish(BaseHttpResponse bhr) {
-										// TODO Auto-generated method stub
-										DeleteAnswerQuesResponse tr = (DeleteAnswerQuesResponse) bhr;
+									public void onResponse(BaseHttpResponse response, BaseHttpRequest request, int rspCookie) {
+										DeleteAnswerQuesResponse tr = (DeleteAnswerQuesResponse) response;
 										if (tr.result.equals("1")) {
 											childChatList.get(num).remove(num2);
 
@@ -804,11 +892,36 @@ public class QuesDetailActivity extends Activity {
 											handler.sendEmptyMessage(8);
 										}
 									}
-
+								},
+								new IErrorReceiver() {
 									@Override
-									public void error() {
+									public void onError(ErrorResponse errorResponse, BaseHttpRequest request, int rspCookie) {
+
 									}
 								});
+//								new ProtocolResponse() {
+//
+//									@Override
+//									public void finish(BaseHttpResponse bhr) {
+//										// TODO Auto-generated method stub
+//										DeleteAnswerQuesResponse tr = (DeleteAnswerQuesResponse) bhr;
+//										if (tr.result.equals("1")) {
+//											childChatList.get(num).remove(num2);
+//
+//											handler.sendEmptyMessage(1);
+//											handler.sendEmptyMessage(8);
+//										} else {
+//											childChatList.get(num).remove(num2);
+//
+//											handler.sendEmptyMessage(1);
+//											handler.sendEmptyMessage(8);
+//										}
+//									}
+//
+//									@Override
+//									public void error() {
+//									}
+//								});
 
 					}
 				});
@@ -833,10 +946,12 @@ public class QuesDetailActivity extends Activity {
 				break;
 			case 1:
 				CustomToast.showToast(mContext, R.string.send_success);
+				button_express.setEnabled(true);
 				expressEditText.setText("");
 				break;
 			case 2:
 				CustomToast.showToast(mContext, R.string.send_fail);
+				button_express.setEnabled(true);
 				break;
 			case 3:
 				express.setText("");
@@ -1131,39 +1246,38 @@ public class QuesDetailActivity extends Activity {
 	public void initQuestion() {
 		// question = QuestionManager.getInstance().question;
 		GitHubImageLoader.Instace(mContext)
-				.setCirclePic(question.uid, userIcon);
-		userName.setText(question.username + "");
+				.setCirclePic(question.getUid(), userIcon);
+		userName.setText(question.getUsername() + "");
 		// questInfo.setText(question.time.substring(0,19)+ " " );
 
-		question.time = question.time.substring(0, 19);
+		question.setCreatetime(question.getCreatetime().substring(0,19));
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
-			long time = sdf.parse(question.time).getTime();
+			long time = sdf.parse(question.getCreatetime()).getTime();
 			questInfo.setText(formatTime(time));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		quesDisc.setText(question.question + "");
-		if (question.questiondetail != null) {
-			question.questiondetail = question.questiondetail.replace("null",
-					"");
-			if (!question.questiondetail.equals("")) {
-				questiondetail.setText(question.questiondetail);
-				questiondetail.setVisibility(View.VISIBLE);
-			}
-
-		}
-		if (question.img.equals("")) {
+		quesDisc.setText(question.getQuestion() + "");
+//		if (question.getQuestion() != null) {
+//			question.setQuestion(question.getQuestion().replace("null", "")) ;
+//			if (!question.getQuestion().equals("")) {
+//				questiondetail.setText(question.getQuestion());
+//				questiondetail.setVisibility(View.VISIBLE);
+//			}
+//
+//		}
+		if (question.getImg().equals("")) {
 			quesPic.setVisibility(View.GONE);
 		} else {
 			quesPic.setVisibility(View.VISIBLE);
 			// GitHubImageLoader.Instace(mContext).setPic("http://www.iyuba.com/question/"+question.img,
 			// quesPic, R.drawable.nearby_no_icon,0);
-			
-			ImageLoader.getInstance().displayImage("http://www.iyuba.com/question/" + question.img,
+
+			ImageLoader.getInstance().displayImage("http://www.iyuba.com/question/" + question.getImg(),
 					quesPic);
 
 //			ImageLoader.getInstance().loadImage(
@@ -1334,7 +1448,7 @@ public class QuesDetailActivity extends Activity {
 				if (answerType.isanswer == 0
 						&& AccountManager.Instace(mContext).isteacher
 								.equals("1")
-						&& !question.uid.equals(AccountManager
+						&& !question.getUid().equals(AccountManager
 								.Instace(mContext).userId)) {
 					expressEditText.setHint("回复问题");
 					answerType.sub = 1;
@@ -1377,85 +1491,159 @@ public class QuesDetailActivity extends Activity {
 	};
 
 	public void getChatList() {
-		ExeProtocol.exe(new GetChatListRequest(qid), new ProtocolResponse() {
+//		ExeProtocol.exe(
+		ClientSession.Instace().asynGetResponse(
+				new GetChatListRequest(qid),
+				new IResponseReceiver() {
+					@Override
+					public void onResponse(BaseHttpResponse response, BaseHttpRequest request, int rspCookie) {
+						GetChatListResponse tr = (GetChatListResponse) response;
+						show++;// 加载完毕值加1
+						if (tr.result.equals("1")) {
+							// 获取问题内容并使其显示
+							question = tr.item;
+							QuestionManager.getInstance().question = question;
+							handler.sendEmptyMessage(21);
+							childChatList = tr.chatList;
+							groupChatList = tr.infoList;
 
-			@Override
-			public void finish(BaseHttpResponse bhr) {
-				// TODO Auto-generated method stub
-				GetChatListResponse tr = (GetChatListResponse) bhr;
-				show++;// 加载完毕值加1
-				if ("1".equals(tr.result)) {
-					// 获取问题内容并使其显示
-					question = tr.item;
-					QuestionManager.getInstance().question = question;
-					handler.sendEmptyMessage(21);
-					childChatList = tr.chatList;
-					groupChatList = tr.infoList;
+							if (groupChatList.size() != 0) {
+								handler.sendEmptyMessage(7);
+								handler.sendEmptyMessage(8);
+							} else {
+								handler.sendEmptyMessage(6);
+							}
 
-					if (groupChatList.size() != 0) {
-						handler.sendEmptyMessage(7);
-						handler.sendEmptyMessage(8);
-					} else {
-						handler.sendEmptyMessage(6);
+							handler.sendEmptyMessage(1);
+							handler.sendEmptyMessage(4);
+						} else {
+
+							handler.sendEmptyMessage(4);
+							handler.sendEmptyMessage(35);
+						}
 					}
-
-					handler.sendEmptyMessage(1);
-					handler.sendEmptyMessage(4);
-				} else {
-
-					handler.sendEmptyMessage(4);
-					handler.sendEmptyMessage(35);
-				}
-			}
-
-			@Override
-			public void error() {
-				// TODO Auto-generated method stub
-				handler.sendEmptyMessage(4);
-				handler.sendEmptyMessage(35);
-			}
-		});
+				},
+				new IErrorReceiver() {
+					@Override
+					public void onError(ErrorResponse errorResponse, BaseHttpRequest request, int rspCookie) {
+						handler.sendEmptyMessage(4);
+					}
+				});
+//		new ProtocolResponse() {
+//
+//			@Override
+//			public void finish(BaseHttpResponse bhr) {
+//				// TODO Auto-generated method stub
+//				GetChatListResponse tr = (GetChatListResponse) bhr;
+//				show++;// 加载完毕值加1
+//				if ("1".equals(tr.result)) {
+//					// 获取问题内容并使其显示
+//					question = tr.item;
+//					QuestionManager.getInstance().question = question;
+//					handler.sendEmptyMessage(21);
+//					childChatList = tr.chatList;
+//					groupChatList = tr.infoList;
+//
+//					if (groupChatList.size() != 0) {
+//						handler.sendEmptyMessage(7);
+//						handler.sendEmptyMessage(8);
+//					} else {
+//						handler.sendEmptyMessage(6);
+//					}
+//
+//					handler.sendEmptyMessage(1);
+//					handler.sendEmptyMessage(4);
+//				} else {
+//
+//					handler.sendEmptyMessage(4);
+//					handler.sendEmptyMessage(35);
+//				}
+//			}
+//
+//			@Override
+//			public void error() {
+//				// TODO Auto-generated method stub
+//				handler.sendEmptyMessage(4);
+//				handler.sendEmptyMessage(35);
+//			}
+//		});
 	}
 
 	public void getCommentList() {
-		ExeProtocol.exe(new GetCommentListRequest(qid), new ProtocolResponse() {
+//		ExeProtocol.exe(
+		ClientSession.Instace().asynGetResponse(
+				new GetCommentListRequest(qid),
+				new IResponseReceiver() {
+					@Override
+					public void onResponse(BaseHttpResponse response, BaseHttpRequest request, int rspCookie) {
+						GetCommentListResponse tr = (GetCommentListResponse) response;
+						show++;// 加载完毕值加1
 
-			@Override
-			public void finish(BaseHttpResponse bhr) {
-				// TODO Auto-generated method stub
+						if (tr.result.equals("1")) {
+							commentList = tr.infoList;
+							if (commentList.size() != 0) {
 
-				GetCommentListResponse tr = (GetCommentListResponse) bhr;
-				show++;// 加载完毕值加1
+								handler.sendEmptyMessage(31);
+								handler.sendEmptyMessage(30);
+								// commentListAdapter = new CommentListAdapter(mContext,
+								// commentList);
 
-				if ("1".equals(tr.result)) {
-					commentList = tr.infoList;
-					if (commentList.size() != 0) {
+							} else {
+								handler.sendEmptyMessage(32);
+							}
 
-						handler.sendEmptyMessage(31);
-						handler.sendEmptyMessage(30);
-						// commentListAdapter = new CommentListAdapter(mContext,
-						// commentList);
-
-					} else {
-						handler.sendEmptyMessage(32);
+							handler.sendEmptyMessage(2);
+							handler.sendEmptyMessage(4);
+						} else {
+							handler.sendEmptyMessage(4);
+							handler.sendEmptyMessage(35);
+						}
 					}
-
-					handler.sendEmptyMessage(2);
-					handler.sendEmptyMessage(4);
-				} else {
-					handler.sendEmptyMessage(4);
-					handler.sendEmptyMessage(35);
-				}
-
-			}
-
-			@Override
-			public void error() {
-				// TODO Auto-generated method stub
-				handler.sendEmptyMessage(4);
-				handler.sendEmptyMessage(35);
-			}
-		});
+				},
+				new IErrorReceiver() {
+					@Override
+					public void onError(ErrorResponse errorResponse, BaseHttpRequest request, int rspCookie) {
+						handler.sendEmptyMessage(4);
+					}
+				});
+//				new ProtocolResponse() {
+//
+//			@Override
+//			public void finish(BaseHttpResponse bhr) {
+//				// TODO Auto-generated method stub
+//
+//				GetCommentListResponse tr = (GetCommentListResponse) bhr;
+//				show++;// 加载完毕值加1
+//
+//				if ("1".equals(tr.result)) {
+//					commentList = tr.infoList;
+//					if (commentList.size() != 0) {
+//
+//						handler.sendEmptyMessage(31);
+//						handler.sendEmptyMessage(30);
+//						// commentListAdapter = new CommentListAdapter(mContext,
+//						// commentList);
+//
+//					} else {
+//						handler.sendEmptyMessage(32);
+//					}
+//
+//					handler.sendEmptyMessage(2);
+//					handler.sendEmptyMessage(4);
+//				} else {
+//					handler.sendEmptyMessage(4);
+//					handler.sendEmptyMessage(35);
+//				}
+//
+//			}
+//
+//			@Override
+//			public void error() {
+//				// TODO Auto-generated method stub
+//				handler.sendEmptyMessage(4);
+//				handler.sendEmptyMessage(35);
+//			}
+//		});
 	}
 
 	// 获取老师回答和追问
@@ -1548,9 +1736,10 @@ public class QuesDetailActivity extends Activity {
 								CustomToast.showToast(mContext, "请输入评论！");
 								expressEditText.setText("");
 							} else {
-
 								answerQuestion(expressionInput.toString()
 										.toString(), 2);
+								expressEditText.setText("");
+								button_express.setEnabled(false);
 							}
 						} else {
 							// 发送语音
@@ -1570,9 +1759,10 @@ public class QuesDetailActivity extends Activity {
 								CustomToast.showToast(mContext, "请输入回复！");
 								expressEditText.setText("");
 							} else {
-
 								answerQuestion(expressionInput.toString()
 										.toString(), 1);
+								expressEditText.setText("");
+								button_express.setEnabled(false);
 							}
 						} else {
 							// 发送语音
@@ -1628,7 +1818,7 @@ public class QuesDetailActivity extends Activity {
 			// 判断此老师如果 没有回复此问题则他只能回复问题
 			if (answerType.isanswer == 0
 					&& AccountManager.Instace(mContext).isteacher.equals("1")
-					&& !question.uid
+					&& !question.getUid()
 							.equals(AccountManager.Instace(mContext).userId)) {
 				expressEditText.setHint("回复问题");
 				answerType.sub = 1;

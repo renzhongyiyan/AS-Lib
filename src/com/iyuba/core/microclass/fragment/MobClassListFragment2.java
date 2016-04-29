@@ -160,8 +160,6 @@ public class MobClassListFragment2 extends Fragment implements
 				false);
 		initView(view);
 		setViews();
-//		wettingDialog.show();
-//		handler.sendEmptyMessage(9);
 		return view;
 	}
 

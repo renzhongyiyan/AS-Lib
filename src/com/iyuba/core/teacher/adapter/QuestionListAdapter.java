@@ -5,11 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -17,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,28 +29,33 @@ import com.iyuba.core.common.thread.GitHubImageLoader;
 import com.iyuba.core.common.util.ExeProtocol;
 import com.iyuba.core.common.widget.Player;
 import com.iyuba.core.common.widget.dialog.CustomToast;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.me.activity.PersonalHome;
-import com.iyuba.core.me.sqlite.mode.NewDoingsInfo;
 import com.iyuba.core.teacher.activity.ShowLargePicActivity;
 import com.iyuba.core.teacher.protocol.AgreeAgainstRequest;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 import com.iyuba.core.teacher.sqlite.op.CommentAgreeOp;
 import com.iyuba.lib.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 public class QuestionListAdapter extends BaseAdapter {
 	private Context mContext;
-	private ArrayList<Question> mList = new ArrayList<Question>();
+	private ArrayList<QuestionListBean.QuestionDataBean> mList = new ArrayList<QuestionListBean.QuestionDataBean>();
+	public	HashMap<String ,String> abilityTypeCatalog=new HashMap<String, String>();
+	public	HashMap<String ,String> appTypeCatalog=new HashMap<String, String>();
+
 	private Player mediaPlayer;
 
-	public QuestionListAdapter(Context context, ArrayList<Question> quesList) {
+	public QuestionListAdapter(Context context, ArrayList<QuestionListBean.QuestionDataBean> quesList) {
 		mContext = context;
 		mList = quesList;
+		setAbilityTypeCatalog();
+		setAppTypeCatalog();
 	}
 	
 	public QuestionListAdapter(Context context) {
 		mContext = context;
+		setAbilityTypeCatalog();
+		setAppTypeCatalog();
 
 	}
 
@@ -61,11 +64,11 @@ public class QuestionListAdapter extends BaseAdapter {
 		return new CommentAgreeOp(mContext).findDataByAll(commentId, uid);
 	}
 
-	public void setData(ArrayList<Question> quesList) {
+	public void setData(ArrayList<QuestionListBean.QuestionDataBean> quesList) {
 		mList = quesList;
 	}
 
-	public void addList(ArrayList<Question> quesList) {
+	public void addList(ArrayList<QuestionListBean.QuestionDataBean> quesList) {
 		mList.addAll(quesList);
 	}
 	
@@ -85,7 +88,7 @@ public class QuestionListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public Question getItem(int position) {
+	public QuestionListBean.QuestionDataBean getItem(int position) {
 		return mList.get(position);
 	}
 
@@ -96,7 +99,7 @@ public class QuestionListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		final Question ques = mList.get(position);
+		final QuestionListBean.QuestionDataBean ques = mList.get(position);
 		final ViewHolder viewHolder;
 		if (convertView == null) {
 			LayoutInflater layoutInflater = (LayoutInflater) mContext
@@ -104,6 +107,8 @@ public class QuestionListAdapter extends BaseAdapter {
 			convertView = layoutInflater.inflate(
 					R.layout.lib_list_item_question, null);
 			viewHolder = new ViewHolder();
+			viewHolder.quesRecommend = (ImageView) convertView
+					.findViewById(R.id.iv_ques_recommend);
 			viewHolder.quesIcon = (ImageView) convertView
 					.findViewById(R.id.ques_icon);
 			viewHolder.quesName = (TextView) convertView
@@ -135,12 +140,16 @@ public class QuestionListAdapter extends BaseAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 
-		Log.d("QuestionListAdapter Uid:", mList.get(position).uid);
-
 		GitHubImageLoader.Instace(mContext).setCirclePic(
-				mList.get(position).uid, viewHolder.quesIcon);
+				mList.get(position).getUid(), viewHolder.quesIcon);
 
-		if (checkAgree("q" + mList.get(position).qid,
+		if(mList.get(position).getFlg() == 2){
+			viewHolder.quesRecommend.setVisibility(View.VISIBLE);
+		}else{
+			viewHolder.quesRecommend.setVisibility(View.INVISIBLE);
+		}
+
+		if (checkAgree("q" + mList.get(position).getQuestionid(),
 				AccountManager.Instace(mContext).userId) == 1) {
 			viewHolder.agree.setBackgroundResource(R.drawable.agree_press);
 		} else {
@@ -161,7 +170,7 @@ public class QuestionListAdapter extends BaseAdapter {
 					return;
 				}
 
-				if (checkAgree("q" + mList.get(position).qid,
+				if (checkAgree("q" + mList.get(position).getQuestionid(),
 						AccountManager.Instace(mContext).userId) == 1) {
 					handler.sendEmptyMessage(3);
 				} else {
@@ -170,7 +179,7 @@ public class QuestionListAdapter extends BaseAdapter {
 							new AgreeAgainstRequest(AccountManager
 									.Instace(mContext).userId, AccountManager
 									.Instace(mContext).userName, "questionid",
-									"" + mList.get(position).qid),
+									"" + mList.get(position).getQuestionid()),
 							new ProtocolResponse() {
 
 								@Override
@@ -185,9 +194,9 @@ public class QuestionListAdapter extends BaseAdapter {
 							});
 
 					new CommentAgreeOp(mContext).saveData(
-							"q" + mList.get(position).qid,
+							"q" + mList.get(position).getQuestionid(),
 							AccountManager.Instace(mContext).userId, "agree");
-					mList.get(position).agree++;
+					mList.get(position).setAgreecount(mList.get(position).getAgreecount()+1);
 					handler.sendEmptyMessage(0);
 				}
 			}
@@ -207,27 +216,27 @@ public class QuestionListAdapter extends BaseAdapter {
 				}
 				
 				Intent intent = new Intent();
-				SocialDataManager.Instance().userid = ques.uid;
+				SocialDataManager.Instance().userid = ques.getUid();
 				intent.setClass(mContext, PersonalHome.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 				mContext.startActivity(intent);
 			}
 		});
 
-		viewHolder.quesName.setText(ques.username);
+		viewHolder.quesName.setText(ques.getUsername());
 
-		if (ques.time == null || "null".equals(ques.time)) {
-			ques.time = "";
+		if (ques.getCreatetime() == null || "null".equals(ques.getCreatetime())) {
+			ques.setCreatetime("");
 		}
 
-		if (ques.location == null || "null".equals(ques.location)) {
-			ques.location = "";
+		if (ques.getLocation() == null || "null".equals(ques.getLocation())) {
+			ques.setLocation("");
 		}
-		ques.time = ques.time.substring(0, 19);
+		ques.setCreatetime(ques.getCreatetime().substring(0,19));
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
-			long time = sdf.parse(ques.time).getTime();
+			long time = sdf.parse(ques.getCreatetime()).getTime();
 			viewHolder.quesInfo.setText(formatTime(time));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -236,7 +245,7 @@ public class QuestionListAdapter extends BaseAdapter {
 
 		// viewHolder.quesInfo.setText(ques.time);
 
-		if (ques.ansCount == 0) {
+		if (ques.getAnswercount() == 0) {
 			viewHolder.answerIcon.setVisibility(View.INVISIBLE);
 			viewHolder.isAnswer.setVisibility(View.INVISIBLE);
 		} else {
@@ -244,14 +253,14 @@ public class QuestionListAdapter extends BaseAdapter {
 			viewHolder.isAnswer.setVisibility(View.VISIBLE);
 		}
 
-		if (ques.question != null && !ques.question.trim().equals("")) {
-			viewHolder.quesDisc.setText(ques.question);
+		if (ques.getQuestion() != null && !ques.getQuestion().trim().equals("")) {
+			viewHolder.quesDisc.setText(ques.getQuestion());
 			viewHolder.quesDisc.setVisibility(View.VISIBLE);
 		} else {
 			viewHolder.quesDisc.setVisibility(View.INVISIBLE);
 		}
 
-		if (ques.img != null && !ques.img.trim().equals("")) {
+		if (ques.getImg() != null && !ques.getImg().trim().equals("")) {
 			
 			
 //			int screenWidth = getScreenWidth(this);
@@ -267,92 +276,10 @@ public class QuestionListAdapter extends BaseAdapter {
 			viewHolder.quesPic.setAdjustViewBounds(true);
 			viewHolder.quesPic.setMaxHeight(360);
 			viewHolder.quesPic.setMaxWidth(240);
-			// GitHubImageLoader.Instace(mContext).setPic("http://www.iyuba.com/question/"+ques.img.replaceAll("_b.jpg",
-			// "_s.jpg"),
-			// viewHolder.quesPic, R.drawable.nearby_no_icon,0);
 
 			ImageLoader.getInstance().displayImage("http://www.iyuba.com/question/"
-					+ ques.img.replaceAll("_b.jpg", "_s.jpg"), viewHolder.quesPic);
+					+ ques.getImg().replaceAll("_b.jpg", "_s.jpg"), viewHolder.quesPic);
 			
-//			ImageLoader.getInstance().displayImage("http://www.iyuba.com/question/"
-//					+ ques.img, viewHolder.quesPic);
-			
-//			ImageLoader.getInstance().loadImage(
-//					"http://www.iyuba.com/question/"
-//							+ ques.img.replaceAll("_b.jpg", "_s.jpg"),
-//					new SimpleImageLoadingListener() {
-//								
-//						
-//
-//						@Override
-//						public void onLoadingStarted(String imageUri, View view) {
-//							// TODO Auto-generated method stub
-//							super.onLoadingStarted(imageUri, view);
-//							
-//							
-//						}
-//
-//						@Override
-//						public void onLoadingComplete(String imageUri,
-//								View view, Bitmap loadedImage) {
-//							super.onLoadingComplete(imageUri, view, loadedImage);
-//
-//							viewHolder.quesPic.setImageBitmap(loadedImage);
-//							
-//							LayoutParams para;
-//							para = viewHolder.quesPic.getLayoutParams();
-//							
-//							int height = loadedImage.getHeight();
-//							int width = loadedImage.getWidth();
-//							
-//							//获取手机屏幕密度
-//							float f = mContext.getResources()
-//									.getDisplayMetrics().density;
-//							float bit = width / 80;
-//							height = (int) (height / bit);
-//							width = (int) (80 / 1.5 * f);
-//							height = (int) (height / 1.5 * f);
-//							
-//							para.height = height;
-//							para.width = width;
-//							viewHolder.quesPic.setLayoutParams(para);
-//
-//						}
-//
-//					});
-			
-//			ImageLoader.getInstance().loadImage(
-//					"http://www.iyuba.com/question/"
-//							+ ques.img,
-//					new SimpleImageLoadingListener() {
-//
-//						@Override
-//						public void onLoadingComplete(String imageUri,
-//								View view, Bitmap loadedImage) {
-//							super.onLoadingComplete(imageUri, view, loadedImage);
-//
-//							viewHolder.quesPic.setImageBitmap(loadedImage);
-//							LayoutParams para;
-//							para = viewHolder.quesPic.getLayoutParams();
-//							int height = loadedImage.getHeight();
-//							int width = loadedImage.getWidth();
-//							// float
-//							// f=mContext.getResources().getDisplayMetrics().density;
-//							// int height = loadedImage.getHeight();
-//							float f = mContext.getResources()
-//									.getDisplayMetrics().density;
-//							Log.e("2-----", "" + width);
-//							float bit = width / 80;
-//							height = (int) (height / bit);
-//							width = (int) (80 / 1.5 * f);
-//							height = (int) (height / 1.5 * f);
-//							para.height = height;
-//							para.width = width;
-//							viewHolder.quesPic.setLayoutParams(para);
-//
-//						}
-//
-//					});
 
 			viewHolder.quesPic.setOnClickListener(new OnClickListener() {
 
@@ -361,7 +288,7 @@ public class QuestionListAdapter extends BaseAdapter {
 					Intent intent = new Intent();
 					intent.setClass(mContext, ShowLargePicActivity.class);
 					intent.putExtra("pic", "http://www.iyuba.com/question/"
-							+ ques.img);
+							+ ques.getImg());
 					mContext.startActivity(intent);
 				}
 			});
@@ -369,11 +296,12 @@ public class QuestionListAdapter extends BaseAdapter {
 			viewHolder.quesPic.setVisibility(View.GONE);
 		}
 
-		viewHolder.quesSource.setText(ques.category2 + " " + ques.category1);
+		viewHolder.quesSource.setText(appTypeCatalog.get(ques.getCategory2())
+				+ " " + abilityTypeCatalog.get(ques.getCategory1()));
 
-		viewHolder.answerNum.setText(ques.ansCount + "");
-		viewHolder.commentNum.setText(ques.commentCount + "");
-		viewHolder.agreeNum.setText(ques.agree + "");
+		viewHolder.answerNum.setText(ques.getAnswercount() + "");
+		viewHolder.commentNum.setText(ques.getCommentcount() + "");
+		viewHolder.agreeNum.setText(ques.getAgreecount() + "");
 
 		return convertView;
 	}
@@ -413,9 +341,45 @@ public class QuestionListAdapter extends BaseAdapter {
 
 	}
 
+	public  void setAbilityTypeCatalog(){
+		abilityTypeCatalog=new HashMap<String, String>();
+		abilityTypeCatalog.put("0", "其他");
+		abilityTypeCatalog.put("1", "口语");
+		abilityTypeCatalog.put("2", "听力");
+		abilityTypeCatalog.put("3", "阅读");
+		abilityTypeCatalog.put("4", "写作");
+		abilityTypeCatalog.put("5", "翻译");
+		abilityTypeCatalog.put("6", "单词");
+		abilityTypeCatalog.put("7", "语法");
+		abilityTypeCatalog.put("8", "其他");
+	}
+
+	public  void setAppTypeCatalog(){
+		appTypeCatalog=new HashMap<String, String>();
+		appTypeCatalog.put("0", "其他");
+		appTypeCatalog.put("101", "VOA");
+		appTypeCatalog.put("102", "BBC");
+		appTypeCatalog.put("103", "听歌");
+		appTypeCatalog.put("104", "CET4");
+		appTypeCatalog.put("105", "CET6");
+		appTypeCatalog.put("106", "托福");
+		appTypeCatalog.put("107", "N1");
+		appTypeCatalog.put("108", "N2");
+		appTypeCatalog.put("109", "N3");
+		appTypeCatalog.put("110", "微课");
+		appTypeCatalog.put("111", "雅思");
+		appTypeCatalog.put("112", "初中");
+		appTypeCatalog.put("113", "高中");
+		appTypeCatalog.put("114", "考研");
+		appTypeCatalog.put("115", "新概念");
+		appTypeCatalog.put("116", "走遍美国");
+		appTypeCatalog.put("117", "英语头条");
+	}
+
 	public class ViewHolder {
 		View user_inf;
 
+		ImageView quesRecommend;
 		ImageView quesIcon;
 		TextView quesName;
 		TextView quesInfo;
@@ -427,7 +391,6 @@ public class QuestionListAdapter extends BaseAdapter {
 		TextView quesSource;
 		TextView answerNum;
 		TextView commentNum;
-		// TextView againestNum;
 		TextView agreeNum;
 		ImageView agree;
 	}

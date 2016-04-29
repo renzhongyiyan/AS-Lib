@@ -29,11 +29,11 @@ import com.iyuba.core.common.widget.dialog.WaittingDialog;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView.OnFooterRefreshListener;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView.OnHeaderRefreshListener;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.teacher.adapter.QuestionListAdapter;
 import com.iyuba.core.teacher.protocol.GetQuesListResponse;
 import com.iyuba.core.teacher.protocol.GetTheQuesListRequest;
 import com.iyuba.core.teacher.sqlite.mode.IyuTeacher;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 import com.iyuba.lib.R;
 
 public class TeacherQuesListActivity extends ListActivity implements OnHeaderRefreshListener, OnFooterRefreshListener{
@@ -47,7 +47,7 @@ public class TeacherQuesListActivity extends ListActivity implements OnHeaderRef
 	public int pageNum=1;
 	boolean isLast=false;
 	String uid="928";
-	private ArrayList<Question> quesList = new ArrayList<Question>();
+	private ArrayList<QuestionListBean.QuestionDataBean> quesList = new ArrayList<QuestionListBean.QuestionDataBean>();
 	private	View sx;
 	public  IyuTeacher teacher=new IyuTeacher();
 	ImageView teacher_img,teacher_star;
@@ -132,7 +132,7 @@ public class TeacherQuesListActivity extends ListActivity implements OnHeaderRef
 				
 				Intent intent = new Intent();
 				intent.setClass(mContext, QuesDetailActivity.class);
-				intent.putExtra("qid",quesList.get(arg2).qid+"");
+				intent.putExtra("qid",quesList.get(arg2).getQuestionid()+"");
 				startActivity(intent);
 			}
 		});

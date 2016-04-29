@@ -445,6 +445,7 @@ public class QuezActivity extends Activity {
 				break;
 			case 2:
 				CustomToast.showToast(mContext, R.string.ask_question_fail);
+				finish();
 				break;
 			case 3:
 				CustomToast.showToast(mContext, R.string.ask_question_success);
@@ -470,7 +471,8 @@ public class QuezActivity extends Activity {
 				CustomToast.showToast(mContext, "请选择问题类型");
 				break;
 			case 9:
-				Toast.makeText(mContext, "提交问题成功+"+jiFen+"积分！", 3000).show();
+				Toast.makeText(mContext, "提交问题成功+"+jiFen+"积分！", Toast.LENGTH_SHORT).show();
+				finish();
 				break;
 			case 10:
 				CustomToast.showToast(mContext, size);
@@ -693,7 +695,7 @@ public class QuezActivity extends Activity {
 	public void setAppTypeData( ) {
 		qatList = new ArrayList<QuestionAppType>();
 	 	String[] types={"VOA","BBC","听歌","CET4","CET6","托福","N1","N2",
-	 					"N3","微课","雅思","初中","高中","考研","新概念","走遍美国"};
+	 					"N3","微课","雅思","初中","高中","考研","新概念","走遍美国","英语头条"};
 		for(int i=1;i<=types.length;i++){
 			QuestionAppType q=new QuestionAppType();
 			q.id=i;

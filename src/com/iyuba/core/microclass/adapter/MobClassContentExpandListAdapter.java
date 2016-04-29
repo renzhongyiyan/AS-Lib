@@ -41,10 +41,10 @@ import com.iyuba.core.common.util.NetWorkState;
 import com.iyuba.core.common.util.ZipUtil;
 import com.iyuba.core.common.widget.RoundProgressBar;
 import com.iyuba.core.common.widget.dialog.CustomToast;
-import com.iyuba.core.downloadprovider.downloads.DownloadInfoSimp;
-import com.iyuba.core.downloadprovider.downloads.DownloadManagerProxy;
-import com.iyuba.core.downloadprovider.downloads.DownloadState;
-import com.iyuba.core.downloadprovider.downloads.providers.DownloadManager;
+import com.iyuba.core.downloadprovider.iyubaclient.downloads.DownloadInfoSimp;
+import com.iyuba.core.downloadprovider.iyubaclient.downloads.DownloadManagerProxy;
+import com.iyuba.core.downloadprovider.iyubaclient.downloads.DownloadState;
+import com.iyuba.core.downloadprovider.iyubaclient.downloads.providers.DownloadManager;
 import com.iyuba.core.microclass.activity.MobClassBase;
 import com.iyuba.core.microclass.activity.MobClassVideoBase;
 import com.iyuba.core.microclass.protocol.MbTextRequest;
@@ -645,11 +645,11 @@ public class MobClassContentExpandListAdapter extends BaseExpandableListAdapter{
 						if (res.result.equals("1")) {
 							mbTextList.clear();
 							mbTextList.addAll(res.mbTextList);
-							Log.d("mbTextList size333333333333333333333333333333:",
+							Log.d("mbTextList size3:",
 									mbTextList.size() + "");
 							mobClassResOp.insertMbText(res.mbTextList);
 						}
-						Log.d("mbTextList size44444444444444444444444444444:",
+						Log.d("mbTextList size4:",
 								mbTextList.size() + "");
 						Looper.loop();
 					}

@@ -38,6 +38,7 @@
             android:layout_marginRight="15dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:visibility="invisible"
             android:src="@drawable/course_share" />
     </RelativeLayout>
 
@@ -247,14 +248,18 @@
                     </RelativeLayout>
                 </RelativeLayout>
 
+
                 <TextView
                     android:id="@+id/ques_disc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/ques_info"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp" />
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
 
+                <!--
                 <TextView
                     android:id="@+id/questiondetail"
                     android:layout_width="match_parent"
@@ -262,6 +267,7 @@
                     android:layout_below="@id/ques_info"
                     android:layout_marginTop="1dp"
                     android:visibility="gone" />
+                -->
 
                 <ImageView
                     android:id="@+id/ques_detail_pic"

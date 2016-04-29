@@ -195,7 +195,7 @@ public class MobClassBase extends BasisActivity {
 		IsAudioDownload = getIntent().getIntExtra("IsAudioDownload",0);
 		IsVideoDownload = getIntent().getIntExtra("IsVideoDownload",0);
 		
-		Log.e("MobClassBase中mbList size","取之前TitleId:"+TitleId);
+//		Log.e("MobClassBase中mbList size","取之前TitleId:"+TitleId);
 		
 		try {
 			mbList = mobClassResOp.findSpecialCourseResourceData(TitleId);
@@ -204,7 +204,7 @@ public class MobClassBase extends BasisActivity {
 			e.printStackTrace();
 		}
 		
-		Log.e("MobClassBase中mbList size",mbList.size()+"");
+//		Log.e("MobClassBase中mbList size",mbList.size()+"");
 		
 		initStudyRecord();
 		
@@ -425,7 +425,7 @@ public class MobClassBase extends BasisActivity {
 
 					vv.seekTo(preTime);
 				} else {
-					Toast.makeText(mContext, "这里是第一张", 1000).show();
+					Toast.makeText(mContext, "这里是第一张", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
@@ -440,7 +440,7 @@ public class MobClassBase extends BasisActivity {
 
 					vv.seekTo(nextTime);
 				} else {
-					Toast.makeText(mContext, "已经是最后一张", 1000).show();
+					Toast.makeText(mContext, "已经是最后一张", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
@@ -603,7 +603,7 @@ public class MobClassBase extends BasisActivity {
 	 * 
 	 * 由目前播放到的时间在MbText时间点里面查找那张图片的位置
 	 * 
-	 * @param second目前播放到的时间
+	 * @param second 目前播放到的时间
 	 * @return
 	 */
 	public int getImage(int second) {
@@ -988,11 +988,11 @@ public class MobClassBase extends BasisActivity {
 				// playVideo();
 			case 8:
 //				Toast.makeText(mContext,"平台分享回调，平台名称："+platformName,0).show();
-				Toast.makeText(mContext,"分享成功加5分！您当前总积分:"+addCoinResponse.totalcredit, 0).show();
+				Toast.makeText(mContext,"分享成功加5分！您当前总积分:"+addCoinResponse.totalcredit, Toast.LENGTH_SHORT).show();
 				break;
 			case 9:
 //				Toast.makeText(mContext,"平台分享回调，平台名称："+platformName,0).show();
-				Toast.makeText(mContext,"您已分享过该课程，请换个课程！", 0).show();
+				Toast.makeText(mContext,"您已分享过该课程，请换个课程！", Toast.LENGTH_SHORT).show();
 				break;
 			case 10:
 				ClientSession.Instace().asynGetResponse(
@@ -1035,12 +1035,12 @@ public class MobClassBase extends BasisActivity {
 									BaseHttpResponse response,
 									BaseHttpRequest request, int rspCookie) {
 								// TODO Auto-generated method stub
-								Log.d("UploadStudyRecordRequest response得到结果(单条上传记录)", "UploadStudyRecordRequest的内容");
+//								Log.d("UploadStudyRecordRequest response得到结果(单条上传记录)", "UploadStudyRecordRequest的内容");
 								
 								UploadStudyRecordResponse res = (UploadStudyRecordResponse)response;
 
 								if (res.result.equals("1")) {
-									Log.d("UploadStudyRecordResponse的结果为1", "结果为1");
+//									Log.d("UploadStudyRecordResponse的结果为1", "结果为1");
 									studyRecordOp.setIsUpload(studyRecordInfo.appId, studyRecordInfo.BeginTime);
 								}
 							}
@@ -1072,9 +1072,9 @@ public class MobClassBase extends BasisActivity {
 								ViewCountTitleResponse res = (ViewCountTitleResponse) bhr;
 
 								if (res.ResultCode.equals("1")) {
-									Toast.makeText(mContext, "获取Title浏览量正确！",1000);
+									Toast.makeText(mContext, "获取Title浏览量正确！",Toast.LENGTH_SHORT);
 								} else {
-									Toast.makeText(mContext, "获取Title浏览量出错！",1000);
+									Toast.makeText(mContext, "获取Title浏览量出错！",Toast.LENGTH_SHORT);
 								}
 								Looper.loop();
 							}

@@ -52,10 +52,21 @@
             android:layout_height="45dp"
             android:layout_alignParentRight="true" >
 
+            <ImageView
+                android:id="@+id/iv_ques_recommend"
+                android:layout_width="42dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/ques_recommend"
+                android:visibility="visible"/>
+
             <RelativeLayout
+                android:id="@+id/rl_is_answer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_toLeftOf="@+id/iv_ques_recommend"
                 android:layout_marginTop="2dp" >
 
                 <ImageView

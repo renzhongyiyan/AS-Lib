@@ -15,7 +15,7 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 
 	public static final String DB_NAME = "lib_database.sqlite";
 
-	public static final int VERSION = 4;
+	public static final int VERSION = 5;
 
 	public DBOpenHelper(Context context) {
 		super(context, DB_NAME, null, VERSION);

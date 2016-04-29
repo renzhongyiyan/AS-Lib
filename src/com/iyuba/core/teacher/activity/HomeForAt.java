@@ -45,12 +45,12 @@ import com.iyuba.core.common.widget.ContextMenu;
 import com.iyuba.core.common.widget.dialog.CustomDialog;
 import com.iyuba.core.common.widget.dialog.CustomToast;
 import com.iyuba.core.common.widget.dialog.WaittingDialog;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.teacher.adapter.QuestionListAdapter;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesRequest;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesResponse;
 import com.iyuba.core.teacher.protocol.GetQuesListRequest;
 import com.iyuba.core.teacher.protocol.GetQuesListResponse;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 import com.iyuba.lib.R;
 
 /**
@@ -66,7 +66,7 @@ public class HomeForAt extends Activity{
 	private PullToRefreshListView refreshView;// 刷新列表
 	private ListView quesListview;
 	private QuestionListAdapter quesAdapter;
-	private ArrayList<Question> quesList = new ArrayList<Question>();
+	private ArrayList<QuestionListBean.QuestionDataBean> quesList = new ArrayList<QuestionListBean.QuestionDataBean>();
 	public int pageNum = 1;
 	boolean isLast = false;
 	ContextMenu contextMenu;
@@ -178,10 +178,10 @@ public class HomeForAt extends Activity{
 				QuestionManager.getInstance().question = quesList.get(arg2);
 
 				if (AccountManager.Instace(mContext).userId != null
-						&& quesList.get(arg2).uid.equals(AccountManager
+						&& quesList.get(arg2).getUid().equals(AccountManager
 								.Instace(mContext).userId)) {
 
-					final int theqid = quesList.get(arg2).qid;
+					final int theqid = quesList.get(arg2).getQuestionid();
 					final int num = arg2;
 					contextMenu.setText(mContext.getResources().getStringArray(
 							R.array.choose_delete));
@@ -227,7 +227,7 @@ public class HomeForAt extends Activity{
 				QuestionManager.getInstance().question = quesList.get(arg2);
 				Intent intent = new Intent();
 				intent.setClass(mContext, QuesDetailActivity.class);
-				intent.putExtra("qid", quesList.get(arg2).qid + "");
+				intent.putExtra("qid", quesList.get(arg2).getQuestionid() + "");
 				startActivity(intent);
 			}
 		});

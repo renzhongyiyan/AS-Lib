@@ -23,9 +23,9 @@
             android:id="@+id/tv_select_ques_type_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:text="@string/select_ques_type_close"
             android:textColor="#ffffff"
             android:textSize="14sp" />

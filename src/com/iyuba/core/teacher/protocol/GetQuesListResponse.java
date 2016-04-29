@@ -1,31 +1,28 @@
 package com.iyuba.core.teacher.protocol;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.iyuba.core.common.protocol.BaseJSONResponse;
-import com.iyuba.core.teacher.sqlite.mode.Question;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 
 public class GetQuesListResponse extends BaseJSONResponse {
 
 	public String result;
 	public String total;
 	public String message;
-	public ArrayList<Question> list = new ArrayList<Question>();
+	public ArrayList<QuestionListBean.QuestionDataBean> list = new ArrayList<QuestionListBean.QuestionDataBean>();
 	public	HashMap<String ,String> abilityTypeCatalog=new HashMap<String, String>();
 	public	HashMap<String ,String> appTypeCatalog=new HashMap<String, String>();
 	
 	@Override
 	protected boolean extractBody(JSONObject headerEleemnt, String bodyElement) {
 		JSONObject jsonBody = null;
-		setAbilityTypeCatalog();
-		setAppTypeCatalog();
+//		setAbilityTypeCatalog();
+//		setAppTypeCatalog();
 		try {
 			jsonBody = new JSONObject(bodyElement);
 			result = jsonBody.getString("result");
@@ -34,38 +31,37 @@ public class GetQuesListResponse extends BaseJSONResponse {
 				JSONArray data = jsonBody.getJSONArray("data");
 				if (data != null && data.length() != 0) {
 					int size = data.length();
-					Question item;
+					QuestionListBean.QuestionDataBean item;
 					JSONObject jsonObject;
 					for (int i = 0; i < size; i++) {
 						try {
-							item = new Question();
+							item = new QuestionListBean.QuestionDataBean();
 							jsonObject = ((JSONObject) data.opt(i));
-							item.qid = jsonObject.getInt("questionid");
-							item.uid = jsonObject.getString("uid");
-							item.username = jsonObject.getString("username");
-							item.userimg = jsonObject.getString("imgsrc");
-							item.question = jsonObject.getString("question");
-							item.img = jsonObject.getString("img");
-							item.audio = jsonObject.getString("audio");
-							item.commentCount = jsonObject.getInt("commentcount");
-							item.ansCount = jsonObject.getInt("answercount");
-							item.time = jsonObject.getString("createtime");
-							item.location = jsonObject.getString("location");
-							item.type=jsonObject.getString("app");
-							item.source=jsonObject.getString("app");
-							item.agree=jsonObject.getInt("agreecount");
-							
-							item.category1=abilityTypeCatalog.get(jsonObject.getString("category1"));
-							item.category2 = appTypeCatalog.get(jsonObject.get("category2"));
-							
-//							Log.d("GetQuesListResponse item.category1:", item.category1);
-//							Log.d("GetQuesListResponse item.category2:", item.category2);
-							
-							if(abilityTypeCatalog.get(jsonObject.getString("category1"))==null)
-								item.category1=  jsonObject.getString("category1");
-							//item.category2=cat2.get(jsonObject.getString("category2"));
-							if(appTypeCatalog.get(jsonObject.getString("category2"))==null)  
-								item.category2=jsonObject.getString("category2");
+							item.setQuestionid(jsonObject.getInt("questionid")) ;
+							item.setUid(jsonObject.getString("uid"));
+							item.setUsername(jsonObject.getString("username"));
+							item.setImgsrc(jsonObject.getString("imgsrc"));
+							item.setQuestion(jsonObject.getString("question"));
+							item.setImg(jsonObject.getString("img"));
+							item.setAudio(jsonObject.getString("audio"));
+							item.setCommentcount(jsonObject.getInt("commentcount"));
+							item.setAnswercount(jsonObject.getInt("answercount"));
+							item.setCreatetime(jsonObject.getString("createtime"));
+							item.setLocation(jsonObject.getString("location"));
+							item.setApp(jsonObject.getString("app"));
+							item.setAgreecount(jsonObject.getInt("agreecount"));
+
+							item.setCategory1(jsonObject.getString("category1"));
+							item.setCategory2(jsonObject.getString("category2"));
+
+
+//							item.setCategory1(abilityTypeCatalog.get(jsonObject.getString("category1")));
+//							item.setCategory2(appTypeCatalog.get(jsonObject.get("category2")));
+//
+//							if(abilityTypeCatalog.get(jsonObject.getString("category1"))==null)
+//								item.setCategory1(jsonObject.getString("category1"));
+//							if(appTypeCatalog.get(jsonObject.getString("category2"))==null)
+//								item.setCategory2(jsonObject.getString("category2"));
 							
 							list.add(item);
 						} catch (JSONException e) {

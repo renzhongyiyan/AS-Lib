@@ -307,8 +307,8 @@ public class SelectQuestionType extends Activity{
 	
 	private static final String[] question_app_type_arr = 
 		{"全部","VOA","BBC","听歌","CET4","CET6",
-		 "托福","N1","N2","微课","雅思","初中",
-		 "高中","考研","新概念","走遍美国"};
+		 "托福","N1","N2","N3","微课","雅思","初中",
+		 "高中","考研","新概念","走遍美国","英语头条"};
 
 	private static final String[] question_ability_type_arr =
 		{"全部","口语","听力","阅读","写作","翻译",

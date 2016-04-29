@@ -2,11 +2,9 @@ package com.iyuba.core.teacher.sqlite.op;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.iyuba.core.common.sqlite.db.DatabaseService;
-import com.iyuba.core.microclass.sqlite.mode.CoursePack;
-import com.iyuba.core.teacher.sqlite.mode.Question;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,46 +14,43 @@ public class QuestionOp extends DatabaseService {
 	//Question表
 	public static final String TABLE_NAME_QUESTION = "Question";
 
-	public static final String QID = "qid";
-	public static final String TYPE = "type";
-	public static final String UID = "uid";
-	public static final String USERNAME = "username";
-	public static final String USERIMG = "userimg";
+	public static final String QUESTIONID = "questionid";
 	public static final String QUESTION = "question";
 	public static final String IMG = "img";
 	public static final String AUDIO = "audio";
+	public static final String UID = "uid";
+	public static final String USERNAME = "username";
+	public static final String IMGSRC = "imgsrc";
+	public static final String ANSWERCOUNT = "answercount";
 	public static final String COMMENTCOUNT = "commentcount";
-	public static final String ANSCOUNT = "anscount";
-	public static final String AGREE = "agree";
-	public static final String AGAINEST = "againest";
-	public static final String TIME = "time";
-	public static final String LOCATION = "location";
-	public static final String SOURCE = "source";
+	public static final String AGREECOUNT = "agreecount";
 	public static final String CATEGORY1 = "category1";
 	public static final String CATEGORY2 = "category2";
-	public static final String QUESTIONDETAIL = "questiondetail";
+	public static final String LOCATION = "location";
+	public static final String FLG = "flg";
+	public static final String APP = "app";
+	public static final String CREATETIME = "createtime";
 
 	public QuestionOp(Context context) {
 		super(context);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public synchronized void insertQuestions(List<Question> questions){
+	public synchronized void insertQuestions(List<QuestionListBean.QuestionDataBean> questions){
 		if (questions != null && questions.size() != 0) {
-			String sqlString="insert or replace into " + TABLE_NAME_QUESTION + " (" + QID + ","
-					+ TYPE + "," + UID + "," + USERNAME + ","
-					+ USERIMG + ","+ QUESTION + "," + IMG + ","
-					+ AUDIO + "," + COMMENTCOUNT+ ","
-					+ ANSCOUNT + "," + AGREE + "," + AGAINEST + ","
-					+ TIME + ","+ LOCATION + "," + SOURCE + ","
-					+ CATEGORY1 + "," + CATEGORY2 + "," + QUESTIONDETAIL +") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String sqlString="insert or replace into " + TABLE_NAME_QUESTION + " (" + QUESTIONID + ","
+					+ QUESTION + "," + IMG + "," + AUDIO + ","
+					+ UID + ","+ USERNAME + "," + IMGSRC + ","
+					+ ANSWERCOUNT + "," + COMMENTCOUNT+ ","
+					+ AGREECOUNT + "," + CATEGORY1 + "," + CATEGORY2 + ","+ FLG + ","
+					+ LOCATION + ","+ APP + "," + CREATETIME  +") values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			
 			for (int i = 0; i < questions.size(); i++) {
-				Question question = questions.get(i);
-				Object[] objects=new Object[]{ question.qid,question.type,question.uid,question.username,
-						question.userimg,question.question,question.img,question.audio,question.commentCount,
-						question.ansCount,question.agree,question.againest,question.time,question.location,
-						question.source,question.category1,question.category2,question.questiondetail};
+				QuestionListBean.QuestionDataBean question = questions.get(i);
+				Object[] objects=new Object[]{ question.getQuestionid(),question.getQuestion(),question.getImg(),
+						question.getAudio(),question.getUid(),question.getUsername(),question.getImgsrc(),
+						question.getAnswercount(),question.getCommentcount(),question.getAgreecount(),question.getCategory1(),
+						question.getCategory2(),question.getFlg(),question.getLocation(),question.getApp(),question.getCreatetime()};
 				importDatabase.openDatabase().execSQL(sqlString,objects);
 				
 				closeDatabase(null);
@@ -86,8 +81,8 @@ public class QuestionOp extends DatabaseService {
 	 * 查找所有的名师堂列表问题的信息
 	 * @return
 	 */
-	public synchronized ArrayList<Question> findDataByAll() {
-		ArrayList<Question> questions = new ArrayList<Question>();
+	public synchronized ArrayList<QuestionListBean.QuestionDataBean> findDataByAll() {
+		ArrayList<QuestionListBean.QuestionDataBean> questions = new ArrayList<QuestionListBean.QuestionDataBean>();
 
 		Cursor cursor = null;
 		try {
@@ -95,25 +90,23 @@ public class QuestionOp extends DatabaseService {
 					"select *" + " from " + TABLE_NAME_QUESTION
 					, new String[] {});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-				Question question = new Question();
-				question.qid = cursor.getInt(0);
-				question.type = cursor.getString(1);
-				question.uid = cursor.getString(2);
-				question.username = cursor.getString(3);
-				question.userimg = cursor.getString(4);
-				question.question = cursor.getString(5);
-				question.img = cursor.getString(6);
-				question.audio = cursor.getString(7);
-				question.commentCount = cursor.getInt(8);
-				question.ansCount = cursor.getInt(9);
-				question.agree = cursor.getInt(10);
-				question.againest = cursor.getInt(11);
-				question.time = cursor.getString(12);
-				question.location = cursor.getString(13);
-				question.source = cursor.getString(14);
-				question.category1 = cursor.getString(15);
-				question.category2 = cursor.getString(16);
-				question.questiondetail = cursor.getString(17);
+				QuestionListBean.QuestionDataBean question = new QuestionListBean.QuestionDataBean();
+				question.setQuestionid(cursor.getInt(0));
+				question.setQuestion(cursor.getString(1));
+				question.setImg(cursor.getString(2));
+				question.setAudio(cursor.getString(3));
+				question.setUid(cursor.getString(4));
+				question.setUsername(cursor.getString(5));
+				question.setImgsrc(cursor.getString(6));
+				question.setAnswercount(cursor.getInt(7));
+				question.setCommentcount(cursor.getInt(8));
+				question.setAgreecount(cursor.getInt(9));
+				question.setCategory1(cursor.getString(10));
+				question.setCategory2(cursor.getString(11));
+				question.setLocation(cursor.getString(12));
+				question.setFlg(cursor.getInt(13));
+				question.setApp(cursor.getString(14));
+				question.setCreatetime(cursor.getString(15));
 				questions.add(question);
 			}
 			cursor.close();
@@ -134,8 +127,8 @@ public class QuestionOp extends DatabaseService {
 	 * 查找所有的名师堂列表问题的信息
 	 * @return
 	 */
-	public synchronized ArrayList<Question> findDataLastTwenty() {
-		ArrayList<Question> questions = new ArrayList<Question>();
+	public synchronized ArrayList<QuestionListBean.QuestionDataBean> findDataLastTwenty() {
+		ArrayList<QuestionListBean.QuestionDataBean> questions = new ArrayList<QuestionListBean.QuestionDataBean>();
 
 		Cursor cursor = null;
 		try {
@@ -143,25 +136,23 @@ public class QuestionOp extends DatabaseService {
 					"select *" + " from " + TABLE_NAME_QUESTION + " LIMIT 20"
 					, new String[] {});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-				Question question = new Question();
-				question.qid = cursor.getInt(0);
-				question.type = cursor.getString(1);
-				question.uid = cursor.getString(2);
-				question.username = cursor.getString(3);
-				question.userimg = cursor.getString(4);
-				question.question = cursor.getString(5);
-				question.img = cursor.getString(6);
-				question.audio = cursor.getString(7);
-				question.commentCount = cursor.getInt(8);
-				question.ansCount = cursor.getInt(9);
-				question.agree = cursor.getInt(10);
-				question.againest = cursor.getInt(11);
-				question.time = cursor.getString(12);
-				question.location = cursor.getString(13);
-				question.source = cursor.getString(14);
-				question.category1 = cursor.getString(15);
-				question.category2 = cursor.getString(16);
-				question.questiondetail = cursor.getString(17);
+				QuestionListBean.QuestionDataBean question = new QuestionListBean.QuestionDataBean();
+				question.setQuestionid(cursor.getInt(0));
+				question.setQuestion(cursor.getString(1));
+				question.setImg(cursor.getString(2));
+				question.setAudio(cursor.getString(3));
+				question.setUid(cursor.getString(4));
+				question.setUsername(cursor.getString(5));
+				question.setImgsrc(cursor.getString(6));
+				question.setAnswercount(cursor.getInt(7));
+				question.setCommentcount(cursor.getInt(8));
+				question.setAgreecount(cursor.getInt(9));
+				question.setCategory1(cursor.getString(10));
+				question.setCategory2(cursor.getString(11));
+				question.setLocation(cursor.getString(12));
+				question.setFlg(cursor.getInt(13));
+				question.setApp(cursor.getString(14));
+				question.setCreatetime(cursor.getString(15));
 				questions.add(question);
 			}
 			cursor.close();

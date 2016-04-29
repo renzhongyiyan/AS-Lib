@@ -1,7 +1,6 @@
 package com.iyuba.core.teacher.activity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -38,12 +37,12 @@ import com.iyuba.core.common.widget.dialog.WaittingDialog;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView.OnFooterRefreshListener;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView.OnHeaderRefreshListener;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.teacher.adapter.QuestionListAdapter;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesRequest;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesResponse;
 import com.iyuba.core.teacher.protocol.GetQuesListRequest;
 import com.iyuba.core.teacher.protocol.GetQuesListResponse;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 import com.iyuba.lib.R;
 
 public class QuesListActivity extends ListActivity implements
@@ -57,7 +56,7 @@ public class QuesListActivity extends ListActivity implements
 	private CustomDialog waitDialog;
 	public int pageNum = 1;
 	boolean isLast = false;
-	private ArrayList<Question> quesList = new ArrayList<Question>();
+	private ArrayList<QuestionListBean.QuestionDataBean> quesList = new ArrayList<QuestionListBean.QuestionDataBean>();
 	Spinner qt1, qt2;
 	ContextMenu contextMenu;
 
@@ -150,10 +149,10 @@ public class QuesListActivity extends ListActivity implements
 
 				QuestionManager.getInstance().question = quesList.get(arg2);
 
-				if (quesList.get(arg2).uid.equals(AccountManager
+				if (quesList.get(arg2).getUid().equals(AccountManager
 						.Instace(mContext).userId)) {
 
-					final int theqid = quesList.get(arg2).qid;
+					final int theqid = quesList.get(arg2).getQuestionid();
 					final int num = arg2;
 
 					contextMenu.setText(mContext.getResources().getStringArray(
@@ -198,7 +197,7 @@ public class QuesListActivity extends ListActivity implements
 
 				Intent intent = new Intent();
 				intent.setClass(mContext, QuesDetailActivity.class);
-				intent.putExtra("qid", quesList.get(arg2).qid + "");
+				intent.putExtra("qid", quesList.get(arg2).getQuestionid() + "");
 				startActivity(intent);
 			}
 		});

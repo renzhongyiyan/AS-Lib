@@ -165,149 +165,6 @@ public class PublishMood extends BasisActivity implements OnClickListener {
 		}
 	}
 	
-//	private void showClickMessage(int which) {
-//		// TODO Auto-generated method stub
-//		switch (which) {
-//		case 0:
-//			// 相机拍摄
-//			System.out.println("相机拍摄");
-//
-//			Log.e("iyuba", "--------------相机拍摄");
-//
-//			Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//			intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(
-//					Environment.getExternalStorageDirectory(), "temp.jpg")));
-//			startActivityForResult(intent, 1);
-//			break;
-//		case 1:
-//			// 手机相册中选择
-//			System.out.println("手机相册中选择");
-//			Intent intent1 = new Intent(Intent.ACTION_GET_CONTENT, null);
-//			intent1.setDataAndType(
-//					MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-//			intent1.putExtra("xiangce", "xiangce");
-//			startActivityForResult(intent1, 2);
-//			break;
-//
-//		default:
-//			break;
-//		}
-//	}
-//
-//	@Override
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		if (resultCode == NONE)
-//			return;
-//		// 拍照
-//		if (requestCode == PHOTOHRAPH) {
-//			// 设置文件保存路径这里放在跟目录下
-//			File picture = new File(Environment.getExternalStorageDirectory()
-//					+ "/temp.jpg");
-//			uploadFile = Environment.getExternalStorageDirectory()
-//					+ "/temp.jpg";
-//			Log.e("startPhotoZoom1", uploadFile);
-//			startPhotoZoom1(Uri.fromFile(picture));
-//		}
-//
-//		if (data == null)
-//			return;
-//
-//		// 读取相册缩放图片
-//		if (requestCode == PHOTOZOOM) {
-//			
-//			if(data !=null){ //可能尚未指定intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);  
-//                //返回有缩略图  
-//				startPhotoZoom(data.getData());
-//            }else{  
-//                //由于指定了目标uri，存储在目标uri，intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);  
-//                // 通过目标uri，找到图片  
-//                // 对图片的缩放处理  
-//                // 操作  
-//            } 
-//		}
-//		// 处理结果
-//		if (requestCode == PHOTORESOULT) {
-//			Bundle extras = data.getExtras();
-//			if (extras != null) {
-//				Bitmap photo = extras.getParcelable("data");
-//
-//				tianjia.setImageBitmap(photo);
-//				isChangePor = true;
-//			}
-//		}
-//		super.onActivityResult(requestCode, resultCode, data);
-//	}
-//
-//	public void startPhotoZoom1(Uri uri) {
-//		Intent intent = new Intent("com.android.camera.action.CROP");
-//		intent.setDataAndType(uri, IMAGE_UNSPECIFIED);
-//		intent.putExtra("crop", "true");
-//		// aspectX aspectY 是宽高的比例
-//		intent.putExtra("aspectX", 1);
-//		intent.putExtra("aspectY", 1);
-//		// outputX outputY 是裁剪图片宽高
-//		intent.putExtra("outputX", 200);
-//		intent.putExtra("outputY", 200);
-//		intent.putExtra("return-data", true);
-//		startActivityForResult(intent, PHOTORESOULT);
-//	}
-//
-//	public void startPhotoZoom(Uri uri) {
-//		Intent intent = new Intent("com.android.camera.action.CROP");
-//		intent.setDataAndType(uri, IMAGE_UNSPECIFIED);
-//		intent.putExtra("crop", "true");
-//		// aspectX aspectY 是宽高的比例
-//		intent.putExtra("aspectX", 1);
-//		intent.putExtra("aspectY", 1);
-//		// outputX outputY 是裁剪图片宽高
-//		intent.putExtra("outputX", 200);
-//		intent.putExtra("outputY", 200);
-//		intent.putExtra("return-data", true);
-//		startActivityForResult(intent, PHOTORESOULT);
-//		Bitmap photo = intent.getExtras().getParcelable("data");
-//		String[] proj = { MediaColumns.DATA };
-//		Cursor cursor = managedQuery(intent.getData(), proj, null, null, null);
-//		
-//		// 按我个人理解 这个是获得用户选择的图片的索引值
-//		int column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
-//		cursor.moveToFirst();
-//		uploadFile = cursor.getString(column_index);
-//		Log.e("startPhotoZoom", uploadFile);
-//
-//	}
-//	
-//	public void setContextMenu() {
-//		contextMenu.setText(mContext.getResources().getStringArray(
-//				R.array.choose_pic));
-//		contextMenu.setCallback(new ResultIntCallBack() {
-//
-//			@Override
-//			public void setResult(int result) {
-//				Intent intent;
-//				switch (result) {
-//				case 0:
-//					intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//					intent.putExtra(MediaStore.EXTRA_OUTPUT,
-//							Uri.fromFile(TakePictureUtil.getPhotoFile(mContext)));
-//					
-//					startActivityForResult(intent, PHOTO_REQUEST_TAKEPHOTO);
-//					break;
-//				case 1:
-//					intent = new Intent(Intent.ACTION_PICK, null);
-//					intent.setDataAndType(
-//							MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//							"image/*");
-//					startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
-//					break;
-//				default:
-//					break;
-//				}
-//				contextMenu.dismiss();
-//			}
-//		});
-//		contextMenu.show();
-//	}
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
@@ -720,7 +577,8 @@ public class PublishMood extends BasisActivity implements OnClickListener {
 				CustomToast.showToast(mContext, "请打开网络！");
 				break;
 			case 4:
-				Toast.makeText(mContext, "发表成功"+"+"+jiFen+"积分！", 3000).show();
+				Toast.makeText(mContext, "发表成功"+"+"+jiFen+"积分！", Toast.LENGTH_SHORT).show();
+				finish();
 				break;
 			case 6:
 				CustomToast.showToast(mContext, "正在发表....");

@@ -2,13 +2,13 @@ package com.iyuba.core.common.manager;
 
 import java.util.HashMap;
 
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.teacher.sqlite.mode.IyuTeacher;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 import com.iyuba.core.teacher.sqlite.mode.Teacher;
 
 public class QuestionManager {
 	private static QuestionManager instance;
-	public Question question=new Question();//主列表中用到
+	public QuestionListBean.QuestionDataBean question=new QuestionListBean.QuestionDataBean();//主列表中用到
 	public IyuTeacher teacher=new IyuTeacher();//名师的信息
 	
 	public Teacher mTeacher=new Teacher();//老师验证的teacher信息

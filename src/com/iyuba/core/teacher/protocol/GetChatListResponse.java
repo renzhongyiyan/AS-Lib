@@ -10,16 +10,16 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.iyuba.core.common.protocol.BaseJSONResponse;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.teacher.sqlite.mode.AnswerInfo;
 import com.iyuba.core.teacher.sqlite.mode.Chat;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 
 public class GetChatListResponse extends BaseJSONResponse {
 
 	public String result;
 	public String total;
 	public String message;
-	public Question item=new Question();
+	public QuestionListBean.QuestionDataBean item=new QuestionListBean.QuestionDataBean();
 	public List<AnswerInfo> infoList = new ArrayList<AnswerInfo>();
 	public List<List<Chat>> chatList = new ArrayList<List<Chat>>();
 	public	HashMap<String ,String> cat1=new HashMap<String, String>();
@@ -35,26 +35,24 @@ public class GetChatListResponse extends BaseJSONResponse {
 			
 			//去question信息
 			JSONObject qjson= jsonBody.getJSONObject("question");
-			item.qid = qjson.getInt("questionid");
-			item.uid = qjson.getString("uid");
-			item.username = qjson.getString("username");
-			item.userimg = qjson.getString("imgsrc");
-			item.question =qjson.getString("question");
-			item.img = qjson.getString("img");
-			item.audio = qjson.getString("audio");
-			item.ansCount = qjson.getInt("answercount");
-			item.time = qjson.getString("createtime");
-			item.location = qjson.getString("location");
-			item.type=qjson.getString("app");
-			item.source=qjson.getString("app");
-			item.agree=qjson.getInt("agreecount");
-			item.questiondetail=qjson.getString("questiondetail");
-			item.category1=cat1.get(qjson.getString("category1"));
+			item.setQuestionid(qjson.getInt("questionid"));
+			item.setUid(qjson.getString("uid"));
+			item.setUsername(qjson.getString("username"));
+			item.setImgsrc(qjson.getString("imgsrc"));
+			item.setQuestion(qjson.getString("question"));
+			item.setImg(qjson.getString("img"));
+			item.setAudio(qjson.getString("audio"));
+			item.setAnswercount(qjson.getInt("answercount"));
+			item.setCreatetime(qjson.getString("createtime"));
+			item.setLocation(qjson.getString("location"));
+			item.setApp(qjson.getString("app"));
+			item.setAgreecount(qjson.getInt("agreecount"));
+			item.setCategory1(cat1.get(qjson.getString("category1")));
 			if(cat1.get(qjson.getString("category1"))==null)
-				item.category1= qjson.getString("category1");
+				item.setCategory1(qjson.getString("category1"));
 			//item.category2=cat2.get(jsonObject.getString("category2"));
 		//	if(cat2.get(jsonObject.getString("category2"))==null)  
-				item.category2=qjson.getString("category2");
+				item.setCategory2(qjson.getString("category2"));
 			
 			
 			

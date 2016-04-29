@@ -20,8 +20,8 @@ import com.iyuba.core.microclass.protocol.appUpdateResponse;
 
 public class VersionManager {
 	private static VersionManager instance;
-	public static final int version = 11;
-	public static final String VERSION_CODE = "1.9.0401";
+	public static final int version = 12;
+	public static final String VERSION_CODE = "1.10.0428";
 
 	private VersionManager() {
 	};

@@ -17,7 +17,6 @@ public class ResponsePhoneNumRegister extends BaseJSONResponse {
 		// TODO 自动生成的方法存根
 		try {
 			JSONObject jsonObjectRoot = new JSONObject(bodyElement);
-			Log.d("ResponsePhoneNumRegister res", jsonObjectRoot.toString());
 			resultCode = jsonObjectRoot.getString("result");
 			message = jsonObjectRoot.getString("message");
 			if (resultCode.equals("111")) {

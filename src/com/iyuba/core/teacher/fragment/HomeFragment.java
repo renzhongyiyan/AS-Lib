@@ -50,8 +50,7 @@ import com.iyuba.core.common.widget.ContextMenu;
 import com.iyuba.core.common.widget.dialog.CustomDialog;
 import com.iyuba.core.common.widget.dialog.CustomToast;
 import com.iyuba.core.common.widget.dialog.WaittingDialog;
-import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView.OnFooterRefreshListener;
-import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshView.OnHeaderRefreshListener;
+import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.teacher.activity.QuesDetailActivity;
 import com.iyuba.core.teacher.activity.QuezActivity;
 import com.iyuba.core.teacher.activity.SelectQuestionType;
@@ -60,7 +59,6 @@ import com.iyuba.core.teacher.protocol.DeleteAnswerQuesRequest;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesResponse;
 import com.iyuba.core.teacher.protocol.GetQuesListRequest;
 import com.iyuba.core.teacher.protocol.GetQuesListResponse;
-import com.iyuba.core.teacher.sqlite.mode.Question;
 import com.iyuba.core.teacher.sqlite.op.QuestionOp;
 import com.iyuba.lib.R;
 
@@ -78,8 +76,8 @@ public class HomeFragment extends Fragment{
 	private ListView quesListview;
 	private QuestionListAdapter quesAdapter;
 	private View root;
-	private ArrayList<Question> quesList = new ArrayList<Question>();
-	private ArrayList<Question> localQuesList = new ArrayList<Question>();
+	private ArrayList<QuestionListBean.QuestionDataBean> quesList = new ArrayList<QuestionListBean.QuestionDataBean>();
+	private ArrayList<QuestionListBean.QuestionDataBean> localQuesList = new ArrayList<QuestionListBean.QuestionDataBean>();
 	public int pageNum=1;
 	boolean isLast=false;
 	ContextMenu contextMenu;
@@ -89,8 +87,8 @@ public class HomeFragment extends Fragment{
 	
 	private static final String[] question_app_type_arr = 
 			{"全部","VOA","BBC","听歌","CET4","CET6",
-			 "托福","N1","N2","微课","雅思","初中",
-			 "高中","考研","新概念","走遍美国"};
+			 "托福","N1","N2","N3","微课","雅思","初中",
+			 "高中","考研","新概念","走遍美国","英语头条"};
 	
 	private static final String[] question_ability_type_arr =
 			{"全部","口语","听力","阅读","写作","翻译",
@@ -212,9 +210,9 @@ public class HomeFragment extends Fragment{
 
 				QuestionManager.getInstance().question = quesList.get(arg2-1);
 				
-				if(quesList.get(arg2-1).uid.equals(AccountManager.Instace(mContext).userId)){
+				if(quesList.get(arg2-1).getUid().equals(AccountManager.Instace(mContext).userId)){
 				
-					final int theqid=quesList.get(arg2-1).qid;
+					final int theqid=quesList.get(arg2-1).getQuestionid();
 					final int num=arg2-1;
 					contextMenu.setText(mContext.getResources().getStringArray(
 							R.array.choose_delete));
@@ -260,7 +258,7 @@ public class HomeFragment extends Fragment{
 				QuestionManager.getInstance().question = quesList.get(arg2-1);
 				Intent intent = new Intent();
 				intent.setClass(mContext, QuesDetailActivity.class);
-				intent.putExtra("qid",quesList.get(arg2-1).qid+"");
+				intent.putExtra("qid",quesList.get(arg2-1).getQuestionid()+"");
 				startActivity(intent);
 			}
 		});

@@ -218,12 +218,9 @@ public class DiscoverFragment extends Fragment {
 					startActivity(intent);
 				}
 			} else if (id == R.id.discover_exchange_gift) {
-				if (AccountManager.Instace(mContext).checkUserLogin()) {
+//				if (AccountManager.Instace(mContext).checkUserLogin()) {
 					intent = new Intent();
 					intent.setClass(mContext, Web.class);
-//					intent.putExtra("url", "http://class.iyuba.com/ex.jsp?uid="
-//							+AccountManager.Instace(mContext).userId+"&platform=android&appid="
-//							+Constant.APPID);
 					intent.putExtra("url", "http://m.iyuba.com/mall/index.jsp?"
 							+"&uid="+AccountManager.Instace(mContext).userId
 							+"&sign="+ MD5.getMD5ofStr("iyuba" + AccountManager.Instace(mContext).userId + "camstory")
@@ -233,11 +230,11 @@ public class DiscoverFragment extends Fragment {
 					intent.putExtra("title",
 							mContext.getString(R.string.discover_iyubaac));
 					startActivity(intent);
-				} else {
-					intent = new Intent();
-					intent.setClass(mContext, Login.class);
-					startActivity(intent);
-				}
+//				} else {
+//					intent = new Intent();
+//					intent.setClass(mContext, Login.class);
+//					startActivity(intent);
+//				}
 			}
 
 		}
