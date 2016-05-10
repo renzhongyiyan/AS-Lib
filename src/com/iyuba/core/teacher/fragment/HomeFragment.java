@@ -99,8 +99,6 @@ public class HomeFragment extends Fragment{
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
 		
-//		CustomToast.showToast(mContext, "HomeFragment---------->onCreate()");
-
 		questionOp = new QuestionOp(mContext);
 		waitDialog = WaittingDialog.showDialog(mContext);
 		localQuesList = questionOp.findDataLastTwenty();
@@ -140,9 +138,6 @@ public class HomeFragment extends Fragment{
 		super.startActivityForResult(intent, requestCode);
 		
 	}
-
-	
-	
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -453,42 +448,6 @@ public class HomeFragment extends Fragment{
 
 					}
 				},null);
-//		new ProtocolResponse() {
-//
-//			@Override
-//			public void finish(BaseHttpResponse bhr) {
-//				// TODO Auto-generated method stub
-//				GetQuesListResponse tr = (GetQuesListResponse) bhr;
-//				if (tr.list != null && tr.list.size() != 0) {
-//
-//					quesList.clear();
-//					quesList.addAll(tr.list);
-//					binderAdapterDataHandler.post(binderAdapterDataRunnable);
-//					questionOp.insertQuestions(tr.list);
-//					pageNum=2;
-//					handler.sendEmptyMessage(3);
-//					handler.sendEmptyMessage(4);
-//					if(tr.list.size()<20) isLast=true;
-//					else  isLast=false;
-//				} else {
-//					handler.sendEmptyMessage(4);
-//					handler.sendEmptyMessage(3);
-//					handler.sendEmptyMessage(6);
-//				}
-//			}
-//
-//			@Override
-//			public void error() {
-//				// TODO Auto-generated method stub
-//				if(localQuesList.size() > 0){
-//					binderAdapterLocalDataHandler.post(binderAdapterLocalDataRunnable);
-//				}else{
-//					handler.sendEmptyMessage(3);
-//					handler.sendEmptyMessage(6);
-//					handler.sendEmptyMessage(4);
-//				}
-//			}
-//		});
 	}
 	
 	public void getFooterData() {
@@ -528,34 +487,6 @@ public class HomeFragment extends Fragment{
 						}
 					}
 				},null);
-//		new ProtocolResponse() {
-//
-//			@Override
-//			public void finish(BaseHttpResponse bhr) {
-//				// TODO Auto-generated method stub
-//				GetQuesListResponse tr = (GetQuesListResponse) bhr;
-//				if (tr.list != null && tr.list.size() != 0) {
-//					quesList.addAll(tr.list);
-//					questionOp.insertQuestions(tr.list);
-//					pageNum++;
-//					binderAdapterDataHandler.post(binderAdapterDataRunnable);
-//
-//					handler.sendEmptyMessage(3);
-//					handler.sendEmptyMessage(4);
-//					if(tr.list.size()<20) isLast=true;
-//					else  isLast=false;
-//				} else {
-//					binderAdapterDataHandler.post(binderAdapterDataRunnable);
-//				}
-//			}
-//
-//			@Override
-//			public void error() {
-//				// TODO Auto-generated method stub
-//				binderAdapterDataHandler.post(binderAdapterDataRunnable);
-//				handler.sendEmptyMessage(4);
-//			}
-//		});
 	}
 
 	private class GetHeaderDataTask extends AsyncTask<Void, Void, String[]> {

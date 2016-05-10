@@ -19,6 +19,11 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.0.0-RC1'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.0-RC1'
     compile project(':configationForClient')
+    compile "com.android.support:appcompat-v7:22.2.1"
+    compile "com.android.support:design:22.2.1"
+    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'com.github.traex.rippleeffect:library:1.3'
+    compile 'com.balysv:material-ripple:1.0.2'
 }
 
 repositories{
@@ -26,7 +31,7 @@ repositories{
 }
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "23.0.3"
 
     sourceSets {

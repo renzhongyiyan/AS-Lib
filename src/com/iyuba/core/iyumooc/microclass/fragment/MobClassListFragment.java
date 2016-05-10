@@ -148,6 +148,7 @@ public class MobClassListFragment extends Fragment implements
 		if (coursePackArrayList.size() == 0) {
 			new GetHeaderDataTask().execute();
 		}
+
 	}
 
 	@Override
@@ -251,6 +252,8 @@ public class MobClassListFragment extends Fragment implements
 	
 				}
 			});
+		//请求轮播图
+		handler.sendEmptyMessage(6);
 	}
 
 	@Override
