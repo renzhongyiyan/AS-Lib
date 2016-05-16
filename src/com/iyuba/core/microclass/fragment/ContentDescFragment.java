@@ -67,7 +67,7 @@ public class ContentDescFragment extends Fragment{
 	private Context mContext;
 	private View root;
 	private int PackId;
-	private ProgressDialog wettingDialog;
+//	private ProgressDialog wettingDialog;
 	
 	private TextView descContent,descTeacher,nameTeacher,descStudent;
   	private CircularImageView teacherImageView;
@@ -142,7 +142,7 @@ public class ContentDescFragment extends Fragment{
 		super.onDetach();
 	}
 	private void initWidget(){
-		wettingDialog = new ProgressDialog(mContext);
+//		wettingDialog = new ProgressDialog(mContext);
 		PackId = MobManager.Instance().packid;
 		cpdInfoOp = new CoursePackDescInfoOp(mContext);
 		teacherInfoOp = new TeacherInfoOp(mContext);
@@ -260,9 +260,9 @@ public class ContentDescFragment extends Fragment{
 								Looper.prepare();
 								ViewCountPackResponse res = (ViewCountPackResponse) bhr;
 								if (res.ResultCode.equals("1")) {
-									Toast.makeText(mContext, "获取浏览量正确！",1000);
+									Toast.makeText(mContext, "获取浏览量正确！",Toast.LENGTH_SHORT).show();
 								} else {
-									Toast.makeText(mContext, "获取浏览量出错！",1000);
+									Toast.makeText(mContext, "获取浏览量出错！",Toast.LENGTH_SHORT).show();
 								}
 								Looper.loop();
 							}
@@ -288,13 +288,13 @@ public class ContentDescFragment extends Fragment{
 			// TODO Auto-generated method stub
 			switch (msg.what) {
 			case 0:
-				wettingDialog.show();
+//				wettingDialog.show();
 				break;
 			case 1:
-				wettingDialog.dismiss();
+//				wettingDialog.dismiss();
 				break;
 			case 2:
-				Toast.makeText(mContext, R.string.play_check_network, 1000).show();
+				Toast.makeText(mContext, R.string.play_check_network, Toast.LENGTH_SHORT).show();
 				break;
 			case 3:
 				break;

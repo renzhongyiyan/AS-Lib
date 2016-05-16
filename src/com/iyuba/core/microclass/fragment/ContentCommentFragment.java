@@ -54,7 +54,7 @@ public class ContentCommentFragment extends Fragment{
 	private View root;
 	private int PackId;
 	private boolean isConnected;
-	private ProgressDialog wettingDialog;
+//	private ProgressDialog wettingDialog;
 	
 	private Player mPlayer;
 	private ListView commentList;
@@ -217,7 +217,7 @@ public class ContentCommentFragment extends Fragment{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				userScroing = rb_curCourse.getRating()*2;
-				Toast.makeText(mContext, "感谢评分！", 0).show();
+				Toast.makeText(mContext, "感谢评分！", Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
@@ -228,13 +228,13 @@ public class ContentCommentFragment extends Fragment{
 			// TODO Auto-generated method stub
 			switch (msg.what) {
 			case 0:
-				wettingDialog.show();
+//				wettingDialog.show();
 				break;
 			case 1:
-				wettingDialog.dismiss();
+//				wettingDialog.dismiss();
 				break;
 			case 2:
-				Toast.makeText(mContext, R.string.play_check_network, 1000).show();
+				Toast.makeText(mContext, R.string.play_check_network, Toast.LENGTH_SHORT).show();
 				break;
 			case 3:
 				break;
@@ -293,19 +293,19 @@ public class ContentCommentFragment extends Fragment{
 									if (!res.firstPage
 											.equals(res.nextPage)) {
 										curCommentPage += 1;
-										Log.d("CommentResponse中：11111111111111", commentsList.size()+"");
+										Log.d("CommentResponse中：11111", commentsList.size()+"");
 										handler_comment.sendEmptyMessage(5);
 									} else {
-										Log.d("CommentResponse中：22222222222222", commentsList.size()+"");
+										Log.d("CommentResponse中：22222", commentsList.size()+"");
 										handler_comment.sendEmptyMessage(5);
 										handler_comment.sendEmptyMessage(6);
 									}
 								} else {
-									Log.d("CommentResponse中：333333333333333", commentsList.size()+"");
+									Log.d("CommentResponse中：33333", commentsList.size()+"");
 									handler_comment.sendEmptyMessage(6);
 								}
 							} else {
-								Log.d("CommentResponse中：44444444444444444", commentsList.size()+"");
+								Log.d("CommentResponse中：44444", commentsList.size()+"");
 								handler_comment.sendEmptyMessage(6);
 							}
 							Looper.loop();

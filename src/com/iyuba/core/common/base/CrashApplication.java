@@ -16,6 +16,7 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.facebook.stetho.Stetho;
 import com.iyuba.configation.RuntimeManager;
 
 public class CrashApplication extends Application {
@@ -36,6 +37,12 @@ public class CrashApplication extends Application {
 		mInstance = this;
 		CrashHandler crashHandler = CrashHandler.getInstance();
 		crashHandler.init(getApplicationContext());
+
+		Stetho.initialize(
+				Stetho.newInitializerBuilder(this)
+						.enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+						.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+						.build());
 	}
 
 	// 程序加入运行列表

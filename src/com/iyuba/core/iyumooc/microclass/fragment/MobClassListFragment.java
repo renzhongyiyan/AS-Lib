@@ -129,7 +129,6 @@ public class MobClassListFragment extends Fragment implements
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
-//		wettingDialog = new ProgressDialog(mContext);
 		coursePackOp = new CoursePackOp(mContext);
 		coursePackTypeOp = new CoursePackTypeOp(mContext);
 		coursePackArrayList = coursePackOp.findDataByAll();

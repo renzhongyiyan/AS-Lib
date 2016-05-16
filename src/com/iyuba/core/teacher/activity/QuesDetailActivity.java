@@ -19,6 +19,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -97,6 +98,7 @@ import com.iyuba.core.teacher.sqlite.mode.AnswerType;
 import com.iyuba.core.teacher.sqlite.mode.Chat;
 import com.iyuba.lib.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.pnikosis.materialishprogress.ProgressWheel;
 
 public class QuesDetailActivity extends Activity {
 	private Context mContext;
@@ -181,12 +183,11 @@ public class QuesDetailActivity extends Activity {
 		setContentView(R.layout.lib_ques_detail);
 		mContext = this;
 		waitDialog = WaittingDialog.showDialog(mContext);
+
 		initData();
 		initWidget();
 		init();
 	}
-	
-	
 
 	@Override
 	protected void onDestroy() {
@@ -196,8 +197,6 @@ public class QuesDetailActivity extends Activity {
 			commentListAdapter.stopVoice();
 		}
 	}
-
-
 
 	public void initData() {
 		if (AccountManager.Instace(mContext).userId == null) {
@@ -256,30 +255,30 @@ public class QuesDetailActivity extends Activity {
 
 				final String type = "2";
 
-				contextMenu.setText(mContext.getResources().getStringArray(
-						R.array.choose_delete2));
-				contextMenu.setCallback(new ResultIntCallBack() {
-
-					@Override
-					public void setResult(int result) {
-						// TODO Auto-generated method stub
-						switch (result) {
-						case 0:
-							if(AccountManager.Instace(mContext).checkUserLogin()){
-								delAlertDialog(theaid + "", num, num2, type);
-							}else{
-								Intent intent = new Intent();
-								intent.setClass(mContext, Login.class);
-								startActivity(intent);
-							}
-							
-							break;
-						default:
-							break;
-						}
-					}
-				});
-				contextMenu.show();
+//				contextMenu.setText(mContext.getResources().getStringArray(
+//						R.array.choose_delete2));
+//				contextMenu.setCallback(new ResultIntCallBack() {
+//
+//					@Override
+//					public void setResult(int result) {
+//						// TODO Auto-generated method stub
+//						switch (result) {
+//						case 0:
+//							if(AccountManager.Instace(mContext).checkUserLogin()){
+//								delAlertDialog(theaid + "", num, num2, type);
+//							}else{
+//								Intent intent = new Intent();
+//								intent.setClass(mContext, Login.class);
+//								startActivity(intent);
+//							}
+//
+//							break;
+//						default:
+//							break;
+//						}
+//					}
+//				});
+//				contextMenu.show();
 				return false;
 			}
 		};

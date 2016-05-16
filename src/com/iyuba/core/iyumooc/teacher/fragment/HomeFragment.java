@@ -292,7 +292,8 @@ public class HomeFragment extends Fragment {
 				startActivity(intent);
 			}
 		});
-
+		//等待进度条
+		handler.sendEmptyMessage(2);
 		getHeaderData();
 	}
 
@@ -464,6 +465,7 @@ public class HomeFragment extends Fragment {
 			quesAdapter.clearList();
 			quesAdapter.addList(quesList);
 			quesAdapter.notifyDataSetChanged();
+			handler.sendEmptyMessage(3);
 		}
 	};
 
@@ -475,6 +477,7 @@ public class HomeFragment extends Fragment {
 			quesAdapter.clearList();
 			quesAdapter.addList(localQuesList);
 			quesAdapter.notifyDataSetChanged();
+			handler.sendEmptyMessage(3);
 		}
 	};
 
@@ -609,7 +612,6 @@ public class HomeFragment extends Fragment {
 		@Override
 		protected String[] doInBackground(Void... params) {
 			ExeRefreshTime.lastRefreshTime("NewPostListUpdateTime");
-//			handler.sendEmptyMessage(2);
 			getHeaderData();
 			return null;
 		}

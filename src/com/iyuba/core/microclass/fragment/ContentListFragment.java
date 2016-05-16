@@ -330,9 +330,9 @@ public class ContentListFragment extends Fragment{
 								Looper.prepare();
 								ViewCountPackResponse res = (ViewCountPackResponse) bhr;
 								if (res.ResultCode.equals("1")) {
-									Toast.makeText(mContext, "获取浏览量正确！",1000);
+									Toast.makeText(mContext, "获取浏览量正确！",Toast.LENGTH_SHORT).show();
 								} else {
-									Toast.makeText(mContext, "获取浏览量出错！",1000);
+									Toast.makeText(mContext, "获取浏览量出错！",Toast.LENGTH_SHORT).show();
 								}
 								Looper.loop();
 							}
@@ -380,7 +380,7 @@ public class ContentListFragment extends Fragment{
 				wettingDialog.dismiss();
 				break;
 			case 2:
-				Toast.makeText(mContext, R.string.play_check_network, 1000).show();
+				Toast.makeText(mContext, R.string.play_check_network, Toast.LENGTH_SHORT).show();
 				break;
 			case 3:
 				if (mobELAdapter == null) {

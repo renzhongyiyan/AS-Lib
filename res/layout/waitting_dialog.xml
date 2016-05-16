@@ -20,8 +20,8 @@
         android:layout_marginTop="25dp"
         android:layout_below="@id/progressbar"
         android:layout_centerHorizontal="true"
-        android:text="稍等片刻,精彩马上呈现…"
-        android:visibility="gone"
+        android:text="内容正在加载…"
+        android:textColor="@color/zhihublue"
         android:textSize="18sp"/>
 
 </RelativeLayout>
