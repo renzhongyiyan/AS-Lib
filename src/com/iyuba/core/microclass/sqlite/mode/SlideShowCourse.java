@@ -1,6 +1,8 @@
 package com.iyuba.core.microclass.sqlite.mode;
 
 public class SlideShowCourse {
+
+
 	public int id;
 	public double price;
 	public String name;

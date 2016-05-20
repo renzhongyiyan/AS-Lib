@@ -41,6 +41,7 @@ import com.iyuba.core.homepage.protocol.VOACNewsResponse;
 import com.iyuba.core.homepage.protocol.VOANNewsRequest;
 import com.iyuba.core.homepage.protocol.VOANNewsResponse;
 import com.iyuba.core.homepage.widget.ListViewNoScroll;
+import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.protocol.SlideShowCourseListRequest;
 import com.iyuba.core.microclass.protocol.SlideShowCourseListResponse;
 import com.iyuba.core.microclass.sqlite.mode.SlideShowCourse;
@@ -73,7 +74,7 @@ public class HomePageFragment extends Fragment {
 	// 轮播图片指引(圆点)的布局
 	private LinearLayout dots_ll;
 	// 用于存放轮播图信息的集合
-	private List<SlideShowCourse> ssCourseList = new ArrayList<>();
+	private List<SlideShowListBean.SlideShowDataBean> ssCourseList = new ArrayList<>();
 	// 用于存放图片地址的集合
 	private ArrayList<String> imageUrls = new ArrayList<>();
 	//用于存放轮播图说明文字
@@ -114,7 +115,9 @@ public class HomePageFragment extends Fragment {
 	}
 
 	public void initWidget() {
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext).memoryCache(new LruMemoryCache(5 * 1024 * 1024)).memoryCacheSize(5 * 1024 * 1024).build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(mContext)
+				.memoryCache(new LruMemoryCache(5 * 1024 * 1024))
+				.memoryCacheSize(5 * 1024 * 1024).build();
 		ImageLoader.getInstance().init(config);
 //        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(this));
 //        layout_roll_view = (RelativeLayout) View.inflate(mContext,
@@ -327,7 +330,7 @@ public class HomePageFragment extends Fragment {
 								if (res.result.equals("1")) {
 									if (res.ssCourseList.size() > 0) {
 										ssCourseList.clear();
-										ssCourseList.addAll(res.ssCourseList);
+//										ssCourseList.addAll(res.ssCourseList);
 										imageUrls.clear();
 										decList.clear();
 										for (int i = 0; i < res.ssCourseList
@@ -423,16 +426,16 @@ public class HomePageFragment extends Fragment {
 						RollViewPager rollViewPager = new RollViewPager(mContext,
 								dot_list, new RollViewPager.OnViewClickListener() {
 							// 用于处理点击图片的逻辑
-							public void viewClick(SlideShowCourse ssCourse) {
+							public void viewClick(SlideShowListBean.SlideShowDataBean ssCourse) {
 								Intent intent = new Intent();
 								CommonNews cn = new CommonNews();
-								switch (ssCourse.name) {
+								switch (ssCourse.getName()) {
 									case "VOA慢速英语":
 										newsArrayList.clear();
-										cn.picUrl = "http://static.iyuba.com/images/voa/" + ssCourse.id + ".jpg";
-										cn.title = ssCourse.desc1;
-										cn.id = ssCourse.id;
-										cn.musicUrl = "/" + dt + "/" + ssCourse.id + ".mp3";
+										cn.picUrl = "http://static.iyuba.com/images/voa/" + ssCourse.getId() + ".jpg";
+										cn.title = ssCourse.getDesc1();
+										cn.id = Integer.parseInt(ssCourse.getId());
+										cn.musicUrl = "/" + dt + "/" + ssCourse.getId() + ".mp3";
 										Log.e("musicUrl",cn.musicUrl);
 										newsArrayList.add(cn);
 										String lesson = "VOA慢速英语";
@@ -447,10 +450,10 @@ public class HomePageFragment extends Fragment {
 										break;
 									case "BBC英语":
 										newsArrayList.clear();
-										cn.picUrl = "http://static.iyuba.com/images/minutes/" + ssCourse.id + ".jpg";
-										cn.title = ssCourse.desc1;
-										cn.id = ssCourse.id;
-										cn.musicUrl = ssCourse.id + ".mp3";
+										cn.picUrl = "http://static.iyuba.com/images/minutes/" + ssCourse.getId() + ".jpg";
+										cn.title = ssCourse.getDesc1();
+										cn.id = Integer.parseInt(ssCourse.getId());
+										cn.musicUrl = ssCourse.getId() + ".mp3";
 										newsArrayList.add(cn);
 										lesson = "BBC英语";
 										shareUrl = "http://bbc.iyuba.com/BBCItem_1_";
@@ -464,10 +467,10 @@ public class HomePageFragment extends Fragment {
 										break;
 									case "听歌学英语":
 										newsArrayList.clear();
-										cn.picUrl = ssCourse.id + ".jpg";
-										cn.title = ssCourse.desc1;
-										cn.id = ssCourse.id;
-										cn.musicUrl = ssCourse.id + "S.mp3";
+										cn.picUrl = ssCourse.getId() + ".jpg";
+										cn.title = ssCourse.getDesc1();
+										cn.id = Integer.parseInt(ssCourse.getId());
+										cn.musicUrl = ssCourse.getId() + "S.mp3";
 										newsArrayList.add(cn);
 										lesson = "听歌学英语";
 										shareUrl = "http://music.iyuba.com/play.jsp?SongId=";
@@ -483,10 +486,10 @@ public class HomePageFragment extends Fragment {
 										break;
 									case "VOA常速英语":
 										newsArrayList.clear();
-										cn.picUrl = "http://static.iyuba.com/images/voa/" + ssCourse.id + ".jpg";
-										cn.title = ssCourse.desc1;
-										cn.id = ssCourse.id;
-										cn.musicUrl = "/" + dt + "/" + ssCourse.id + ".mp3";
+										cn.picUrl = "http://static.iyuba.com/images/voa/" + ssCourse.getId() + ".jpg";
+										cn.title = ssCourse.getDesc1();
+										cn.id = Integer.parseInt(ssCourse.getId());
+										cn.musicUrl = "/" + dt + "/" + ssCourse.getId() + ".mp3";
 										Log.e("musicUrl",cn.musicUrl);
 										newsArrayList.add(cn);
 										lesson = "VOA常速英语";
@@ -530,7 +533,7 @@ public class HomePageFragment extends Fragment {
 						RollViewPager rollViewPager = new RollViewPager(mContext,
 								dot_list, new RollViewPager.OnViewClickListener() {
 							// 用于处理点击图片的逻辑
-							public void viewClick(SlideShowCourse ssCourse) {
+							public void viewClick(SlideShowListBean.SlideShowDataBean ssCourse) {
 
 							}
 						});

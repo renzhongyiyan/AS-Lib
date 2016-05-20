@@ -36,10 +36,11 @@ import com.iyuba.core.common.network.IResponseReceiver;
 import com.iyuba.core.common.protocol.BaseHttpRequest;
 import com.iyuba.core.common.protocol.BaseHttpResponse;
 import com.iyuba.core.common.protocol.ErrorResponse;
-import com.iyuba.core.common.util.ExeRefreshTime;
 import com.iyuba.core.common.util.NetWorkState;
 import com.iyuba.core.common.widget.RollViewPager;
 import com.iyuba.core.common.widget.dialog.CustomToast;
+import com.iyuba.core.iyumooc.microclass.API.SlidePicApiStores;
+import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.activity.MobileClassActivity;
 import com.iyuba.core.microclass.adapter.MobClassListAdapter;
 import com.iyuba.core.microclass.adapter.MobClassListTypeAdapter;
@@ -47,13 +48,11 @@ import com.iyuba.core.microclass.protocol.CourseListRequest;
 import com.iyuba.core.microclass.protocol.CourseListResponse;
 import com.iyuba.core.microclass.protocol.CourseTypeListRequest;
 import com.iyuba.core.microclass.protocol.CourseTypeListResponse;
-import com.iyuba.core.microclass.protocol.SlideShowCourseListRequest;
-import com.iyuba.core.microclass.protocol.SlideShowCourseListResponse;
 import com.iyuba.core.microclass.sqlite.mode.CoursePack;
 import com.iyuba.core.microclass.sqlite.mode.CoursePackType;
-import com.iyuba.core.microclass.sqlite.mode.SlideShowCourse;
 import com.iyuba.core.microclass.sqlite.op.CoursePackOp;
 import com.iyuba.core.microclass.sqlite.op.CoursePackTypeOp;
+import com.iyuba.lib.BuildConfig;
 import com.iyuba.lib.R;
 import com.youdao.sdk.nativeads.RequestParameters;
 import com.youdao.sdk.nativeads.RequestParameters.NativeAdAsset;
@@ -65,12 +64,21 @@ import com.youdao.sdk.nativeads.YouDaoNativeAdRenderer;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MobClassListFragment extends Fragment implements
 		OnActivityGroupKeyDown {
 
 	private final static String PIC_BASE_URL = "http://app.iyuba.com/dev/";
-	
+
 	private Context mContext;
 	//轮播图图片数量
 	private int curPackId;
@@ -80,9 +88,10 @@ public class MobClassListFragment extends Fragment implements
 	private String reqPackDesc;
 	public String lastPage;
 	public int iLastPage = 0;
-	public int pageNum=1;
-	boolean isLast=false;
+	public int pageNum = 1;
+	boolean isLast = false;
 	private int classShowId = 0;
+
 	/*View或者布局相关*/
 	//轮播图布局(图片+引导dots)
 	private RelativeLayout layout_roll_view;
@@ -90,6 +99,7 @@ public class MobClassListFragment extends Fragment implements
 	private LinearLayout top_news_viewpager;
 	// 轮播图片指引(圆点)的布局
 	private LinearLayout dots_ll;
+
 	private View view;
 	private View backView;
 	private Spinner coursePackSpinner;
@@ -104,26 +114,26 @@ public class MobClassListFragment extends Fragment implements
 	//课程分类和课程包列表的adapter
 	private MobClassListAdapter mobClassListAdapter;
 	private MobClassListTypeAdapter mobClassListTypeAdapter;
-	
+
 	// 用于存放轮播图信息的集合
-	private List<SlideShowCourse> ssCourseList = new ArrayList<SlideShowCourse>();
+	private List<SlideShowListBean.SlideShowDataBean> ssCourseList = new ArrayList<SlideShowListBean.SlideShowDataBean>();
 	// 用于存放图片地址的集合
 	private ArrayList<String> imageUrls = new ArrayList<String>();
 	// 用于存放滚动点的集合
 	private ArrayList<View> dot_list = new ArrayList<View>();
 	private ArrayList<CoursePack> coursePackArrayList = new ArrayList<CoursePack>();
 	private ArrayList<CoursePackType> coursePackTypes = new ArrayList<CoursePackType>();
-	
-	final EnumSet<NativeAdAsset> desiredAssets = EnumSet.of( 
-			NativeAdAsset.TITLE, 
-			NativeAdAsset.TEXT, 
-			NativeAdAsset.MAIN_IMAGE, 
+
+	final EnumSet<NativeAdAsset> desiredAssets = EnumSet.of(
+			NativeAdAsset.TITLE,
+			NativeAdAsset.TEXT,
+			NativeAdAsset.MAIN_IMAGE,
 			NativeAdAsset.CALL_TO_ACTION_TEXT);
 	//指定请求资源
-	RequestParameters mRequestParameters = new RequestParameters.Builder() 
-		.desiredAssets(desiredAssets) 
-		.build(); 
-	
+	RequestParameters mRequestParameters = new RequestParameters.Builder()
+			.desiredAssets(desiredAssets)
+			.build();
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -152,7 +162,7 @@ public class MobClassListFragment extends Fragment implements
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		view = inflater.inflate(R.layout.lib_microclass_course_list, container,
 				false);
@@ -173,6 +183,28 @@ public class MobClassListFragment extends Fragment implements
 		super.onResume();
 	}
 
+	public void initDefaultImageUrls(){
+		DataManager.Instance().imageUrls.clear();
+		DataManager.Instance().imageUrls.add(PIC_BASE_URL + "upload/1430274693593.png");
+		DataManager.Instance().imageUrls.add(PIC_BASE_URL + "upload/1459324400736.png");
+		DataManager.Instance().imageUrls.add(PIC_BASE_URL + "upload/1459417381077.png");
+
+	}
+
+	public void initDefaultSlidePicData(){
+		DataManager.Instance().slideShowList.clear();
+		DataManager.Instance().slideShowList.add(
+				new SlideShowListBean.SlideShowDataBean("26", "8600", "托福听力",
+				"upload/1430274693593.png", "7", "听得好才能记得好"));
+		DataManager.Instance().slideShowList.add(
+				new SlideShowListBean.SlideShowDataBean("803", "0", "雅思听力导学",
+				"upload/1459324400736.png", "61", "雅思听力导学"));
+		DataManager.Instance().slideShowList.add(
+				new SlideShowListBean.SlideShowDataBean("804", "0", "N1语法",
+				"upload/1459417381077.png", "61", "雅思口语入门"));
+
+	}
+
 	public void initView(View view) {
 		backView = view.findViewById(R.id.backlayout);
 		backView.setBackgroundColor(Color.WHITE);
@@ -191,22 +223,22 @@ public class MobClassListFragment extends Fragment implements
 				coursePackArrayList);
 		mobClassListTypeAdapter = new MobClassListTypeAdapter(mContext,
 				coursePackTypes);
-		
+
 		//定义信息流广告位置
 		mAdAdapter = new YouDaoAdAdapter(mContext, mobClassListAdapter,
 				YouDaoNativeAdPositioning.newBuilder()
-					.addFixedPosition(2)
-					.enableRepeatingPositions(10)
-					.build());
-		
+						.addFixedPosition(2)
+						.enableRepeatingPositions(10)
+						.build());
+
 		//设定广告样式，代理listview的adapter
 		final YouDaoNativeAdRenderer adRenderer = new YouDaoNativeAdRenderer(
 				new ViewBinder.Builder(R.layout.lib_native_ad_row)
-					.titleId(R.id.native_title)
-					.textId(R.id.native_text)
-					.mainImageId(R.id.native_main_image)
-					.build());
-		
+						.titleId(R.id.native_title)
+						.textId(R.id.native_text)
+						.mainImageId(R.id.native_main_image)
+						.build());
+
 		mAdAdapter.registerAdRenderer(adRenderer);
 		// AD_UNIT_ID为申请的广告位ID。
 		mAdAdapter.loadAds("44e16c0bd4cb49907163d8c4c8c6ad61", mRequestParameters);
@@ -228,31 +260,33 @@ public class MobClassListFragment extends Fragment implements
 		}
 		mobClassListWaitBar.setVisibility(View.GONE);
 	}
-	
-	public void setViews(){
+
+	public void setViews() {
 		mobClassListView.setOnRefreshListener(orfl);
 		mobClassListView.setOnItemClickListener(oItemClickListener);
 		coursePackSpinner
-			.setOnItemSelectedListener(new OnItemSelectedListener() {
-				@Override
-				public void onItemSelected(AdapterView<?> parent,
-						View view, int position, long id) {
-					// TODO Auto-generated method stub
-					reqPackId = coursePackTypes.get(position).id + "";
-					reqPackType = coursePackTypes.get(position).type + "";
-					reqPackDesc = coursePackTypes.get(position).desc; // 对应的是轮播图片对应的请求字段，如"class.all"
-					pageNum = 1;
-					handler.sendEmptyMessage(3);
-					handler.sendEmptyMessage(6);
-				}
-				@Override
-				public void onNothingSelected(AdapterView<?> parent) {
-					// TODO Auto-generated method stub
-	
-				}
-			});
+				.setOnItemSelectedListener(new OnItemSelectedListener() {
+					@Override
+					public void onItemSelected(AdapterView<?> parent,
+											   View view, int position, long id) {
+						// TODO Auto-generated method stub
+						reqPackId = coursePackTypes.get(position).id + "";
+						reqPackType = coursePackTypes.get(position).type + "";
+						reqPackDesc = coursePackTypes.get(position).desc; // 对应的是轮播图片对应的请求字段，如"class.all"
+						pageNum = 1;
+						isLast = false;
+						handler.sendEmptyMessage(3);
+						initSlideShowViewPicData();
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {
+						// TODO Auto-generated method stub
+
+					}
+				});
 		//请求轮播图
-		handler.sendEmptyMessage(6);
+		initSlideShowViewPicData();
 	}
 
 	@Override
@@ -260,47 +294,46 @@ public class MobClassListFragment extends Fragment implements
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	private OnItemClickListener oItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
+								long id) {
 			// TODO Auto-generated method stub
 			Intent intent = new Intent();
-			if(position > 1){
-				mAdAdapter.getItem(position-2);
+			if (position > 1) {
+				mAdAdapter.getItem(position - 2);
 				// 之前是position-1，现在因为添加了ListView的Header，所以改成了position-2
-				curPackId = ((CoursePack)mAdAdapter.getItem(position-2)).id;
-				curPackPrice = ((CoursePack)mAdAdapter.getItem(position-2)).price;
+				curPackId = ((CoursePack) mAdAdapter.getItem(position - 2)).id;
+				curPackPrice = ((CoursePack) mAdAdapter.getItem(position - 2)).price;
 				MobManager.Instance().packid = curPackId;
-				MobManager.Instance().ownerid = ((CoursePack)mAdAdapter.getItem(position-2)).ownerid;
+				MobManager.Instance().ownerid = ((CoursePack) mAdAdapter.getItem(position - 2)).ownerid;
 				MobManager.Instance().appId = Constant.APPID;
-				MobManager.Instance().desc = ((CoursePack)mAdAdapter.getItem(position-2)).desc;
+				MobManager.Instance().desc = ((CoursePack) mAdAdapter.getItem(position - 2)).desc;
 				MobManager.Instance().curPackPrice = curPackPrice;
-				MobManager.Instance().CourseNum = ((CoursePack)mAdAdapter.getItem(position-2)).classNum;
+				MobManager.Instance().CourseNum = ((CoursePack) mAdAdapter.getItem(position - 2)).classNum;
 
 				intent.putExtra("packname",
-						((CoursePack)mAdAdapter.getItem(position-2)).name);
+						((CoursePack) mAdAdapter.getItem(position - 2)).name);
 				intent.putExtra("position", position);
 				intent.putExtra("coursenum",
-						((CoursePack)mAdAdapter.getItem(position-2)).classNum);
+						((CoursePack) mAdAdapter.getItem(position - 2)).classNum);
 				intent.setClass(mContext, MobileClassActivity.class);
 				startActivity(intent);
 			}
 		}
 	};
-	
+
 	public void getPackTypeData() {
-		
+
 		ClientSession.Instace().asynGetResponse(
 				// APPID pageNumber pageCounts
-				
 				// 获取所有课程的列表
 				new CourseTypeListRequest(), new IResponseReceiver() {
 
 					@Override
 					public void onResponse(BaseHttpResponse response,
-							BaseHttpRequest request, int rspCookie) {
+										   BaseHttpRequest request, int rspCookie) {
 						CourseTypeListResponse res = (CourseTypeListResponse) response;
 						if (res.result.equals("1")) {
 							if (res.courseTypeList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
@@ -320,20 +353,15 @@ public class MobClassListFragment extends Fragment implements
 								}
 								if (flag == 1) {
 									coursePackTypes.clear();
-									coursePackTypes
-											.addAll(res.courseTypeList);
-									coursePackTypeOp
-											.deleteCoursePackTypeData();
-									coursePackTypeOp
-											.insertCoursePackType(coursePackTypes);
+									coursePackTypes.addAll(res.courseTypeList);
+									coursePackTypeOp.deleteCoursePackTypeData();
+									coursePackTypeOp.insertCoursePackType(coursePackTypes);
 									mobClassListTypeAdapter.clearList();// 清除原来的记录
-									mobClassListTypeAdapter
-											.addList(res.courseTypeList);
+									mobClassListTypeAdapter.addList(res.courseTypeList);
 									handler.sendEmptyMessage(8);
-									handlerRefreshList
-											.sendEmptyMessage(3);
-									
-									
+									handlerRefreshList.sendEmptyMessage(3);
+
+
 								}
 							}
 						}
@@ -342,67 +370,16 @@ public class MobClassListFragment extends Fragment implements
 
 					@Override
 					public void onError(ErrorResponse errorResponse,
-							BaseHttpRequest request, int rspCookie) {
+										BaseHttpRequest request, int rspCookie) {
 						// TODO Auto-generated method stub
 					}
 
 				}, null);
-		
-	}
-	
-	public void getHeaderData() {
-		ClientSession.Instace().asynGetResponse(
-				// APPID pageNumber pageCounts
-				// 获取所有课程的列表
-				new CourseListRequest(reqPackId, reqPackType, "1"),
-				new IResponseReceiver() {
-					@Override
-					public void onResponse(BaseHttpResponse response,
-							BaseHttpRequest request, int rspCookie) {
-						CourseListResponse res = (CourseListResponse) response;
-						if (res.result.equals("1")) {
-							iLastPage = Integer.parseInt(res.lastPage);
-							if(iLastPage != pageNum){
-								isLast=false;
-							}else if(iLastPage == pageNum || iLastPage ==0){
-								isLast=true;
-							}
-							pageNum = 2;
-							if (res.courseList.size() > 0) {
-									coursePackArrayList.clear();
-									coursePackArrayList
-											.addAll(res.courseList);
-									mobClassListAdapter.clearList();// 清除原来的记录
-									mobClassListAdapter
-											.addList(res.courseList);
-									
-									handlerRefreshList.sendEmptyMessage(3);
 
-									if (reqPackId.equals("-2")) {
-										coursePackOp
-												.deleteCoursePackData();
-									}
-
-									coursePackOp
-											.insertCoursePacks(coursePackArrayList);
-							}
-						}
-						handler.sendEmptyMessage(2);
-					}
-				}, new IErrorReceiver() {
-					
-					@Override
-					public void onError(ErrorResponse errorResponse, BaseHttpRequest request,
-							int rspCookie) {
-						// TODO Auto-generated method stub
-						handlerRefreshList.sendEmptyMessage(4);
-						handlerRefreshList.sendEmptyMessage(9);
-					}
-				}, null);
 	}
-	
-	public void getFooterData() {
-		if(isLast){
+
+	public void getRefreshPackData(final boolean isClean) {
+		if (isLast) {
 			handlerRefreshList.sendEmptyMessage(14);
 			handlerRefreshList.sendEmptyMessage(4);
 			return;
@@ -414,61 +391,75 @@ public class MobClassListFragment extends Fragment implements
 						pageNum + ""), new IResponseReceiver() {
 					@Override
 					public void onResponse(BaseHttpResponse response,
-							BaseHttpRequest request, int rspCookie) {
+										   BaseHttpRequest request, int rspCookie) {
 						CourseListResponse res = (CourseListResponse) response;
 						if (res.result.equals("1")) {
+							iLastPage = Integer.parseInt(res.lastPage);
+							if (iLastPage != pageNum) {
+								isLast = false;
+							} else if (iLastPage == pageNum || iLastPage == 0) {
+								isLast = true;
+							}
+							pageNum += 1;
 							if (res.courseList.size() > 0) {
-								iLastPage = Integer.parseInt(res.lastPage);
-								if(iLastPage != pageNum){
-									isLast=false;
-								}else if(iLastPage == pageNum || iLastPage ==0){
-									isLast=true;
+								if (isClean) {
+									coursePackArrayList.clear();
+									coursePackArrayList.addAll(res.courseList);
+									mobClassListAdapter.clearList();// 清除原来的记录
+									mobClassListAdapter.addList(res.courseList);
+									handlerRefreshList.sendEmptyMessage(3);
+									if (reqPackId.equals("-2")) {
+										coursePackOp.deleteCoursePackData();
+									}
+									coursePackOp.insertCoursePacks(coursePackArrayList);
+								} else {
+									mobClassListAdapter.clearList();// 清除原来的记录
+									coursePackArrayList.addAll(res.courseList);
+									mobClassListAdapter.addList(coursePackArrayList);
 								}
-								pageNum++;
-								mobClassListAdapter.clearList();// 清除原来的记录
-								coursePackArrayList.addAll(res.courseList);
-								mobClassListAdapter
-									.addList(coursePackArrayList);
 								handlerRefreshList.sendEmptyMessage(3);
+								handler.sendEmptyMessage(2);
 							}
 						}
 						handlerRefreshList.sendEmptyMessage(3);
-						handler.sendEmptyMessage(2);
+
 					}
 				}, new IErrorReceiver() {
 					@Override
 					public void onError(ErrorResponse errorResponse, BaseHttpRequest request,
-							int rspCookie) {
+										int rspCookie) {
 						// TODO Auto-generated method stub
 						handler.sendEmptyMessage(2);
 					}
 				}, null);
 	}
+
 	private class GetPackTypeDataTask extends AsyncTask<Void, Void, String[]> {
 		@Override
 		protected String[] doInBackground(Void... params) {
-			ExeRefreshTime.lastRefreshTime("NewPostListUpdateTime");
 			getPackTypeData();
 			return null;
 		}
 	}
+
 	private class GetHeaderDataTask extends AsyncTask<Void, Void, String[]> {
 		@Override
 		protected String[] doInBackground(Void... params) {
-			ExeRefreshTime.lastRefreshTime("NewPostListUpdateTime");
-			getHeaderData();
+			pageNum = 1;
+			isLast = false;
+			getRefreshPackData(true);
 			return null;
 		}
 	}
+
 	private class GetFooterDataTask extends AsyncTask<Void, Void, String[]> {
 		@Override
 		protected String[] doInBackground(Void... params) {
-			ExeRefreshTime.lastRefreshTime("NewPostListUpdateTime");
-			getFooterData();
+			getRefreshPackData(false);
 			return null;
 		}
 	}
-	
+
 	private OnRefreshListener2<ListView> orfl = new OnRefreshListener2<ListView>() {
 		@Override
 		public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
@@ -476,13 +467,14 @@ public class MobClassListFragment extends Fragment implements
 			if (NetWorkState.isConnectingToInternet()) {// 开始刷新
 				new GetPackTypeDataTask().execute();
 				new GetHeaderDataTask().execute();
-				handler.sendEmptyMessage(6);
+				initSlideShowViewPicData();
 			} else {// 刷新失败
 				handlerRefreshList.sendEmptyMessage(4);
 				handlerRefreshList.sendEmptyMessage(9);
 				handlerRefreshList.sendEmptyMessage(13);
 			}
 		}
+
 		@Override
 		public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
 			// TODO Auto-generated method stub
@@ -493,130 +485,125 @@ public class MobClassListFragment extends Fragment implements
 				handlerRefreshList.sendEmptyMessage(9);
 				handlerRefreshList.sendEmptyMessage(13);
 			}
-			
+
 		}
 	};
-	
+
 	Handler handler = new Handler() {
 
 		int reqPageNumber;
+
 		@Override
 		public void handleMessage(Message msg) {
 			// TODO Auto-generated method stub
 			super.handleMessage(msg);
 			switch (msg.what) {
 
-			case 2:
-				mobClassListAdapter.notifyDataSetChanged();
-				mobClassListView.onRefreshComplete();
-				mobClassListWaitBar.setVisibility(View.GONE);
-				break;
-			// 分类获取也联网获取
-			case 3:
-				if ((!reqPackId.equals("-2")) && (!reqPackId.equals("-1"))) { // 按课程的分类获取包（日语一级、VOA应用、英语四级等）
-					// 首先判断本地是否有该类别的课程对应的包
-					coursePackArrayList.clear();
-					coursePackArrayList = coursePackOp
-							.findDataByOwnerId(reqPackId);
+				case 2:
+					mobClassListAdapter.notifyDataSetChanged();
+					mobClassListView.onRefreshComplete();
+					mobClassListWaitBar.setVisibility(View.GONE);
+					break;
+				// 分类获取也联网获取
+				case 3:
+					if ((!reqPackId.equals("-2")) && (!reqPackId.equals("-1"))) { // 按课程的分类获取包（日语一级、VOA应用、英语四级等）
+						// 首先判断本地是否有该类别的课程对应的包
+						coursePackArrayList.clear();
+						coursePackArrayList = coursePackOp.findDataByOwnerId(reqPackId);
 
-					// 如果当前课程对应的包在本地有记录，则加载本地的
-					if (coursePackArrayList.size() != 0) {
-						mobClassListAdapter.clearList();// 清除原来的记录
-						mobClassListAdapter.addList(coursePackArrayList);
-						handlerRefreshList.sendEmptyMessage(3);
-					} else {// 否则，联网取数据，加载到本地
-						handler.sendEmptyMessage(4);
-					}
-				} else if (reqPackId.equals("-1")) { // 获取最新课程包列表
-					reqPackType = "1";
-					reqPackId = "-1";
-					handler.sendEmptyMessage(4);
-					handlerRefreshList.sendEmptyMessage(3);
-				} else if (reqPackId.equals("-2")) { // 获取全部课程包列表
-					coursePackArrayList.clear();
-					coursePackArrayList = coursePackOp.findDataByAll();
-
-					if (coursePackArrayList.size() != 0) {
-						mobClassListAdapter.clearList();// 清除原来的记录
-						mobClassListAdapter.addList(coursePackArrayList);
-						handlerRefreshList.sendEmptyMessage(3);
-					} else {
-						if (NetWorkState.isConnectingToInternet()) {// 开始刷新
-							new GetHeaderDataTask().execute();
+						// 如果当前课程对应的包在本地有记录，则加载本地的
+						if (coursePackArrayList.size() != 0) {
+							mobClassListAdapter.clearList();// 清除原来的记录
+							mobClassListAdapter.addList(coursePackArrayList);
 							handlerRefreshList.sendEmptyMessage(3);
-						} else {// 刷新失败
-							handlerRefreshList.sendEmptyMessage(4);
-							handlerRefreshList.sendEmptyMessage(9);
-							handlerRefreshList.sendEmptyMessage(13);
+						} else {// 否则，联网取数据，加载到本地
+							handler.sendEmptyMessage(4);
 						}
+					} else if (reqPackId.equals("-1")) { // 获取最新课程包列表
+						reqPackType = "1";
+						reqPackId = "-1";
+						handler.sendEmptyMessage(4);
 						handlerRefreshList.sendEmptyMessage(3);
+					} else if (reqPackId.equals("-2")) { // 获取全部课程包列表
+						coursePackArrayList.clear();
+						coursePackArrayList = coursePackOp.findDataByAll();
+						if (coursePackArrayList.size() != 0) {
+							mobClassListAdapter.clearList();// 清除原来的记录
+							mobClassListAdapter.addList(coursePackArrayList);
+							handlerRefreshList.sendEmptyMessage(3);
+						} else {
+							if (NetWorkState.isConnectingToInternet()) {// 开始刷新
+								new GetHeaderDataTask().execute();
+								handlerRefreshList.sendEmptyMessage(3);
+							} else {// 刷新失败
+								handlerRefreshList.sendEmptyMessage(4);
+								handlerRefreshList.sendEmptyMessage(9);
+								handlerRefreshList.sendEmptyMessage(13);
+							}
+							handlerRefreshList.sendEmptyMessage(3);
+						}
 					}
-				}
-				break;
-			// 联网取某个分类的课程
-			case 4:
-				ClientSession.Instace().asynGetResponse(
-						// APPID pageNumber pageCounts
-						// 获取所有课程的列表
-						new CourseListRequest(reqPackId, reqPackType, "1"),
-						new IResponseReceiver() {
-							@Override
-							public void onResponse(BaseHttpResponse response,
-									BaseHttpRequest request, int rspCookie) {
-								CourseListResponse res = (CourseListResponse) response;
-								if (res.result.equals("1")) {
-									if (res.courseList.size() > 0) {
-										coursePackArrayList.clear();
-										coursePackArrayList
-												.addAll(res.courseList);
-										mobClassListAdapter.clearList();// 清除原来的记录
-										mobClassListAdapter
-												.addList(res.courseList);
-										handlerRefreshList.sendEmptyMessage(3);
-										
-										if (!reqPackId.equals("-1")) {
-											try {
-												coursePackOp
-														.insertCoursePacks(res.courseList);
-											} catch (Exception e) {
-												// TODO Auto-generated catch
-												// block
-												e.printStackTrace();
+					break;
+				// 联网取某个分类的课程
+				case 4:
+					ClientSession.Instace().asynGetResponse(
+							// APPID pageNumber pageCounts
+							// 获取所有课程的列表
+							new CourseListRequest(reqPackId, reqPackType, "1"),
+							new IResponseReceiver() {
+								@Override
+								public void onResponse(BaseHttpResponse response,
+													   BaseHttpRequest request, int rspCookie) {
+									CourseListResponse res = (CourseListResponse) response;
+									if (res.result.equals("1")) {
+										if (res.courseList.size() > 0) {
+											coursePackArrayList.clear();
+											coursePackArrayList.addAll(res.courseList);
+											mobClassListAdapter.clearList();// 清除原来的记录
+											mobClassListAdapter.addList(res.courseList);
+											handlerRefreshList.sendEmptyMessage(3);
+											if (!reqPackId.equals("-1")) {
+												try {
+													coursePackOp.insertCoursePacks(res.courseList);
+												} catch (Exception e) {
+													// TODO Auto-generated catch
+													// block
+													e.printStackTrace();
+												}
 											}
 										}
 									}
+									handler.sendEmptyMessage(2);
 								}
-								handler.sendEmptyMessage(2);
-							}
-						}, null, null);
-				break;
-			case 6:
-				initSlideShowViewPicData();
-				break;
-			case 7:
-				break;
-			case 8:
-				mobClassListTypeAdapter.notifyDataSetChanged();
-				break;
-			case 9:
-				if(coursePackTypes.size() != 0&&coursePackArrayList.size() != 0&&imageUrls.size() != 0){
-					if(classShowId == 0){
-						for(int i=0;i<coursePackTypes.size();i++){
-							CoursePackType cpt = coursePackTypes.get(i);
-							if(cpt.id == 21){
-								classShowId = i;
+							}, null, null);
+					break;
+				case 6:
+					initSlideShowViewPicData();
+					break;
+				case 7:
+					break;
+				case 8:
+					mobClassListTypeAdapter.notifyDataSetChanged();
+					break;
+				case 9:
+					if (coursePackTypes.size() != 0 && coursePackArrayList.size() != 0 && imageUrls.size() != 0) {
+						if (classShowId == 0) {
+							for (int i = 0; i < coursePackTypes.size(); i++) {
+								CoursePackType cpt = coursePackTypes.get(i);
+								if (cpt.id == 21) {
+									classShowId = i;
+								}
 							}
 						}
+						coursePackSpinner.setSelection(classShowId);
+						handler.sendEmptyMessage(6);
+						handlerRefreshList.sendEmptyMessage(9);
+					} else {
+						handler.sendEmptyMessageDelayed(9, 500);
 					}
-					coursePackSpinner.setSelection(classShowId);
-					handler.sendEmptyMessage(6);
-					handlerRefreshList.sendEmptyMessage(9);
-				}else{
-					handler.sendEmptyMessageDelayed(9,500);
-				}
-				break;
-			default:
-				break;
+					break;
+				default:
+					break;
 			}
 		}
 	};
@@ -627,35 +614,35 @@ public class MobClassListFragment extends Fragment implements
 			// TODO Auto-generated method stub
 			super.handleMessage(msg);
 			switch (msg.what) {
-			case 3:
-				if (mobClassListAdapter == null) {
-					mobClassListAdapter = new MobClassListAdapter(mContext,
-							coursePackArrayList);
-					actualListView.setAdapter(mAdAdapter);
-					mAdAdapter.refreshAds(actualListView, "44e16c0bd4cb49907163d8c4c8c6ad61", mRequestParameters);
-				} else {
-					mobClassListAdapter.notifyDataSetChanged();
-					mAdAdapter.notifyDataSetChanged();
-				}
-				actualListView.setVisibility(View.VISIBLE);
-				mobClassListWaitBar.setVisibility(View.GONE);
-				break;
-			case 4:
-				mobClassListView.onRefreshComplete();
-				break;
-			case 8:
-				if (isDetached()) {
-					return;
-				}
-				break;
-			case 9:
-				break;
-			case 13:
-				CustomToast.showToast(mContext, R.string.check_network, 1000);
-				break;
-			case 14:
-				CustomToast.showToast(mContext, "已经是最后一页！", 1000);
-				break;
+				case 3:
+					if (mobClassListAdapter == null) {
+						mobClassListAdapter = new MobClassListAdapter(mContext,
+								coursePackArrayList);
+						actualListView.setAdapter(mAdAdapter);
+						mAdAdapter.refreshAds(actualListView, "44e16c0bd4cb49907163d8c4c8c6ad61", mRequestParameters);
+					} else {
+						mobClassListAdapter.notifyDataSetChanged();
+						mAdAdapter.notifyDataSetChanged();
+					}
+					actualListView.setVisibility(View.VISIBLE);
+					mobClassListWaitBar.setVisibility(View.GONE);
+					break;
+				case 4:
+					mobClassListView.onRefreshComplete();
+					break;
+				case 8:
+					if (isDetached()) {
+						return;
+					}
+					break;
+				case 9:
+					break;
+				case 13:
+					CustomToast.showToast(mContext, R.string.check_network, 1000);
+					break;
+				case 14:
+					CustomToast.showToast(mContext, "已经是最后一页！", 1000);
+					break;
 			}
 		}
 	};
@@ -666,94 +653,81 @@ public class MobClassListFragment extends Fragment implements
 	private void initSlideShowViewPicData() {
 		// 一步任务获取图片
 		Log.e("准备发送一次轮播图片的请求：", "准备发送！！！");
-		new GetSlidePicListTask().execute("");
+		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+		OkHttpClient.Builder client = new OkHttpClient.Builder()
+				.connectTimeout(5, TimeUnit.SECONDS)
+				.readTimeout(5, TimeUnit.SECONDS)
+				.addInterceptor(interceptor);
+
+		Retrofit retrofit = new Retrofit.Builder()
+				//这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
+				.baseUrl("http://app.iyuba.com/")
+				.client(client.build())
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+
+		SlidePicApiStores apiStores = retrofit.create(SlidePicApiStores.class);
+		Call<SlideShowListBean> call = apiStores.getSlidePicList(reqPackDesc);
+		call.enqueue(new Callback<SlideShowListBean>() {
+			@Override
+			public void onResponse(Response<SlideShowListBean> response) {
+
+				if (response.body().getData() != null && response.body().getData().size() != 0) {
+
+					if (response.body().getResult().equals("1")) {
+						ssCourseList.clear();
+						ssCourseList.addAll(response.body().getData());
+						imageUrls.clear();
+						for (int i = 0; i < response.body().getData()
+								.size(); i++) {
+							if (!imageUrls
+									.contains(PIC_BASE_URL
+											+ response.body().getData()
+											.get(i).getPic())) {
+								imageUrls.add(PIC_BASE_URL
+										+ response.body().getData()
+										.get(i).getPic());
+								Log.e("SlideShowCourseList" + i,
+										response.body().getData().get(i).getName());
+							}
+						}
+					}
+					//添加底部的点、为轮播图添加点击处理事件
+					slideHandler.sendEmptyMessage(0);
+				} else {
+					Log.e("执行轮播图片请求异常：", "异常中222！！！");
+					imageUrls.clear();
+					initDefaultImageUrls();
+					imageUrls.addAll(DataManager.Instance().imageUrls);
+
+					ssCourseList.clear();
+					initDefaultSlidePicData();
+					ssCourseList.addAll(DataManager.Instance().slideShowList);
+
+					//添加底部的点、为轮播图添加点击处理事件
+					slideHandler.sendEmptyMessage(0);
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable t) {
+				Log.e("执行轮播图片请求异常：", "异常中333！！！");
+				imageUrls.clear();
+				initDefaultImageUrls();
+				imageUrls.addAll(DataManager.Instance().imageUrls);
+
+				ssCourseList.clear();
+				initDefaultSlidePicData();
+				ssCourseList.addAll(DataManager.Instance().slideShowList);
+
+				//添加底部的点、为轮播图添加点击处理事件
+				slideHandler.sendEmptyMessage(0);
+			}
+		});
 	}
 
-	/**
-	 * 异步任务,获取数据
-	 * 
-	 */
-	class GetSlidePicListTask extends AsyncTask<String, Integer, Boolean> {
-
-		@Override
-		protected Boolean doInBackground(String... params) {
-			try {
-				// 这里一般调用服务端接口获取一组轮播图片，下面是从百度找的几个图片
-
-				ClientSession.Instace().asynGetResponse(
-						// 获取所有课程轮播图片的列表
-						new SlideShowCourseListRequest(reqPackDesc),
-						new IResponseReceiver() {
-							@Override
-							public void onResponse(BaseHttpResponse response,
-									BaseHttpRequest request, int rspCookie) {
-								SlideShowCourseListResponse res = (SlideShowCourseListResponse) response;
-								if (res.result.equals("1")) {
-									if (res.ssCourseList.size() > 0) {
-										ssCourseList.clear();
-										ssCourseList.addAll(res.ssCourseList);
-										imageUrls.clear();
-										for (int i = 0; i < res.ssCourseList
-												.size(); i++) {
-											if (!imageUrls
-													.contains(PIC_BASE_URL
-															+ res.ssCourseList
-																	.get(i).pic)) {
-												imageUrls.add(PIC_BASE_URL
-														+ res.ssCourseList
-																.get(i).pic);
-												Log.e("SlideShowCourseList" + i,
-														res.ssCourseList.get(i).name);
-											}
-
-										}
-									}
-									//添加底部的点、为轮播图添加点击处理事件
-									slideHandler.sendEmptyMessage(0);
-								}
-							}
-						}, 
-						new IErrorReceiver() {
-							
-							@Override
-							public void onError(ErrorResponse errorResponse, BaseHttpRequest request,
-									int rspCookie) {
-								// TODO Auto-generated method stub
-								if(imageUrls.size() == 0){
-									Log.e("执行轮播图片请求异常：", "异常中！！！");
-									imageUrls.clear();
-									imageUrls.add(PIC_BASE_URL+ "upload/1430274693593.png");
-									imageUrls.add(PIC_BASE_URL+ "upload/1459324400736.png");
-									imageUrls.add(PIC_BASE_URL+ "upload/1459417381077.png");
-									
-									ssCourseList.clear();
-									ssCourseList.add(new SlideShowCourse(26, 8600,"托福听力",7,
-											"upload/1430274693593.png", "听得好才能记得好"));
-									ssCourseList.add(new SlideShowCourse(803, 0,"雅思听力导学",61,
-											"upload/1459324400736.png", "雅思听力导学"));
-									ssCourseList.add(new SlideShowCourse(804, 0,"N1语法",61,
-											"upload/1459417381077.png","雅思口语入门"));
-									
-									//添加底部的点、为轮播图添加点击处理事件
-									slideHandler.sendEmptyMessage(0);
-								}
-							}
-						}, null);
-
-				return true;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result) {
-			super.onPostExecute(result);
-			if (result) {
-			}
-		}
-	}
 	private void initDot() {
 		// 滚动的个数应该和图片的个数相等
 		// 清空点所在集合
@@ -779,65 +753,76 @@ public class MobClassListFragment extends Fragment implements
 		}
 	}
 
+	public ArrayList<String> getCoursePackIds(ArrayList<CoursePack> cpList) {
+		ArrayList<String> cpIds = new ArrayList<>();
+		for (int i = 0; i < cpList.size(); i++) {
+			String tempId = coursePackArrayList.get(i).id + "";
+			cpIds.add(tempId);
+		}
+		return cpIds;
+	}
+
 	Handler slideHandler = new Handler() {
+		boolean isContainsClick = false;
 
 		@Override
 		public void dispatchMessage(Message msg) {
 			// TODO Auto-generated method stub
 			super.dispatchMessage(msg);
 			switch (msg.what) {
-			case 0:
-				// 初始划滚动点
-				initDot();
-				// 创建轮播图
-				if(ssCourseList != null && ssCourseList.size() != 0){
-					RollViewPager rollViewPager = new RollViewPager(mContext,
-							dot_list, new RollViewPager.OnViewClickListener() {
-								// 用于处理点击图片的逻辑
-								public void viewClick(SlideShowCourse ssCourse) {
-									Intent intent = new Intent();
-									// 之前是position-1，现在因为添加了ListView的Header，所以改成了position-2
-									curPackId = ssCourse.id;
-									curPackPrice = ssCourse.price;
-									MobManager.Instance().packid = curPackId;
-									MobManager.Instance().ownerid = ssCourse.ownerid;
-									MobManager.Instance().appId = Constant.APPID;
-									MobManager.Instance().desc = ssCourse.desc1;
-									MobManager.Instance().curPackPrice = curPackPrice;
-									intent.putExtra("packname", ssCourse.name);
-									intent.setClass(mContext,
-											MobileClassActivity.class);
-									if(curPackId != 0){
-										startActivity(intent);
-									}
-									
+				case 0:
+					// 初始划滚动点
+					initDot();
+					// 创建轮播图
+					if (ssCourseList != null && ssCourseList.size() != 0) {
+						RollViewPager rollViewPager = new RollViewPager(mContext,
+								dot_list, new RollViewPager.OnViewClickListener() {
+							// 用于处理点击图片的逻辑
+							public void viewClick(SlideShowListBean.SlideShowDataBean ssCourse) {
+								isContainsClick = getCoursePackIds(coursePackArrayList).contains(ssCourse.getId());
+								Intent intent = new Intent();
+								// 之前是position-1，现在因为添加了ListView的Header，所以改成了position-2
+								curPackId = Integer.parseInt(ssCourse.getId());
+								curPackPrice = Double.parseDouble(ssCourse.getPrice());
+								MobManager.Instance().packid = curPackId;
+								MobManager.Instance().ownerid = Integer.parseInt(ssCourse.getOwnerid());
+								MobManager.Instance().appId = Constant.APPID;
+								MobManager.Instance().desc = ssCourse.getDesc1();
+								MobManager.Instance().curPackPrice = curPackPrice;
+								intent.putExtra("packname", ssCourse.getName());
+								intent.setClass(mContext,
+										MobileClassActivity.class);
+								if (curPackId != 0 && isContainsClick) {
+									startActivity(intent);
 								}
-							});
-					// 将图片地址添加到轮播图中
-					rollViewPager.initSlideShowCourseList(ssCourseList);
-					rollViewPager.initImgUrl(imageUrls);
-					rollViewPager.startRoll();
-					top_news_viewpager.removeAllViews();
-					top_news_viewpager.addView(rollViewPager);
-				}else if(imageUrls != null && imageUrls.size() != 0){
-					RollViewPager rollViewPager = new RollViewPager(mContext,
-							dot_list, new RollViewPager.OnViewClickListener() {
-								// 用于处理点击图片的逻辑
-								public void viewClick(SlideShowCourse ssCourse) {
-									
-								}
-							});
-					// 将图片地址添加到轮播图中
-					rollViewPager.initImgUrl(imageUrls);
-					rollViewPager.startRoll();
-					top_news_viewpager.removeAllViews();
-					top_news_viewpager.addView(rollViewPager);
-				}
-				
-				break;
 
-			default:
-				break;
+							}
+						});
+						// 将图片地址添加到轮播图中
+						rollViewPager.initSlideShowCourseList(ssCourseList);
+						rollViewPager.initImgUrl(imageUrls);
+						rollViewPager.startRoll();
+						top_news_viewpager.removeAllViews();
+						top_news_viewpager.addView(rollViewPager);
+					} else if (imageUrls != null && imageUrls.size() != 0) {
+						RollViewPager rollViewPager = new RollViewPager(mContext,
+								dot_list, new RollViewPager.OnViewClickListener() {
+							// 用于处理点击图片的逻辑
+							public void viewClick(SlideShowListBean.SlideShowDataBean ssCourse) {
+
+							}
+						});
+						// 将图片地址添加到轮播图中
+						rollViewPager.initImgUrl(imageUrls);
+						rollViewPager.startRoll();
+						top_news_viewpager.removeAllViews();
+						top_news_viewpager.addView(rollViewPager);
+					}
+
+					break;
+
+				default:
+					break;
 			}
 		}
 

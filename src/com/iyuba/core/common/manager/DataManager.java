@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.w3c.dom.Text;
 
 import com.iyuba.core.discover.sqlite.mode.BlogContent;
+import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.sqlite.mode.CourseContent;
 import com.iyuba.core.microclass.sqlite.mode.CoursePack;
 import com.iyuba.core.microclass.sqlite.mode.CoursePackType;
@@ -48,5 +49,8 @@ public class DataManager {
 	public ArrayList<PayedCourseRecord> payedCourseRecordList = new ArrayList<PayedCourseRecord>();
 //	public FeedInfo feed=new FeedInfo();
 	public BlogContent blogContent;
+
+	public ArrayList<SlideShowListBean.SlideShowDataBean> slideShowList = new ArrayList<>();
+	public ArrayList<String> imageUrls = new ArrayList<>();
 }
 

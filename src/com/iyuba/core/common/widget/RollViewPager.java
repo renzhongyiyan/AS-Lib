@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.sqlite.mode.SlideShowCourse;
 import com.iyuba.lib.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -21,7 +22,7 @@ public class RollViewPager extends ViewPager {
 	private Context context;
 	private List<View> dot_List;
 	
-	private List<SlideShowCourse> ssCourseList;
+	private List<SlideShowListBean.SlideShowDataBean> ssCourseList;
 	
 	//轮播图显示文字对应集合
 	private List<String> titleList;
@@ -61,7 +62,7 @@ public class RollViewPager extends ViewPager {
 	
 	public interface OnViewClickListener{
 //		public void viewClick(String url);
-		public void viewClick(SlideShowCourse ssCourse);
+		public void viewClick(SlideShowListBean.SlideShowDataBean ssCourse);
 		
 	}
 	
@@ -157,7 +158,7 @@ public class RollViewPager extends ViewPager {
 		this.imgUrlList = imgUrlList;		
 	}
 	
-	public void initSlideShowCourseList(List<SlideShowCourse> ssCourseList) {
+	public void initSlideShowCourseList(List<SlideShowListBean.SlideShowDataBean> ssCourseList) {
 		this.ssCourseList = ssCourseList;		
 	}
 	

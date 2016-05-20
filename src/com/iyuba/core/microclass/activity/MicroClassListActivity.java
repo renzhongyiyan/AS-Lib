@@ -43,6 +43,7 @@ import com.iyuba.core.common.util.ExeRefreshTime;
 import com.iyuba.core.common.util.NetWorkState;
 import com.iyuba.core.common.widget.RollViewPager;
 import com.iyuba.core.common.widget.dialog.CustomToast;
+import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.adapter.MobClassListAdapter;
 import com.iyuba.core.microclass.adapter.MobClassListTypeAdapter;
 import com.iyuba.core.microclass.protocol.CourseListRequest;
@@ -1137,31 +1138,22 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 					RollViewPager rollViewPager = new RollViewPager(mContext,
 							dot_list, new RollViewPager.OnViewClickListener() {
 								// 用于处理点击图片的逻辑
-								public void viewClick(SlideShowCourse ssCourse) {
+								public void viewClick(SlideShowListBean.SlideShowDataBean ssCourse) {
 									Intent intent = new Intent();
 
 									// 之前是position-1，现在因为添加了ListView的Header，所以改成了position-2
 
-									curPackId = ssCourse.id;
-									curPackPrice = ssCourse.price;
+//									curPackId = ssCourse.id;
+//									curPackPrice = ssCourse.price;
+//									MobManager.Instance().packid = curPackId;
+//									MobManager.Instance().ownerid = ssCourse.ownerid;
+//									MobManager.Instance().appId = Constant.APPID;
+//									MobManager.Instance().desc = ssCourse.desc1;
+//									MobManager.Instance().curPackPrice = curPackPrice;
+//									intent.putExtra("packname", ssCourse.name);
+//									intent.setClass(mContext,
+//											MobileClassActivity.class);
 
-									MobManager.Instance().packid = curPackId;
-									MobManager.Instance().ownerid = ssCourse.ownerid;
-									MobManager.Instance().appId = Constant.APPID;
-									MobManager.Instance().desc = ssCourse.desc1;
-									MobManager.Instance().curPackPrice = curPackPrice;
-
-									// MobManager.Instance().CourseNum =
-									// coursePackArrayList.get(position-2).classNum;
-
-									intent.putExtra("packname", ssCourse.name);
-									// intent.putExtra("position", position);
-									// intent.putExtra("coursenum",
-									// coursePackArrayList.get(position-2).classNum);
-
-									intent.setClass(mContext,
-											MobileClassActivity.class);
-									
 									if(curPackId != 0){
 										startActivity(intent);
 									}
@@ -1169,7 +1161,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 								}
 							});
 					// 将图片地址添加到轮播图中
-					rollViewPager.initSlideShowCourseList(ssCourseList);
+//					rollViewPager.initSlideShowCourseList(ssCourseList);
 					rollViewPager.initImgUrl(imageUrls);
 					rollViewPager.startRoll();
 					top_news_viewpager.removeAllViews();

@@ -19,6 +19,8 @@ import android.support.multidex.MultiDex;
 import com.facebook.stetho.Stetho;
 import com.iyuba.configation.RuntimeManager;
 
+import org.litepal.LitePalApplication;
+
 public class CrashApplication extends Application {
 	private static CrashApplication mInstance = null;
 	private List<Activity> activityList = new LinkedList<Activity>();
@@ -35,6 +37,7 @@ public class CrashApplication extends Application {
 		RuntimeManager.setApplicationContext(getApplicationContext());
 		RuntimeManager.setApplication(this);
 		mInstance = this;
+		LitePalApplication.initialize(this);
 		CrashHandler crashHandler = CrashHandler.getInstance();
 		crashHandler.init(getApplicationContext());
 
