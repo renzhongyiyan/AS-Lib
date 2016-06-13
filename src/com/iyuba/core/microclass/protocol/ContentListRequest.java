@@ -1,5 +1,7 @@
 package com.iyuba.core.microclass.protocol;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,7 +26,7 @@ public class ContentListRequest extends BaseJSONRequest {
 		
 		setAbsoluteURI("http://class.iyuba.com/getClass.iyuba?protocol=10104&ocid="+this.id+"&sign="+
 				MD5.getMD5ofStr("10104class"+this.id));
-		System.out.println("http://class.iyuba.com/getClass.iyuba?protocol=10104&ocid="+this.id+"&sign="+
+		Log.w("ContentListRequest:","http://class.iyuba.com/getClass.iyuba?protocol=10104&ocid="+this.id+"&sign="+
 				MD5.getMD5ofStr("10104class"+this.id));
 		
 //		setAbsoluteURI("http://class.iyuba.com/getClass.iyuba?protocol=10102&id="+this.id+"&type="+this.type+"&sign="+
