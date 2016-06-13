@@ -271,16 +271,17 @@
                 android:textColor="#ececec" />
             
 	    	<SeekBar
-                android:id="@+id/microclass_seekBar_player"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="7dp"
-                android:maxHeight="7dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/textView_curtime"
-                android:layout_toRightOf="@id/LL_Button_Play"/>
+				android:id="@+id/microclass_seekBar_player"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:minHeight="7dp"
+				android:maxHeight="7dp"
+				android:layout_marginLeft="3dp"
+				android:layout_marginRight="3dp"
+				android:layout_centerVertical="true"
+				android:layout_toLeftOf="@id/textView_curtime"
+				android:layout_toRightOf="@id/LL_Button_Play"
+				android:indeterminate="false"/>
 	    	
 	    </RelativeLayout>
     </RelativeLayout>

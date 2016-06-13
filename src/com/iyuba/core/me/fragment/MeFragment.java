@@ -65,7 +65,7 @@ import com.iyuba.core.me.activity.PersonalHome;
 import com.iyuba.core.me.activity.PersonalSignatureList;
 import com.iyuba.core.me.activity.TestResultActivity;
 import com.iyuba.core.me.activity.WordResultActivity;
-import com.iyuba.core.teacher.activity.SettingActivity;
+import com.iyuba.core.microclass.activity.SettingActivity;
 import com.iyuba.core.teacher.activity.QuesListActivity;
 import com.iyuba.core.teacher.activity.QuestionNotice;
 import com.iyuba.core.teacher.activity.TheQuesListActivity;

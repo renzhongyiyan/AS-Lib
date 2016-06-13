@@ -31,17 +31,17 @@ public class UploadStudyRecordRequest extends BaseJSONRequest{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		try {
-			Log.d("UploadStudyRecordRequest url", "http://daxue.iyuba.com/ecollege/updateStudyRecord.jsp?format=json&uid="+studyRecordInfo.uid
-					+"&BeginTime="+studyRecordInfo.BeginTime+"&EndTime="+studyRecordInfo.EndTime+"&Lesson="+URLEncoder.encode(studyRecordInfo.Lesson,"UTF-8")
-					+"&LessonId="+studyRecordInfo.LessonId+"&EndFlg="+studyRecordInfo.EndFlg+"&platform="+studyRecordInfo.Device
-					+"&IP="+studyRecordInfo.IP+"&appName="+studyRecordInfo.appName+"&appId="+studyRecordInfo.appId
-					+"&DeviceId="+studyRecordInfo.DeviceId+"&testNumber="+studyRecordInfo.TestNumber);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+//		try {
+//			Log.d("UploadStudyRecordRequest url", "http://daxue.iyuba.com/ecollege/updateStudyRecord.jsp?format=json&uid="+studyRecordInfo.uid
+//					+"&BeginTime="+studyRecordInfo.BeginTime+"&EndTime="+studyRecordInfo.EndTime+"&Lesson="+URLEncoder.encode(studyRecordInfo.Lesson,"UTF-8")
+//					+"&LessonId="+studyRecordInfo.LessonId+"&EndFlg="+studyRecordInfo.EndFlg+"&platform="+studyRecordInfo.Device
+//					+"&IP="+studyRecordInfo.IP+"&appName="+studyRecordInfo.appName+"&appId="+studyRecordInfo.appId
+//					+"&DeviceId="+studyRecordInfo.DeviceId+"&testNumber="+studyRecordInfo.TestNumber);
+//		} catch (UnsupportedEncodingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	

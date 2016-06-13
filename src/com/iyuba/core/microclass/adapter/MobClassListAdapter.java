@@ -2,6 +2,7 @@ package com.iyuba.core.microclass.adapter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.graphics.Paint;
@@ -14,12 +15,13 @@ import android.widget.TextView;
 
 import com.iyuba.configation.Constant;
 import com.iyuba.core.common.thread.GitHubImageLoader;
+import com.iyuba.core.iyumooc.microclass.bean.CoursePackListBean;
 import com.iyuba.core.microclass.sqlite.mode.CoursePack;
 import com.iyuba.lib.R;
 
 public class MobClassListAdapter extends BaseAdapter {
 	private Context mContext;
-	private ArrayList<CoursePack> mList = new ArrayList<CoursePack>();
+	private ArrayList<CoursePackListBean.CoursePackDataBean> mList = new ArrayList<>();
 	public boolean modeDelete = false;
 	private String allPicUrl;
 	
@@ -27,7 +29,7 @@ public class MobClassListAdapter extends BaseAdapter {
 		mContext = context;
 	}
 	
-	public MobClassListAdapter(Context context, ArrayList<CoursePack> list) {
+	public MobClassListAdapter(Context context, ArrayList<CoursePackListBean.CoursePackDataBean> list) {
 		mContext = context;
 		mList = list;
 	}
@@ -49,7 +51,7 @@ public class MobClassListAdapter extends BaseAdapter {
 		return position;
 	}
 	
-	public void addList(ArrayList<CoursePack> courseList){
+	public void addList(List<CoursePackListBean.CoursePackDataBean> courseList){
 		mList.addAll(courseList);
 	}
 	public void clearList(){
@@ -60,7 +62,7 @@ public class MobClassListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		
-		final CoursePack cp = mList.get(position);
+		final CoursePackListBean.CoursePackDataBean cp = mList.get(position);
 		ViewHolder viewHolder;
 		if(convertView == null){
 			LayoutInflater vi = (LayoutInflater)mContext
@@ -84,22 +86,22 @@ public class MobClassListAdapter extends BaseAdapter {
 		}
 		viewHolder.oldPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
 		
-		viewHolder.title.setText(cp.name);
-		viewHolder.content.setText(cp.desc);
-		viewHolder.tvclassNum.setText(cp.classNum+"");
+		viewHolder.title.setText(cp.getName());
+		viewHolder.content.setText(cp.getDesc());
+		viewHolder.tvclassNum.setText(cp.getClassNum()+"");
 		
-		viewHolder.oldPrice.setText("原:"+(int)cp.realprice);
-		viewHolder.newPrice.setText("现:"+(int)cp.price+"爱语币");
+		viewHolder.oldPrice.setText("原:"+cp.getRealprice());
+		viewHolder.newPrice.setText("现:"+cp.getPrice()+"爱语币");
 		
 		DecimalFormat df=new java.text.DecimalFormat("#.0"); 
 		
-		if(cp.viewCount>10000){
-			viewHolder.viewCount.setText(df.format((float)(cp.viewCount/10000.0))+"万");
+		if(cp.getViewCount()>10000){
+			viewHolder.viewCount.setText(df.format((float)(cp.getViewCount()/10000.0))+"万");
 		}else{
-			viewHolder.viewCount.setText(cp.viewCount+"");
+			viewHolder.viewCount.setText(cp.getViewCount()+"");
 		}
 		
-		allPicUrl = Constant.MOB_CLASS_PACK_IMAGE+cp.picUrl+".jpg";
+		allPicUrl = Constant.MOB_CLASS_PACK_IMAGE+cp.getPic()+".jpg";
 		//使用ImageLoaderConfiguration初始�?
 		GitHubImageLoader.Instace(mContext).setPic(allPicUrl, viewHolder.pic, R.drawable.nearby_no_icon);
 		

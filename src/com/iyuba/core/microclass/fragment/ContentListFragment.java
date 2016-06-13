@@ -31,8 +31,14 @@ import com.iyuba.core.common.protocol.BaseHttpResponse;
 import com.iyuba.core.common.util.ExeProtocol;
 import com.iyuba.core.common.util.MD5;
 import com.iyuba.core.common.util.NetWorkState;
+import com.iyuba.core.common.widget.dialog.CustomDialog;
+import com.iyuba.core.common.widget.dialog.WaittingDialog;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshViewHeader;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshViewHeader.OnHeaderRefreshListener;
+import com.iyuba.core.downloadprovider.downloads.DownloadInfoSimp;
+import com.iyuba.core.downloadprovider.downloads.DownloadManagerProxy;
+import com.iyuba.core.downloadprovider.downloads.DownloadState;
+import com.iyuba.core.downloadprovider.downloads.providers.DownloadManager;
 import com.iyuba.core.microclass.activity.MobClassBase;
 import com.iyuba.core.microclass.adapter.MobClassContentExpandListAdapter;
 import com.iyuba.core.microclass.protocol.CheckAmountRequest;
@@ -69,7 +75,7 @@ public class ContentListFragment extends Fragment{
 	private double packPrice;
 	private double CostedPrice = 0; // 购买课程已经花的钱
 	private double curCourseCost;
-	private ProgressDialog wettingDialog;
+	private CustomDialog wettingDialog;
 	private MobClassResOp mobClassResOp;
 	private CourseContentOp courseContentOp;
 	private PullToRefreshViewHeader refreshCourseContentView;// 刷新列表
@@ -84,6 +90,9 @@ public class ContentListFragment extends Fragment{
 	private ArrayList<FirstTitleInfo> courseContentFirTitle = new ArrayList<FirstTitleInfo>();
 	private ArrayList<SecondTitleInfo> courseContentSecTitle = new ArrayList<SecondTitleInfo>();
 	private ArrayList<CourseContent> btCourseContentList = new ArrayList<CourseContent>();
+
+	DownloadManager mDownloadManager;
+	DownloadManagerProxy proxy;
 	@Override
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
@@ -94,6 +103,10 @@ public class ContentListFragment extends Fragment{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
+
+		mDownloadManager = new DownloadManager(mContext.getContentResolver(),
+				mContext.getPackageName());
+		proxy = DownloadManagerProxy.getInstance(mContext);
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,6 +134,7 @@ public class ContentListFragment extends Fragment{
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		handlerRequest.sendEmptyMessage(0);
 	}
 	@Override
 	public void onPause() {
@@ -141,6 +155,14 @@ public class ContentListFragment extends Fragment{
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
+//		for(int i = 0;i < courseContentList.size();i++){
+//			DownloadInfoSimp info = proxy.query(courseContentList.get(i).id);
+//			if (info != null && info.state == DownloadState.STATUS_RUNNING) {
+//				if(proxy != null){
+//					proxy.removeDownload(courseContentList.get(i).id);
+//				}
+//			}
+//		}
 	}
 	@Override
 	public void onDetach() {
@@ -152,7 +174,7 @@ public class ContentListFragment extends Fragment{
 		packPrice = MobManager.Instance().curPackPrice;
 		courseContentOp = new CourseContentOp(mContext);
 		mobClassResOp = new MobClassResOp(mContext);
-		wettingDialog = new ProgressDialog(mContext);
+		wettingDialog = WaittingDialog.showDialog(mContext);
 		refreshCourseContentView = (PullToRefreshViewHeader) root.findViewById(R.id.ptr_course_content);
 		expandableListView = (ExpandableListView) root.findViewById(R.id.el_coursecontent_list);
 		groupData=new ArrayList<HashMap<String,Object>>();
@@ -199,7 +221,8 @@ public class ContentListFragment extends Fragment{
 		for (int i=0; i< groupCount; i++)
 		 { 
 			expandableListView.expandGroup(i);
-		 }; 
+		 };
+		handler.sendEmptyMessage(0);
 	}
 	Handler handlerRequest = new Handler() {
 		@Override
@@ -231,19 +254,20 @@ public class ContentListFragment extends Fragment{
 														.get(count).Amount);
 									}
 								}
+
+								handlerRequest.sendEmptyMessage(1);
 								Looper.loop();
 							}
 							@Override
 							public void error() {
 								// TODO Auto-generated method stub
 								Log.d("PayedCourseResponse", "Response error");
+								handler.sendEmptyMessage(1);
 							}
 						});
-				handlerRequest.sendEmptyMessage(1);
 				break;
 			case 1:
 				try {
-					handler.sendEmptyMessage(0);
 					ExeProtocol.exe(new ContentListRequest(
 							MobManager.Instance().packid + "", "2"),
 							new ProtocolResponse() {
@@ -304,11 +328,13 @@ public class ContentListFragment extends Fragment{
 								public void error() {
 									// TODO Auto-generated method stub
 									Log.d("ContentListResponse","Response error");
+									handler.sendEmptyMessage(1);
 								}
 							});
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					handler.sendEmptyMessage(1);
 				}
 			break;
 			case 2:
@@ -339,11 +365,13 @@ public class ContentListFragment extends Fragment{
 							@Override
 							public void error() {
 								// TODO Auto-generated method stub
+								handler.sendEmptyMessage(1);
 							}
 						});
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					handler.sendEmptyMessage(1);
 				}
 				break;
 			case 7:

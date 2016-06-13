@@ -246,8 +246,7 @@ public class CourseContentOp extends DatabaseService {
 				cursor.close();
 			}
 		}
-		Log.e("CourseContentSize BTidSEPCIAL:", courses.size()+" ");		
-		return courses;		
+		return courses;
 		
 		
 	}

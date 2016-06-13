@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import com.iyuba.core.homepage.entity.NewsInfo;
 import com.iyuba.lib.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ public class NewsListAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private ViewHolder curViewHolder;
+    private DisplayImageOptions options = new DisplayImageOptions.Builder().cacheInMemory(true).cacheOnDisk(true).imageScaleType(ImageScaleType.IN_SAMPLE_INT).build();
 
     public NewsListAdapter(Context mContext, List<NewsInfo> mList) {
         this.mList = mList;
@@ -52,7 +55,7 @@ public class NewsListAdapter extends BaseAdapter {
         final NewsInfo curDetail = mList.get(position);
 
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.homepage_news_info, null);
+            convertView = mInflater.inflate(R.layout.news_info, null);
 
             curViewHolder = new ViewHolder();
             curViewHolder.image = (ImageView) convertView
@@ -70,33 +73,41 @@ public class NewsListAdapter extends BaseAdapter {
         } else {
             curViewHolder = (ViewHolder) convertView.getTag();
         }
-        switch (curDetail.itemId) {
-            case "3":
-                ImageLoader.getInstance().displayImage("http://static.iyuba.com/images/song/"+curDetail.picUrl,
-                        curViewHolder.image);
+        ImageLoader.getInstance().displayImage(curDetail.picUrl,
+                        curViewHolder.image,options);
                 curViewHolder.newsCn.setTextColor(Color.GRAY);
-                curViewHolder.newsCn.setText("歌手 "+curDetail.singer+"\n"+"播音 "+curDetail.announcer);
-                curViewHolder.newsEn.setText(curDetail.titleEn);
-                curViewHolder.newsTime.setText(curDetail.time.substring(0, curDetail.time.indexOf(" ")));
-                curViewHolder.newsReadTimes.setText(curDetail.readTimes);
-                break;
-            case "4":
-                ImageLoader.getInstance().displayImage("http://static.iyuba.com/cms/news/image/"+curDetail.picUrl,
-                        curViewHolder.image);
                 curViewHolder.newsCn.setText(curDetail.title);
                 curViewHolder.newsEn.setText(curDetail.titleEn);
                 curViewHolder.newsTime.setText(curDetail.time.substring(0, curDetail.time.indexOf(" ")));
                 curViewHolder.newsReadTimes.setText(curDetail.readTimes);
-                break;
-            default:
-                ImageLoader.getInstance().displayImage(curDetail.picUrl,
-                        curViewHolder.image);
-                curViewHolder.newsCn.setText(curDetail.title);
-                curViewHolder.newsEn.setText(curDetail.titleEn);
-                curViewHolder.newsTime.setText(curDetail.time.substring(0, curDetail.time.indexOf(" ")));
-                curViewHolder.newsReadTimes.setText(curDetail.readTimes);
-                break;
-        }
+//        switch (curDetail.itemId) {
+//            case "3":
+//
+//                ImageLoader.getInstance().displayImage(curDetail.picUrl,
+//                        curViewHolder.image,options);
+//                curViewHolder.newsCn.setTextColor(Color.GRAY);
+//                curViewHolder.newsCn.setText(curDetail.title);
+//                curViewHolder.newsEn.setText(curDetail.titleEn);
+//                curViewHolder.newsTime.setText(curDetail.time.substring(0, curDetail.time.indexOf(" ")));
+//                curViewHolder.newsReadTimes.setText(curDetail.readTimes);
+//                break;
+//            case "4":
+//                ImageLoader.getInstance().displayImage(curDetail.picUrl,
+//                        curViewHolder.image,options);
+//                curViewHolder.newsCn.setText(curDetail.title);
+//                curViewHolder.newsEn.setText(curDetail.titleEn);
+//                curViewHolder.newsTime.setText(curDetail.time.substring(0, curDetail.time.indexOf(" ")));
+//                curViewHolder.newsReadTimes.setText(curDetail.readTimes);
+//                break;
+//            default:
+//                ImageLoader.getInstance().displayImage(curDetail.picUrl,
+//                        curViewHolder.image,options);
+//                curViewHolder.newsCn.setText(curDetail.title);
+//                curViewHolder.newsEn.setText(curDetail.titleEn);
+//                curViewHolder.newsTime.setText(curDetail.time.substring(0, curDetail.time.indexOf(" ")));
+//                curViewHolder.newsReadTimes.setText(curDetail.readTimes);
+//                break;
+//        }
         return convertView;
     }
 

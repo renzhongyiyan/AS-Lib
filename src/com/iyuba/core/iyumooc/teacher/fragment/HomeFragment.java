@@ -486,8 +486,6 @@ public class HomeFragment extends Fragment {
 		int quesAppType = ConfigManager.Instance().loadInt("quesAppType");
 		int quesAbilityType = ConfigManager.Instance().loadInt("quesAbilityType");
 
-//		handler.sendEmptyMessage(2);
-
 		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 		OkHttpClient client = new OkHttpClient.Builder()
@@ -500,6 +498,7 @@ public class HomeFragment extends Fragment {
 				.client(client)
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
+
 		TeacherApiStores apiStores = retrofit.create(TeacherApiStores.class);
 		Call<QuestionListBean> call = apiStores.getQuesList("json", 3, quesAbilityType, quesAppType, 1, -1);
 		call.enqueue(new Callback<QuestionListBean>() {
@@ -551,7 +550,6 @@ public class HomeFragment extends Fragment {
 			handler.sendEmptyMessage(7);
 			return;
 		}
-//		handler.sendEmptyMessage(2);
 
 		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -585,7 +583,6 @@ public class HomeFragment extends Fragment {
 				} else {
 					handler.sendEmptyMessage(4);
 					handler.sendEmptyMessage(3);
-//					handler.sendEmptyMessage(6);
 				}
 			}
 

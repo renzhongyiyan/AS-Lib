@@ -8,8 +8,8 @@ import com.iyuba.core.microclass.fragment.HelpFragment;
 import com.iyuba.lib.R;
 
 public class HelpFragmentAdapter extends FragmentPagerAdapter {
-	protected static final int[] CONTENT = new int[] { R.drawable.help1,
-			R.drawable.help2, R.drawable.help3, R.drawable.help4, R.drawable.help5 };
+	protected static final int[] CONTENT = new int[] { R.drawable.iyumicroclass_help1,
+			R.drawable.iyumicroclass_help2, R.drawable.iyumicroclass_help3, R.drawable.iyumicroclass_help4, R.drawable.iyumicroclass_help5 };
 
 	public HelpFragmentAdapter(FragmentManager fm) {
 		super(fm);

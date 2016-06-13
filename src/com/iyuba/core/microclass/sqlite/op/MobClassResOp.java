@@ -110,18 +110,14 @@ public class MobClassResOp extends DatabaseService {
 	 * @return
 	 */
 	public synchronized ArrayList<MbText> findSpecialCourseResourceData(String titleId) {
-		Log.e("111111111111","2");
 		ArrayList<MbText> mbTexts = new ArrayList<MbText>();
 		Cursor cursor = null;
 		try {
-			Log.e("111111111111","22");
 			cursor = importDatabase.openDatabase().rawQuery(
 					"select *" + " from " + TABLE_NAME_MOBCLASSRES + " where TitleId =" + titleId 
 						+ " ORDER BY " + ID +" asc", new String[] {});
-			Log.e("111111111111","2222");
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 				MbText mbtext = new MbText();
-				Log.e("111111111111","2222222222");
 				mbtext.id = cursor.getInt(0);
 				mbtext.imageName = cursor.getString(1);
 				mbtext.seconds = cursor.getInt(2);

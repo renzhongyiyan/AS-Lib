@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.iyuba.core.common.sqlite.db.DatabaseService;
+import com.iyuba.core.iyumooc.microclass.bean.CourseTypeListBean;
 import com.iyuba.core.microclass.sqlite.mode.CoursePackType;
 
 public class CoursePackTypeOp extends DatabaseService {
@@ -25,16 +26,16 @@ public class CoursePackTypeOp extends DatabaseService {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public synchronized void insertCoursePackType(List<CoursePackType> courses){
+	public synchronized void insertCoursePackType(List<CourseTypeListBean.CourseTypeDataBean> courses){
 		if (courses != null && courses.size() != 0) {
 			String sqlString="insert into " + TABLE_NAME_COURSEPACKTYPE + " (" + ID + ","
 					+ DESC + "," + CONDITION + "," + NAME + ","
 					+ TYPE + ","+ DESTINATION + ") values(?,?,?,?,?,?)";
 			
 			for (int i = 0; i < courses.size(); i++) {
-				CoursePackType course = courses.get(i);
-				Object[] objects=new Object[]{ course.id, course.desc, course.condition,
-						course.name, course.type,course.destination};
+				CourseTypeListBean.CourseTypeDataBean course = courses.get(i);
+				Object[] objects=new Object[]{ course.getId(), course.getDesc(), course.getCondition(),
+						course.getName(), course.getType(),course.getDestination()};
 				importDatabase.openDatabase().execSQL(sqlString,objects);
 				
 				closeDatabase(null);
@@ -66,8 +67,8 @@ public class CoursePackTypeOp extends DatabaseService {
 	 * 查找所有的移动课堂的课程包的分类信息
 	 * @return
 	 */
-	public synchronized ArrayList<CoursePackType> findDataByAll() {
-		ArrayList<CoursePackType> courses = new ArrayList<CoursePackType>();
+	public synchronized ArrayList<CourseTypeListBean.CourseTypeDataBean> findDataByAll() {
+		ArrayList<CourseTypeListBean.CourseTypeDataBean> courses = new ArrayList<>();
 	
 		Cursor cursor = null;
 		try {
@@ -76,13 +77,13 @@ public class CoursePackTypeOp extends DatabaseService {
 					"select *" + " from " + TABLE_NAME_COURSEPACKTYPE
 							, new String[] {});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-				CoursePackType course = new CoursePackType();
-				course.id = cursor.getInt(0);
-				course.desc = cursor.getString(1);
-				course.condition = cursor.getString(2);
-				course.name = cursor.getString(3);
-				course.type = cursor.getInt(4);
-				course.destination = cursor.getString(5);
+				CourseTypeListBean.CourseTypeDataBean course = new CourseTypeListBean.CourseTypeDataBean();
+				course.setId(cursor.getInt(0));
+				course.setDesc(cursor.getString(1));
+				course.setCondition(cursor.getString(2));
+				course.setName(cursor.getString(3));
+				course.setType(cursor.getInt(4));
+				course.setDestination(cursor.getString(5));
 				courses.add(course);
 			}
 			cursor.close();

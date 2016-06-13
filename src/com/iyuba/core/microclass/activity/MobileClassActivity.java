@@ -82,7 +82,7 @@ public class MobileClassActivity extends BasisActivity {
 	private RelativeLayout rlBack;
 	private RelativeLayout rlCourseContentVideo;
 	private RelativeLayout rlQQConsultation;
-	private ProgressDialog wettingDialog;
+//	private ProgressDialog wettingDialog;
 
 	private Button normalproblemBtn;
 	private Button consultationBtn;
@@ -103,6 +103,7 @@ public class MobileClassActivity extends BasisActivity {
 	
 	// 通用变量
 	private int PackId;
+	private int ownerid;
 	private String appId;
 	private int ClassNum;
 	private double packPrice;
@@ -177,6 +178,7 @@ public class MobileClassActivity extends BasisActivity {
 		isConnected = NetWorkState.isConnectingToInternet();
 		
 		PackId = MobManager.Instance().packid;
+		ownerid = MobManager.Instance().ownerid;
 		strPackName = getIntent().getStringExtra("packname");
 		ClassNum = getIntent().getIntExtra("coursenum", 1);
 		
@@ -245,7 +247,7 @@ public class MobileClassActivity extends BasisActivity {
 	}
 	
 	public void findView(){
-		wettingDialog = new ProgressDialog(mContext);
+//		wettingDialog = new ProgressDialog(mContext);
 		cpdInfoOp = new CoursePackDescInfoOp(mContext);
 		teacherInfoOp = new TeacherInfoOp(mContext);
 		
@@ -407,7 +409,6 @@ public class MobileClassActivity extends BasisActivity {
 			case 1:
 				//请求Activity中和课程简介中用到的信息
 				try {
-					handler.sendEmptyMessage(0);
 					ExeProtocol.exe(new ContentListRequest(
 							MobManager.Instance().packid + "", "2"),
 							new ProtocolResponse() {
@@ -574,10 +575,10 @@ public class MobileClassActivity extends BasisActivity {
 			// TODO Auto-generated method stub
 			switch (msg.what) {
 			case 0:
-				wettingDialog.show();
+//				wettingDialog.show();
 				break;
 			case 1:
-				wettingDialog.dismiss();
+//				wettingDialog.dismiss();
 				break;
 			case 2:
 				Toast.makeText(mContext, R.string.play_check_network, 1000).show();

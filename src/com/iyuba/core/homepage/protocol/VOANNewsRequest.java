@@ -1,5 +1,7 @@
 package com.iyuba.core.homepage.protocol;
 
+import android.util.Log;
+
 import com.iyuba.core.common.protocol.BaseHttpResponse;
 import com.iyuba.core.common.protocol.BaseJSONRequest;
 
@@ -12,6 +14,9 @@ import org.json.JSONObject;
 public class VOANNewsRequest extends BaseJSONRequest {
     public VOANNewsRequest(int num){
         setAbsoluteURI("http://apps.iyuba.com/iyuba/titleChangSuApi.jsp?type=iso&format=json&pages=1&pageNum=" +
+                String.valueOf(num) +
+                "&maxid=0");
+        Log.e("voan","http://apps.iyuba.com/iyuba/titleChangSuApi.jsp?type=iso&format=json&pages=1&pageNum=" +
                 String.valueOf(num) +
                 "&maxid=0");
     }

@@ -174,7 +174,8 @@ public class QuesDetailActivity extends Activity {
 	Button button_express;
 	ContextMenu contextMenu;
 	
-	private static String shareCourseTitleUrl;
+	private static String shareQuestionTitleUrl;
+	private static String shareCourseTitleImageUrl;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -209,8 +210,9 @@ public class QuesDetailActivity extends Activity {
 		if (theQid == null)
 			theQid = "1";
 		qid = Integer.parseInt(theQid);
-		
-		shareCourseTitleUrl = "http://m.iyuba.com/teacher/qdetail.jsp?qid="+qid;
+
+		shareQuestionTitleUrl = "http://m.iyuba.com/teacher/qdetail.jsp?qid="+qid;
+		shareCourseTitleImageUrl = "http://app.iyuba.com/android/images/iyuba/iyuba.png";
 	}
 
 	public void initWidget() {
@@ -255,30 +257,6 @@ public class QuesDetailActivity extends Activity {
 
 				final String type = "2";
 
-//				contextMenu.setText(mContext.getResources().getStringArray(
-//						R.array.choose_delete2));
-//				contextMenu.setCallback(new ResultIntCallBack() {
-//
-//					@Override
-//					public void setResult(int result) {
-//						// TODO Auto-generated method stub
-//						switch (result) {
-//						case 0:
-//							if(AccountManager.Instace(mContext).checkUserLogin()){
-//								delAlertDialog(theaid + "", num, num2, type);
-//							}else{
-//								Intent intent = new Intent();
-//								intent.setClass(mContext, Login.class);
-//								startActivity(intent);
-//							}
-//
-//							break;
-//						default:
-//							break;
-//						}
-//					}
-//				});
-//				contextMenu.show();
 				return false;
 			}
 		};
@@ -649,7 +627,6 @@ public class QuesDetailActivity extends Activity {
 		username = AccountManager.Instace(mContext).userName;
 		show = 3;
 
-//		ExeProtocol.exe(
 		ClientSession.Instace().asynGetResponse(
 				new AnswerQuesRequest(AccountManager.Instace(mContext).userId
 						+ "", AccountManager.Instace(mContext).userName,
@@ -698,55 +675,11 @@ public class QuesDetailActivity extends Activity {
 						}
 					}
 				});
-//				new ProtocolResponse() {
-//
-//					@Override
-//					public void finish(BaseHttpResponse bhr) {
-//						AnswerQuesResponse tr = (AnswerQuesResponse) bhr;
-//						if ("1".equals(tr.result) || "0".equals(tr.result)) {
-//							handler.sendEmptyMessage(4);
-//							if(tr.jiFen != null && Integer.parseInt(tr.jiFen) > 0){
-//								Message msg = new Message();
-//								msg.what = 9;
-//								msg.arg1 = Integer.parseInt(tr.jiFen);
-//								handler.sendMessage(msg);
-//							}else{
-//								handler_chat.sendEmptyMessage(1);
-//							}
-//							if (userType == 1) {
-//								new GetChatDataTask().execute();
-//							} else {
-//
-//								Log.e("iyuba", "提交--------");
-//								new GetCommentDataTask().execute();
-//							}
-//						} else {
-//							handler.sendEmptyMessage(4);
-//							handler_chat.sendEmptyMessage(2);
-//							Message msg = handler_chat.obtainMessage();
-//							msg.obj = answer;
-//							msg.what = 4;
-//							handler_chat.sendMessage(msg);
-//						}
-//					}
-//
-//					@Override
-//					public void error() {
-//						handler.sendEmptyMessage(4);
-//						handler_chat.sendEmptyMessage(2);
-//						Message msg = handler_chat.obtainMessage();
-//						msg.obj = answer;
-//						msg.what = 4;
-//						handler_chat.sendMessage(msg);
-//					}
-//
-//	});
 	}
 
 	// 提交追问或者老师的追问回答
 	public void answerFollowQuestion(final String answer) {
 
-//		ExeProtocol.exe(
 		ClientSession.Instace().asynGetResponse(
 				new AnswerFollowRequest(
 						AccountManager.Instace(mContext).userId, answerType.aid
@@ -775,30 +708,6 @@ public class QuesDetailActivity extends Activity {
 
 					}
 				});
-//				new ProtocolResponse() {
-//
-//					@Override
-//					public void finish(BaseHttpResponse bhr) {
-//						AnswerFollowResponse tr = (AnswerFollowResponse) bhr;
-//						if ("1".equals(tr.result)) {
-//							handler.sendEmptyMessage(4);
-//							handler_chat.sendEmptyMessage(1);
-//							new GetChatDataTask().execute();
-//						} else {
-//							handler.sendEmptyMessage(4);
-//							handler_chat.sendEmptyMessage(2);
-//							Message msg = handler_chat.obtainMessage();
-//							msg.obj = answer;
-//							msg.what = 4;
-//							handler_chat.sendMessage(msg);
-//						}
-//					}
-//
-//					@Override
-//					public void error() {
-//
-//					}
-//				});
 
 	}
 	
@@ -814,19 +723,19 @@ public class QuesDetailActivity extends Activity {
 		 oks.disableSSOWhenAuthorize(); 
 
 		 // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
-		 oks.setTitleUrl(shareCourseTitleUrl);
+		 oks.setTitleUrl(shareQuestionTitleUrl);
 		 // comment是我对这条分享的评论，仅在人人网和QQ空间使用
 		 oks.setComment(Constant.APPName);
 		 // site是分享此内容的网站名称，仅在QQ空间使用
 		 oks.setSite(Constant.APPName);
 		 // siteUrl是分享此内容的网站地址，仅在QQ空间使用
-		 oks.setSiteUrl(shareCourseTitleUrl);
+		 oks.setSiteUrl(shareQuestionTitleUrl);
 		 //图片的网络路径，新浪微博、人人、QQ空间和Linked-in
-//		 oks.setImageUrl(shareCourseTitleImageUrl);
+		 oks.setImageUrl(shareCourseTitleImageUrl);
 		 
-		 oks.setText("小伙伴们来用爱语吧客户端交流问题吧～");
+		 oks.setText("小伙伴们快来用爱语吧客户端交流问题吧～");
 		 oks.setTitle("爱语吧客户端");
-		 oks.setUrl(shareCourseTitleUrl);
+		 oks.setUrl(shareQuestionTitleUrl);
 		 
 //		 oks.setCallback(new PlatformActionListener() {
 //
@@ -871,7 +780,6 @@ public class QuesDetailActivity extends Activity {
 					@Override
 					public void onClick(final DialogInterface dialog, int which) {
 
-//						ExeProtocol.exe(
 						ClientSession.Instace().asynGetResponse(
 								new DeleteAnswerQuesRequest(type, id,
 										AccountManager.Instace(mContext).userId),
@@ -898,30 +806,6 @@ public class QuesDetailActivity extends Activity {
 
 									}
 								});
-//								new ProtocolResponse() {
-//
-//									@Override
-//									public void finish(BaseHttpResponse bhr) {
-//										// TODO Auto-generated method stub
-//										DeleteAnswerQuesResponse tr = (DeleteAnswerQuesResponse) bhr;
-//										if (tr.result.equals("1")) {
-//											childChatList.get(num).remove(num2);
-//
-//											handler.sendEmptyMessage(1);
-//											handler.sendEmptyMessage(8);
-//										} else {
-//											childChatList.get(num).remove(num2);
-//
-//											handler.sendEmptyMessage(1);
-//											handler.sendEmptyMessage(8);
-//										}
-//									}
-//
-//									@Override
-//									public void error() {
-//									}
-//								});
-
 					}
 				});
 		alert.setButton(AlertDialog.BUTTON_NEGATIVE,
@@ -1273,38 +1157,9 @@ public class QuesDetailActivity extends Activity {
 			quesPic.setVisibility(View.GONE);
 		} else {
 			quesPic.setVisibility(View.VISIBLE);
-			// GitHubImageLoader.Instace(mContext).setPic("http://www.iyuba.com/question/"+question.img,
-			// quesPic, R.drawable.nearby_no_icon,0);
 
 			ImageLoader.getInstance().displayImage("http://www.iyuba.com/question/" + question.getImg(),
 					quesPic);
-
-//			ImageLoader.getInstance().loadImage(
-//					"http://www.iyuba.com/question/" + question.img,
-//					new SimpleImageLoadingListener() {
-//
-//						@Override
-//						public void onLoadingComplete(String imageUri,
-//								View view, Bitmap loadedImage) {
-//							super.onLoadingComplete(imageUri, view, loadedImage);
-//
-//							LayoutParams para;
-//							para = quesPic.getLayoutParams();
-//							int height = loadedImage.getHeight();
-//							int width = loadedImage.getWidth();
-//							float f = mContext.getResources()
-//									.getDisplayMetrics().density;
-//							Log.e("2-----", "" + width);
-//							float bit = width / 200;
-//							height = (int) (height / bit);
-//							width = (int) (200 / 1.5 * f);
-//							height = (int) (height / 1.5 * f);
-//							para.height = height;
-//							para.width = width;
-//							quesPic.setLayoutParams(para);
-//							quesPic.setImageBitmap(loadedImage);
-//						}
-//					});
 
 		}
 	}
@@ -1361,7 +1216,7 @@ public class QuesDetailActivity extends Activity {
 				
 				if (chatAdapter != null) {
 					chatAdapter.notifyDataSetChanged();
-					
+
 					setExpandableListViewHeight(mContext,chatListview);
 				}
 				
@@ -1463,7 +1318,6 @@ public class QuesDetailActivity extends Activity {
 				int sh = 0;
 				for (int cl = 0; cl < childChatList.size(); cl++) {
 					sh = sh + chatListview.getChildAt(cl).getHeight() + it;
-					// CustomToast.showToast(mContext, sh);
 
 					Log.e("iyuba", "" + chatListview.getChildAt(cl).getHeight());
 
@@ -1490,7 +1344,6 @@ public class QuesDetailActivity extends Activity {
 	};
 
 	public void getChatList() {
-//		ExeProtocol.exe(
 		ClientSession.Instace().asynGetResponse(
 				new GetChatListRequest(qid),
 				new IResponseReceiver() {
@@ -1528,48 +1381,9 @@ public class QuesDetailActivity extends Activity {
 						handler.sendEmptyMessage(4);
 					}
 				});
-//		new ProtocolResponse() {
-//
-//			@Override
-//			public void finish(BaseHttpResponse bhr) {
-//				// TODO Auto-generated method stub
-//				GetChatListResponse tr = (GetChatListResponse) bhr;
-//				show++;// 加载完毕值加1
-//				if ("1".equals(tr.result)) {
-//					// 获取问题内容并使其显示
-//					question = tr.item;
-//					QuestionManager.getInstance().question = question;
-//					handler.sendEmptyMessage(21);
-//					childChatList = tr.chatList;
-//					groupChatList = tr.infoList;
-//
-//					if (groupChatList.size() != 0) {
-//						handler.sendEmptyMessage(7);
-//						handler.sendEmptyMessage(8);
-//					} else {
-//						handler.sendEmptyMessage(6);
-//					}
-//
-//					handler.sendEmptyMessage(1);
-//					handler.sendEmptyMessage(4);
-//				} else {
-//
-//					handler.sendEmptyMessage(4);
-//					handler.sendEmptyMessage(35);
-//				}
-//			}
-//
-//			@Override
-//			public void error() {
-//				// TODO Auto-generated method stub
-//				handler.sendEmptyMessage(4);
-//				handler.sendEmptyMessage(35);
-//			}
-//		});
 	}
 
 	public void getCommentList() {
-//		ExeProtocol.exe(
 		ClientSession.Instace().asynGetResponse(
 				new GetCommentListRequest(qid),
 				new IResponseReceiver() {
@@ -1605,44 +1419,6 @@ public class QuesDetailActivity extends Activity {
 						handler.sendEmptyMessage(4);
 					}
 				});
-//				new ProtocolResponse() {
-//
-//			@Override
-//			public void finish(BaseHttpResponse bhr) {
-//				// TODO Auto-generated method stub
-//
-//				GetCommentListResponse tr = (GetCommentListResponse) bhr;
-//				show++;// 加载完毕值加1
-//
-//				if ("1".equals(tr.result)) {
-//					commentList = tr.infoList;
-//					if (commentList.size() != 0) {
-//
-//						handler.sendEmptyMessage(31);
-//						handler.sendEmptyMessage(30);
-//						// commentListAdapter = new CommentListAdapter(mContext,
-//						// commentList);
-//
-//					} else {
-//						handler.sendEmptyMessage(32);
-//					}
-//
-//					handler.sendEmptyMessage(2);
-//					handler.sendEmptyMessage(4);
-//				} else {
-//					handler.sendEmptyMessage(4);
-//					handler.sendEmptyMessage(35);
-//				}
-//
-//			}
-//
-//			@Override
-//			public void error() {
-//				// TODO Auto-generated method stub
-//				handler.sendEmptyMessage(4);
-//				handler.sendEmptyMessage(35);
-//			}
-//		});
 	}
 
 	// 获取老师回答和追问

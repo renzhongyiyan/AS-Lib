@@ -314,12 +314,12 @@ public class MobileClassActivity extends BasisActivity {
 				// TODO Auto-generated method stub
 				String url;
 				if(curCoursePackDescInfo!=null && curCoursePackDescInfo.qq != ""){
-					url="mqqwpa://im/chat?chat_type=wpa&uin="+curCoursePackDescInfo.qq+"&version=1";  
+					url="mqqwpa://im/chat?chat_type=wpa&uin="+curCoursePackDescInfo.qq+"&version=1";
 				}else if(firCoursePackDescInfo!=null&&firCoursePackDescInfo.qq != ""){
-					url="mqqwpa://im/chat?chat_type=wpa&uin="+firCoursePackDescInfo.qq+"&version=1";  
+					url="mqqwpa://im/chat?chat_type=wpa&uin="+firCoursePackDescInfo.qq+"&version=1";
 				}
 				else{
-					url="mqqwpa://im/chat?chat_type=wpa&uin="+QQSupport+"&version=1";  
+					url="mqqwpa://im/chat?chat_type=wpa&uin="+QQSupport+"&version=1";
 				}
 				
 				try {

@@ -40,9 +40,14 @@ import com.iyuba.core.common.protocol.BaseHttpRequest;
 import com.iyuba.core.common.protocol.BaseHttpResponse;
 import com.iyuba.core.common.protocol.ErrorResponse;
 import com.iyuba.core.common.util.ExeRefreshTime;
+import com.iyuba.core.common.util.MD5;
 import com.iyuba.core.common.util.NetWorkState;
 import com.iyuba.core.common.widget.RollViewPager;
 import com.iyuba.core.common.widget.dialog.CustomToast;
+import com.iyuba.core.iyumooc.microclass.API.CoursePackApiStores;
+import com.iyuba.core.iyumooc.microclass.API.CourseTypeApiStores;
+import com.iyuba.core.iyumooc.microclass.bean.CoursePackListBean;
+import com.iyuba.core.iyumooc.microclass.bean.CourseTypeListBean;
 import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.adapter.MobClassListAdapter;
 import com.iyuba.core.microclass.adapter.MobClassListTypeAdapter;
@@ -65,6 +70,14 @@ import com.youdao.sdk.nativeads.YouDaoAdAdapter;
 import com.youdao.sdk.nativeads.YouDaoNativeAdPositioning;
 import com.youdao.sdk.nativeads.YouDaoNativeAdRenderer;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.GsonConverterFactory;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
 public class MicroClassListActivity extends Activity implements OnActivityGroupKeyDown{
 
 	private Context mContext;
@@ -83,26 +96,26 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 	public int pageNum=1;
 	boolean isLast=false;
 	private int classShowId = 0;
-	
+
 	// 课程信息的数据库操作帮助类
 	private CoursePackOp coursePackOp;
 	private CoursePackTypeOp coursePackTypeOp;
-	
+
 	//有道广告的Adapter
 	private YouDaoAdAdapter mAdAdapter;
-	
+
 	private MobClassListAdapter mobClassListAdapter;
 	private MobClassListTypeAdapter mobClassListTypeAdapter;
-	
+
 	// 用于存放轮播图信息的集合
 	private List<SlideShowCourse> ssCourseList = new ArrayList<SlideShowCourse>();
 	// 用于存放图片地址的集合
 	private ArrayList<String> imageUrls = new ArrayList<String>();
 	// 用于存放滚动点的集合
 	private ArrayList<View> dot_list = new ArrayList<View>();
-	private ArrayList<CoursePack> coursePackArrayList = new ArrayList<CoursePack>();
-	private ArrayList<CoursePackType> coursePackTypes = new ArrayList<CoursePackType>();
-	
+	private ArrayList<CoursePackListBean.CoursePackDataBean> coursePackArrayList = new ArrayList<>();
+	private ArrayList<CourseTypeListBean.CourseTypeDataBean> coursePackTypes = new ArrayList<>();
+
 	/*
 	 * View或者布局相关
 	 */
@@ -119,26 +132,26 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 	private View backView;
 	private View view;
 	private ListView actualListView;
-	
-	final EnumSet<NativeAdAsset> desiredAssets = EnumSet.of( 
-			NativeAdAsset.TITLE, 
-			NativeAdAsset.TEXT, 
-			NativeAdAsset.MAIN_IMAGE, 
+
+	final EnumSet<NativeAdAsset> desiredAssets = EnumSet.of(
+			NativeAdAsset.TITLE,
+			NativeAdAsset.TEXT,
+			NativeAdAsset.MAIN_IMAGE,
 			NativeAdAsset.CALL_TO_ACTION_TEXT);
-	
+
 	//指定请求资源
-	RequestParameters mRequestParameters = new RequestParameters.Builder() 
-		.desiredAssets(desiredAssets) 
-		.build(); 
-	
+	RequestParameters mRequestParameters = new RequestParameters.Builder()
+		.desiredAssets(desiredAssets)
+		.build();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.lib_microclass_course_list);
 		mContext = this;
-		
+
 		coursePackOp = new CoursePackOp(mContext);
 		coursePackTypeOp = new CoursePackTypeOp(mContext);
 		wettingDialog = new ProgressDialog(mContext);
@@ -164,7 +177,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 		}
 		initView();
 		handler.sendEmptyMessage(9);
-		
+
 	}
 
 	@Override
@@ -172,7 +185,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 		// TODO Auto-generated method stub
 		super.onPause();
 	}
-	
+
 	@Override
 	public void onResume() {
 		// TODO Auto-generated method stub
@@ -199,14 +212,14 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				coursePackArrayList);
 		mobClassListTypeAdapter = new MobClassListTypeAdapter(mContext,
 				coursePackTypes);
-		
+
 		//定义信息流广告位置
 		mAdAdapter = new YouDaoAdAdapter(mContext, mobClassListAdapter,
 				YouDaoNativeAdPositioning.newBuilder()
 					.addFixedPosition(2)
 					.enableRepeatingPositions(10)
 					.build());
-		
+
 		//设定广告样式，代理listview的adapter
 		final YouDaoNativeAdRenderer adRenderer = new YouDaoNativeAdRenderer(
 				new ViewBinder.Builder(R.layout.lib_native_ad_row)
@@ -214,21 +227,21 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 					.textId(R.id.native_text)
 					.mainImageId(R.id.native_main_image)
 					.build());
-		
+
 		mAdAdapter.registerAdRenderer(adRenderer);
-		
+
 		// AD_UNIT_ID为申请的广告位ID。
 		mAdAdapter.loadAds("44e16c0bd4cb49907163d8c4c8c6ad61", mRequestParameters);
-		
+
 		mobClassListView = (PullToRefreshListView)findViewById(R.id.ptr_course_list);
-		
+
 		actualListView = mobClassListView.getRefreshableView();
 		registerForContextMenu(actualListView);
-		
+
 		mobClassListView.setMode(Mode.BOTH);
-		
+
 		actualListView.addHeaderView(layout_roll_view);
-		
+
 		mobClassListView.setOnRefreshListener(orfl);
 		mobClassListView.setOnItemClickListener(oItemClickListener);
 
@@ -240,9 +253,9 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 //			actualListView.setAdapter(mobClassListAdapter);
 			//绑定样式与广告数据的对应关系，然后代理当前listview的adapter
 			actualListView.setAdapter(mAdAdapter);
-			
+
 			mAdAdapter.refreshAds(actualListView, "44e16c0bd4cb49907163d8c4c8c6ad61", mRequestParameters);
-			
+
 		}
 		mobClassListWaitBar.setVisibility(View.GONE);
 
@@ -253,12 +266,12 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 						// TODO Auto-generated method stub
-						reqPackId = coursePackTypes.get(position).id + "";
-						reqPackType = coursePackTypes.get(position).type + "";
-						reqPackDesc = coursePackTypes.get(position).desc; // 对应的是轮播图片对应的请求字段，如"class.all"
+						reqPackId = coursePackTypes.get(position).getId() + "";
+						reqPackType = coursePackTypes.get(position).getType() + "";
+						reqPackDesc = coursePackTypes.get(position).getDesc(); // 对应的是轮播图片对应的请求字段，如"class.all"
 
 						pageNum = 1;
-						
+
 						handler.sendEmptyMessage(3);
 						handler.sendEmptyMessage(6);
 
@@ -273,7 +286,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				});
 	}
 
-	
+
 	public String getAppId(int ownerid) {
 		// TODO Auto-generated method stub
 		String appId = "238";
@@ -286,220 +299,369 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	//*******************************************************************************
 	//***************************以下是下拉刷新和上拉加载部分的处理***************************
-	
-	public void getPackTypeData() {
-		
-		wettingDialog.show();
-		ClientSession.Instace().asynGetResponse(
-				// APPID pageNumber pageCounts
-				
-				// 获取所有课程的列表
-				new CourseTypeListRequest(), new IResponseReceiver() {
 
-					@Override
-					public void onResponse(BaseHttpResponse response,
-							BaseHttpRequest request, int rspCookie) {
-						CourseTypeListResponse res = (CourseTypeListResponse) response;
-						if (res.result.equals("1")) {
-							if (res.courseTypeList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
-								// 则证明没有新的资讯类容，
-								// 无需刷新
-								// 以后可更改接口实现高效刷新
-								int flag = 0;
-								if (DataManager.Instance().courseTypeList
-										.size() == 0) {
-									flag = 1;
-								} else {
-									if (res.courseTypeList.size() > DataManager
-											.Instance().courseTypeList
-											.size()) {
-										flag = 1;
-									}
-								}
-								if (flag == 1) {
-									coursePackTypes.clear();
-									coursePackTypes
-											.addAll(res.courseTypeList);
-									coursePackTypeOp
-											.deleteCoursePackTypeData();
-									coursePackTypeOp
-											.insertCoursePackType(coursePackTypes);
-									mobClassListTypeAdapter.clearList();// 清除原来的记录
-									mobClassListTypeAdapter
-											.addList(res.courseTypeList);
-									mobClassListTypeAdapter
-											.notifyDataSetChanged();
-									handler.sendEmptyMessage(8);
-									handlerRefreshList
-											.sendEmptyMessage(3);
-									
-									
-								}
+	public void getPackTypeData() {
+
+		wettingDialog.show();
+
+		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+		OkHttpClient client = new OkHttpClient.Builder()
+				.addInterceptor(interceptor)
+				.build();
+
+		Retrofit retrofit = new Retrofit.Builder()
+				.baseUrl("http://class.iyuba.com/")
+				.client(client)
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+
+		CourseTypeApiStores courseTypeApiStores = retrofit.create(CourseTypeApiStores.class);
+		Call<CourseTypeListBean> call = courseTypeApiStores.getCourseTypeList(
+				"10103","0", "806e43f1d3416670861ef3b187f6a27c");
+		call.enqueue(new Callback<CourseTypeListBean>() {
+			@Override
+			public void onResponse(Response<CourseTypeListBean> response) {
+				if (response.body().getResult() == 1) {
+					if (response.body().getData().size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+						// 则证明没有新的资讯类容，
+						// 无需刷新
+						// 以后可更改接口实现高效刷新
+						int flag = 0;
+						if (DataManager.Instance().courseTypeList
+								.size() == 0) {
+							flag = 1;
+						} else {
+							if (response.body().getData().size() > DataManager
+									.Instance().courseTypeList
+									.size()) {
+								flag = 1;
 							}
 						}
-						wettingDialog.dismiss();
+						if (flag == 1) {
+							coursePackTypes.clear();
+							coursePackTypes
+									.addAll(response.body().getData());
+							coursePackTypeOp
+									.deleteCoursePackTypeData();
+							coursePackTypeOp
+									.insertCoursePackType(coursePackTypes);
+							mobClassListTypeAdapter.clearList();// 清除原来的记录
+							mobClassListTypeAdapter
+									.addList(response.body().getData());
+							mobClassListTypeAdapter
+									.notifyDataSetChanged();
+							handler.sendEmptyMessage(8);
+							handlerRefreshList
+									.sendEmptyMessage(3);
+
+
+						}
 					}
-				}, new IErrorReceiver() {
+				}
+				wettingDialog.dismiss();
+			}
 
-					@Override
-					public void onError(ErrorResponse errorResponse,
-							BaseHttpRequest request, int rspCookie) {
-						// TODO Auto-generated method stub
-					}
+			@Override
+			public void onFailure(Throwable t) {
 
-				}, null);
-		
-	}
-	
-	public void getHeaderData() {
-		
-		ClientSession.Instace().asynGetResponse(
-				// APPID pageNumber pageCounts
+			}
+		});
 
-				// 获取所有课程的列表
-				new CourseListRequest(reqPackId, reqPackType, "1"),
-				new IResponseReceiver() {
-
-					@Override
-					public void onResponse(BaseHttpResponse response,
-							BaseHttpRequest request, int rspCookie) {
-						CourseListResponse res = (CourseListResponse) response;
-						if (res.result.equals("1")) {
-
-							iLastPage = Integer.parseInt(res.lastPage);
-							
-							if(iLastPage != pageNum){
-								isLast=false;
-							}else if(iLastPage == pageNum || iLastPage ==0){
-								isLast=true;
-							}
-							
-							pageNum = 2;
-
-							if (res.courseList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
-															// 则证明没有新的资讯类容，
-															// 无需刷新
-															// 以后可更改接口实现高效刷新
+//		ClientSession.Instace().asynGetResponse(
+//				// APPID pageNumber pageCounts
+//
+//				// 获取所有课程的列表
+//				new CourseTypeListRequest(), new IResponseReceiver() {
+//
+//					@Override
+//					public void onResponse(BaseHttpResponse response,
+//							BaseHttpRequest request, int rspCookie) {
+//						CourseTypeListResponse res = (CourseTypeListResponse) response;
+//						if (res.result.equals("1")) {
+//							if (res.courseTypeList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+//								// 则证明没有新的资讯类容，
+//								// 无需刷新
+//								// 以后可更改接口实现高效刷新
 //								int flag = 0;
-//								if (DataManager.Instance().courseList
+//								if (DataManager.Instance().courseTypeList
 //										.size() == 0) {
 //									flag = 1;
 //								} else {
-//									if (res.courseList.size() > DataManager
-//											.Instance().courseList
-//											.size()
-//											|| !(res.courseList.get(res.courseList
-//													.size() - 1).id == DataManager
-//													.Instance().courseList.get(DataManager
-//													.Instance().courseList
-//													.size() - 1).id)) {
+//									if (res.courseTypeList.size() > DataManager
+//											.Instance().courseTypeList
+//											.size()) {
 //										flag = 1;
 //									}
 //								}
 //								if (flag == 1) {
-									coursePackArrayList.clear();
-									coursePackArrayList
-											.addAll(res.courseList);
-									mobClassListAdapter.clearList();// 清除原来的记录
-									mobClassListAdapter
-											.addList(res.courseList);
-									
-//									mAdAdapter.notifyDataSetChanged();
-									handlerRefreshList.sendEmptyMessage(3);
-
-									if (reqPackId.equals("-2")) {
-										coursePackOp
-												.deleteCoursePackData();
-									}
-
-									coursePackOp
-											.insertCoursePacks(coursePackArrayList);
+//									coursePackTypes.clear();
+//									coursePackTypes
+//											.addAll(res.courseTypeList);
+//									coursePackTypeOp
+//											.deleteCoursePackTypeData();
+//									coursePackTypeOp
+//											.insertCoursePackType(coursePackTypes);
+//									mobClassListTypeAdapter.clearList();// 清除原来的记录
+//									mobClassListTypeAdapter
+//											.addList(res.courseTypeList);
+//									mobClassListTypeAdapter
+//											.notifyDataSetChanged();
+//									handler.sendEmptyMessage(8);
+//									handlerRefreshList
+//											.sendEmptyMessage(3);
+//
+//
 //								}
-							}
-						}
-						handler.sendEmptyMessage(2);
-						wettingDialog.dismiss();
-					}
-				}, new IErrorReceiver() {
-					
-					@Override
-					public void onError(ErrorResponse errorResponse, BaseHttpRequest request,
-							int rspCookie) {
-						// TODO Auto-generated method stub
-						handlerRefreshList.sendEmptyMessage(4);
-						handlerRefreshList.sendEmptyMessage(9);
-					}
-				}, null);
-		
+//							}
+//						}
+//						wettingDialog.dismiss();
+//					}
+//				}, new IErrorReceiver() {
+//
+//					@Override
+//					public void onError(ErrorResponse errorResponse,
+//							BaseHttpRequest request, int rspCookie) {
+//						// TODO Auto-generated method stub
+//					}
+//
+//				}, null);
+
 	}
-	
+
+	public void getHeaderData() {
+
+		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+		OkHttpClient client = new OkHttpClient.Builder()
+				.addInterceptor(interceptor)
+				.build();
+
+		Retrofit retrofit = new Retrofit.Builder()
+				.baseUrl("http://class.iyuba.com/")
+				.client(client)
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+
+		CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
+		Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
+				"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
+		call.enqueue(new Callback<CoursePackListBean>() {
+			@Override
+			public void onResponse(Response<CoursePackListBean> response) {
+				if (response.body().getResult() == 1) {
+					iLastPage = response.body().getLastPage();
+
+					if(iLastPage != pageNum){
+						isLast=false;
+					}else if(iLastPage == pageNum || iLastPage ==0){
+						isLast=true;
+					}
+
+					pageNum = 2;
+
+					if (response.body().getData().size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+						// 则证明没有新的资讯类容，
+						// 无需刷新
+						// 以后可更改接口实现高效刷新
+						coursePackArrayList.clear();
+						coursePackArrayList
+								.addAll(response.body().getData());
+						mobClassListAdapter.clearList();// 清除原来的记录
+						mobClassListAdapter
+								.addList(response.body().getData());
+
+						handlerRefreshList.sendEmptyMessage(3);
+
+						if (reqPackId.equals("-2")) {
+							coursePackOp
+									.deleteCoursePackData();
+						}
+
+						coursePackOp
+								.insertCoursePacks(coursePackArrayList);
+					}
+				}
+				handler.sendEmptyMessage(2);
+				wettingDialog.dismiss();
+			}
+
+			@Override
+			public void onFailure(Throwable t) {
+				handlerRefreshList.sendEmptyMessage(4);
+				handlerRefreshList.sendEmptyMessage(9);
+			}
+		});
+
+//		ClientSession.Instace().asynGetResponse(
+//				// APPID pageNumber pageCounts
+//
+//				// 获取所有课程的列表
+//				new CourseListRequest(reqPackId, reqPackType, "1"),
+//				new IResponseReceiver() {
+//
+//					@Override
+//					public void onResponse(BaseHttpResponse response,
+//							BaseHttpRequest request, int rspCookie) {
+//						CourseListResponse res = (CourseListResponse) response;
+//						if (res.result.equals("1")) {
+//
+//							iLastPage = Integer.parseInt(res.lastPage);
+//
+//							if(iLastPage != pageNum){
+//								isLast=false;
+//							}else if(iLastPage == pageNum || iLastPage ==0){
+//								isLast=true;
+//							}
+//
+//							pageNum = 2;
+//
+//							if (res.courseList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+//															// 则证明没有新的资讯类容，
+//															// 无需刷新
+//															// 以后可更改接口实现高效刷新
+//								coursePackArrayList.clear();
+//								coursePackArrayList
+//										.addAll(res.courseList);
+//								mobClassListAdapter.clearList();// 清除原来的记录
+//								mobClassListAdapter
+//										.addList(res.courseList);
+//
+//								handlerRefreshList.sendEmptyMessage(3);
+//
+//								if (reqPackId.equals("-2")) {
+//									coursePackOp
+//											.deleteCoursePackData();
+//								}
+//
+//								coursePackOp
+//										.insertCoursePacks(coursePackArrayList);
+//							}
+//						}
+//						handler.sendEmptyMessage(2);
+//						wettingDialog.dismiss();
+//					}
+//				}, new IErrorReceiver() {
+//
+//					@Override
+//					public void onError(ErrorResponse errorResponse, BaseHttpRequest request,
+//							int rspCookie) {
+//						// TODO Auto-generated method stub
+//						handlerRefreshList.sendEmptyMessage(4);
+//						handlerRefreshList.sendEmptyMessage(9);
+//					}
+//				}, null);
+
+	}
+
 	public void getFooterData() {
-		
+
 		if(isLast){
 			handlerRefreshList.sendEmptyMessage(14);
 			handlerRefreshList.sendEmptyMessage(4);
 			return;
 		}
-		
-		ClientSession.Instace().asynGetResponse(
-				// APPID pageNumber pageCounts
 
-				// 获取上拉加载课程的列表,将当前获取的课程列表与上拉加载返回的课程列表做比较，
-				new CourseListRequest(reqPackId, reqPackType,
-						pageNum + ""), new IResponseReceiver() {
+		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+		OkHttpClient client = new OkHttpClient.Builder()
+				.addInterceptor(interceptor)
+				.build();
 
-					@Override
-					public void onResponse(BaseHttpResponse response,
-							BaseHttpRequest request, int rspCookie) {
-						CourseListResponse res = (CourseListResponse) response;
-						if (res.result.equals("1")) {
-							if (res.courseList.size() > 0) {
-								
-								iLastPage = Integer.parseInt(res.lastPage);
-								
-								if(iLastPage != pageNum){
-									isLast=false;
-								}else if(iLastPage == pageNum || iLastPage ==0){
-									isLast=true;
-								}
-								
-								pageNum++;
+		Retrofit retrofit = new Retrofit.Builder()
+				.baseUrl("http://class.iyuba.com/")
+				.client(client)
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
 
-								mobClassListAdapter.clearList();// 清除原来的记录
-								coursePackArrayList.addAll(res.courseList);
-								mobClassListAdapter
-									.addList(coursePackArrayList);
-								
-//								mAdAdapter.notifyDataSetChanged();
-								handlerRefreshList.sendEmptyMessage(3);
-								
-								try {
-//									coursePackOp
-//											.insertCoursePacks(coursePackArrayList);
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
+		CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
+		Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
+				"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
+		call.enqueue(new Callback<CoursePackListBean>() {
+			@Override
+			public void onResponse(Response<CoursePackListBean> response) {
+				if (response.body().getResult() == 1) {
+					if (response.body().getData().size() > 0) {
+
+						iLastPage = response.body().getLastPage();
+
+						if(iLastPage != pageNum){
+							isLast=false;
+						}else if(iLastPage == pageNum || iLastPage ==0){
+							isLast=true;
 						}
+
+						pageNum++;
+
+						mobClassListAdapter.clearList();// 清除原来的记录
+						coursePackArrayList.addAll(response.body().getData());
+						mobClassListAdapter
+								.addList(coursePackArrayList);
+
 						handlerRefreshList.sendEmptyMessage(3);
-						handler.sendEmptyMessage(2);
-						wettingDialog.dismiss();
 					}
-				}, new IErrorReceiver() {
-					
-					@Override
-					public void onError(ErrorResponse errorResponse, BaseHttpRequest request,
-							int rspCookie) {
-						// TODO Auto-generated method stub
-						handler.sendEmptyMessage(2);
-						wettingDialog.dismiss();
-					}
-				}, null);
-		
+				}
+				handler.sendEmptyMessage(2);
+				wettingDialog.dismiss();
+			}
+
+			@Override
+			public void onFailure(Throwable t) {
+				handler.sendEmptyMessage(2);
+				wettingDialog.dismiss();
+			}
+		});
+
+//		ClientSession.Instace().asynGetResponse(
+//				// APPID pageNumber pageCounts
+//
+//				// 获取上拉加载课程的列表,将当前获取的课程列表与上拉加载返回的课程列表做比较，
+//				new CourseListRequest(reqPackId, reqPackType,
+//						pageNum + ""), new IResponseReceiver() {
+//
+//					@Override
+//					public void onResponse(BaseHttpResponse response,
+//							BaseHttpRequest request, int rspCookie) {
+//						CourseListResponse res = (CourseListResponse) response;
+//						if (res.result.equals("1")) {
+//							if (res.courseList.size() > 0) {
+//
+//								iLastPage = Integer.parseInt(res.lastPage);
+//
+//								if(iLastPage != pageNum){
+//									isLast=false;
+//								}else if(iLastPage == pageNum || iLastPage ==0){
+//									isLast=true;
+//								}
+//
+//								pageNum++;
+//
+//								mobClassListAdapter.clearList();// 清除原来的记录
+//								coursePackArrayList.addAll(res.courseList);
+//								mobClassListAdapter
+//									.addList(coursePackArrayList);
+//
+//								handlerRefreshList.sendEmptyMessage(3);
+//							}
+//						}
+//						handlerRefreshList.sendEmptyMessage(3);
+//						handler.sendEmptyMessage(2);
+//						wettingDialog.dismiss();
+//					}
+//				}, new IErrorReceiver() {
+//
+//					@Override
+//					public void onError(ErrorResponse errorResponse, BaseHttpRequest request,
+//							int rspCookie) {
+//						// TODO Auto-generated method stub
+//						handler.sendEmptyMessage(2);
+//						wettingDialog.dismiss();
+//					}
+//				}, null);
+
 	}
 
 	private class GetPackTypeDataTask extends AsyncTask<Void, Void, String[]> {
@@ -511,7 +673,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 			return null;
 		}
 	}
-	
+
 	private class GetHeaderDataTask extends AsyncTask<Void, Void, String[]> {
 
 		@Override
@@ -521,7 +683,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 			return null;
 		}
 	}
-	
+
 	private class GetFooterDataTask extends AsyncTask<Void, Void, String[]> {
 
 		@Override
@@ -531,7 +693,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 			return null;
 		}
 	}
-	
+
 	private OnItemClickListener oItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -539,11 +701,9 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 			// TODO Auto-generated method stub
 			Intent intent = new Intent();
 
-			Log.d("MobileClassList22222222222222222222:", position + "");
-
 			if(position > 1){
 				mAdAdapter.getItem(position-2);
-				
+
 				// 之前是position-1，现在因为添加了ListView的Header，所以改成了position-2
 
 				curPackId = ((CoursePack)mAdAdapter.getItem(position-2)).id;
@@ -562,58 +722,58 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				intent.putExtra("position", position);
 				intent.putExtra("coursenum",
 						((CoursePack)mAdAdapter.getItem(position-2)).classNum);
-				
+
 				intent.setClass(mContext, MobileClassActivity.class);
 				startActivity(intent);
 			}
-			
+
 		}
 	};
-	
-	
+
+
 	private OnRefreshListener2<ListView> orfl = new OnRefreshListener2<ListView>() {
 
 		@Override
 		public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
 			// TODO Auto-generated method stub
-			
+
 			if (NetWorkState.isConnectingToInternet()) {// 开始刷新
 
 				handler.sendEmptyMessage(0);
-				
+
 				new GetHeaderDataTask().execute();
 				handler.sendEmptyMessage(6);
-				
+
 			} else {// 刷新失败
 				handlerRefreshList.sendEmptyMessage(4);
 				handlerRefreshList.sendEmptyMessage(9);
 				handlerRefreshList.sendEmptyMessage(13);
 			}
-			
+
 		}
 
 		@Override
 		public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
 			// TODO Auto-generated method stub
-			
+
 			if (NetWorkState.isConnectingToInternet()) {// 开始刷新
 
 				new GetFooterDataTask().execute();
-				
+
 			} else {// 刷新失败
 				handlerRefreshList.sendEmptyMessage(4);
 				handlerRefreshList.sendEmptyMessage(9);
 				handlerRefreshList.sendEmptyMessage(13);
 			}
-			
+
 		}
 	};
-	
-	
+
+
 
 	//***************************以上是下拉刷新和上拉加载部分的处理***************************
 	//*******************************************************************************
-	
+
 	Handler handler = new Handler() {
 		int reqPageNumber;
 
@@ -621,132 +781,261 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 		public void handleMessage(Message msg) {
 			// TODO Auto-generated method stub
 			super.handleMessage(msg);
+
+			HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+			interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+			OkHttpClient client = new OkHttpClient.Builder()
+					.addInterceptor(interceptor)
+					.build();
+
+			Retrofit retrofit = new Retrofit.Builder()
+					.baseUrl("http://class.iyuba.com/")
+					.client(client)
+					.addConverterFactory(GsonConverterFactory.create())
+					.build();
+
 			switch (msg.what) {
 
 			case 0:
 				wettingDialog.show();
-				ClientSession.Instace().asynGetResponse(
-				// APPID pageNumber pageCounts
 
-						// 获取所有课程的列表
-						new CourseTypeListRequest(), new IResponseReceiver() {
-
-							@Override
-							public void onResponse(BaseHttpResponse response,
-									BaseHttpRequest request, int rspCookie) {
-								CourseTypeListResponse res = (CourseTypeListResponse) response;
-								if (res.result.equals("1")) {
-									if (res.courseTypeList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
-										// 则证明没有新的资讯类容，
-										// 无需刷新
-										// 以后可更改接口实现高效刷新
-										int flag = 0;
-										if (DataManager.Instance().courseTypeList
-												.size() == 0) {
-											flag = 1;
-										} else {
-											if (res.courseTypeList.size() > DataManager
-													.Instance().courseTypeList
-													.size()) {
-												flag = 1;
-											}
-										}
-										if (flag == 1) {
-											coursePackTypes.clear();
-											coursePackTypes
-													.addAll(res.courseTypeList);
-											coursePackTypeOp
-													.deleteCoursePackTypeData();
-											coursePackTypeOp
-													.insertCoursePackType(coursePackTypes);
-											mobClassListTypeAdapter.clearList();// 清除原来的记录
-											mobClassListTypeAdapter
-													.addList(res.courseTypeList);
-//											mobClassListTypeAdapter
-//													.notifyDataSetChanged();
-											handler.sendEmptyMessage(8);
-											handlerRefreshList
-													.sendEmptyMessage(3);
-											
-											
-										}
+				CourseTypeApiStores courseTypeApiStores = retrofit.create(CourseTypeApiStores.class);
+				Call<CourseTypeListBean> callCourseType = courseTypeApiStores.getCourseTypeList(
+						"10103","0", "806e43f1d3416670861ef3b187f6a27c");
+				callCourseType.enqueue(new retrofit2.Callback<CourseTypeListBean>() {
+					@Override
+					public void onResponse(Response<CourseTypeListBean> response) {
+						if (response.body().getResult() == 1) {
+							if (response.body().getData().size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+								// 则证明没有新的资讯类容，
+								// 无需刷新
+								// 以后可更改接口实现高效刷新
+								int flag = 0;
+								if (DataManager.Instance().courseTypeList
+										.size() == 0) {
+									flag = 1;
+								} else {
+									if (response.body().getData().size() > DataManager
+											.Instance().courseTypeList
+											.size()) {
+										flag = 1;
 									}
 								}
-								wettingDialog.dismiss();
-							}
-						}, new IErrorReceiver() {
+								if (flag == 1) {
+									coursePackTypes.clear();
+									coursePackTypes
+											.addAll(response.body().getData());
+									coursePackTypeOp
+											.deleteCoursePackTypeData();
+									coursePackTypeOp
+											.insertCoursePackType(coursePackTypes);
+									mobClassListTypeAdapter.clearList();// 清除原来的记录
+									mobClassListTypeAdapter
+											.addList(response.body().getData());
+//											mobClassListTypeAdapter
+//													.notifyDataSetChanged();
+									handler.sendEmptyMessage(8);
+									handlerRefreshList
+											.sendEmptyMessage(3);
 
-							@Override
-							public void onError(ErrorResponse errorResponse,
-									BaseHttpRequest request, int rspCookie) {
-								// TODO Auto-generated method stub
-							}
 
-						}, null);
+								}
+							}
+						}
+						wettingDialog.dismiss();
+					}
+
+					@Override
+					public void onFailure(Throwable t) {
+
+					}
+				});
+
+//				ClientSession.Instace().asynGetResponse(
+//				// APPID pageNumber pageCounts
+//
+//						// 获取所有课程的列表
+//						new CourseTypeListRequest(), new IResponseReceiver() {
+//
+//							@Override
+//							public void onResponse(BaseHttpResponse response,
+//									BaseHttpRequest request, int rspCookie) {
+//								CourseTypeListResponse res = (CourseTypeListResponse) response;
+//								if (res.result.equals("1")) {
+//									if (res.courseTypeList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+//										// 则证明没有新的资讯类容，
+//										// 无需刷新
+//										// 以后可更改接口实现高效刷新
+//										int flag = 0;
+//										if (DataManager.Instance().courseTypeList
+//												.size() == 0) {
+//											flag = 1;
+//										} else {
+//											if (res.courseTypeList.size() > DataManager
+//													.Instance().courseTypeList
+//													.size()) {
+//												flag = 1;
+//											}
+//										}
+//										if (flag == 1) {
+//											coursePackTypes.clear();
+//											coursePackTypes
+//													.addAll(res.courseTypeList);
+//											coursePackTypeOp
+//													.deleteCoursePackTypeData();
+//											coursePackTypeOp
+//													.insertCoursePackType(coursePackTypes);
+//											mobClassListTypeAdapter.clearList();// 清除原来的记录
+//											mobClassListTypeAdapter
+//													.addList(res.courseTypeList);
+////											mobClassListTypeAdapter
+////													.notifyDataSetChanged();
+//											handler.sendEmptyMessage(8);
+//											handlerRefreshList
+//													.sendEmptyMessage(3);
+//
+//
+//										}
+//									}
+//								}
+//								wettingDialog.dismiss();
+//							}
+//						}, new IErrorReceiver() {
+//
+//							@Override
+//							public void onError(ErrorResponse errorResponse,
+//									BaseHttpRequest request, int rspCookie) {
+//								// TODO Auto-generated method stub
+//							}
+//
+//						}, null);
 				break;
 
 			case 1:
 				wettingDialog.show();
-				ClientSession.Instace().asynGetResponse(
-						// APPID pageNumber pageCounts
 
-						// 获取所有课程的列表
-						new CourseListRequest(reqPackId, reqPackType, "1"),
-						new IResponseReceiver() {
+				CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
+				Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
+						"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
+				call.enqueue(new retrofit2.Callback<CoursePackListBean>() {
+					@Override
+					public void onResponse(Response<CoursePackListBean> response) {
+						if (response.body().getResult() == 1) {
+							if (response.body().getData().size() > 0) {
 
-							@Override
-							public void onResponse(BaseHttpResponse response,
-									BaseHttpRequest request, int rspCookie) {
-								CourseListResponse res = (CourseListResponse) response;
-								if (res.result.equals("1")) {
+								iLastPage = response.body().getLastPage();
 
-									iLastPage = Integer.parseInt(res.lastPage);
-
-									if (res.courseList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
-																	// 则证明没有新的资讯类容，
-																	// 无需刷新
-																	// 以后可更改接口实现高效刷新
-										int flag = 0;
-										if (DataManager.Instance().courseList
-												.size() == 0) {
+								if (response.body().getData().size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+									// 则证明没有新的资讯类容，
+									// 无需刷新
+									// 以后可更改接口实现高效刷新
+									int flag = 0;
+									if (DataManager.Instance().courseList
+											.size() == 0) {
+										flag = 1;
+									} else {
+										if (response.body().getData().size() > DataManager
+												.Instance().courseList
+												.size()
+												|| !(response.body().getData().get(response.body().getData()
+												.size() - 1).getId() == DataManager
+												.Instance().courseList.get(DataManager
+														.Instance().courseList
+														.size() - 1).getId())) {
 											flag = 1;
-										} else {
-											if (res.courseList.size() > DataManager
-													.Instance().courseList
-													.size()
-													|| !(res.courseList.get(res.courseList
-															.size() - 1).id == DataManager
-															.Instance().courseList.get(DataManager
-															.Instance().courseList
-															.size() - 1).id)) {
-												flag = 1;
-											}
-										}
-										if (flag == 1) {
-											coursePackArrayList.clear();
-											coursePackArrayList
-													.addAll(res.courseList);
-											mobClassListAdapter.clearList();// 清除原来的记录
-											mobClassListAdapter
-													.addList(res.courseList);
-											
-//											mAdAdapter.notifyDataSetChanged();
-											handlerRefreshList.sendEmptyMessage(3);
-
-											if (reqPackId.equals("-2")) {
-												coursePackOp
-														.deleteCoursePackData();
-											}
-
-											coursePackOp
-													.insertCoursePacks(coursePackArrayList);
 										}
 									}
+									if (flag == 1) {
+										coursePackArrayList.clear();
+										coursePackArrayList
+												.addAll(response.body().getData());
+										mobClassListAdapter.clearList();// 清除原来的记录
+										mobClassListAdapter
+												.addList(response.body().getData());
+
+										handlerRefreshList.sendEmptyMessage(3);
+
+										if (reqPackId.equals("-2")) {
+											coursePackOp
+													.deleteCoursePackData();
+										}
+
+										coursePackOp
+												.insertCoursePacks(coursePackArrayList);
+									}
 								}
-								handler.sendEmptyMessage(2);
-								wettingDialog.dismiss();
 							}
-						}, null, null);
+						}
+						handler.sendEmptyMessage(2);
+						wettingDialog.dismiss();
+					}
+
+					@Override
+					public void onFailure(Throwable t) {
+						handler.sendEmptyMessage(2);
+						wettingDialog.dismiss();
+					}
+				});
+
+//				ClientSession.Instace().asynGetResponse(
+//						// APPID pageNumber pageCounts
+//
+//						// 获取所有课程的列表
+//						new CourseListRequest(reqPackId, reqPackType, "1"),
+//						new IResponseReceiver() {
+//
+//							@Override
+//							public void onResponse(BaseHttpResponse response,
+//									BaseHttpRequest request, int rspCookie) {
+//								CourseListResponse res = (CourseListResponse) response;
+//								if (res.result.equals("1")) {
+//
+//									iLastPage = Integer.parseInt(res.lastPage);
+//
+//									if (res.courseList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+//																	// 则证明没有新的资讯类容，
+//																	// 无需刷新
+//																	// 以后可更改接口实现高效刷新
+//										int flag = 0;
+//										if (DataManager.Instance().courseList
+//												.size() == 0) {
+//											flag = 1;
+//										} else {
+//											if (res.courseList.size() > DataManager
+//													.Instance().courseList
+//													.size()
+//													|| !(res.courseList.get(res.courseList
+//															.size() - 1).id == DataManager
+//															.Instance().courseList.get(DataManager
+//															.Instance().courseList
+//															.size() - 1).id)) {
+//												flag = 1;
+//											}
+//										}
+//										if (flag == 1) {
+//											coursePackArrayList.clear();
+//											coursePackArrayList
+//													.addAll(res.courseList);
+//											mobClassListAdapter.clearList();// 清除原来的记录
+//											mobClassListAdapter
+//													.addList(res.courseList);
+//
+//											handlerRefreshList.sendEmptyMessage(3);
+//
+//											if (reqPackId.equals("-2")) {
+//												coursePackOp
+//														.deleteCoursePackData();
+//											}
+//
+//											coursePackOp
+//													.insertCoursePacks(coursePackArrayList);
+//										}
+//									}
+//								}
+//								handler.sendEmptyMessage(2);
+//								wettingDialog.dismiss();
+//							}
+//						}, null, null);
 				break;
 			case 2:
 				mobClassListAdapter.notifyDataSetChanged();
@@ -789,7 +1078,6 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 					} else {
 						if (NetWorkState.isConnectingToInternet()) {// 开始刷新
 
-//							handler.sendEmptyMessage(1);
 							new GetHeaderDataTask().execute();
 							handlerRefreshList.sendEmptyMessage(3);
 
@@ -803,53 +1091,96 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 					}
 				}
 
-				
+
 				break;
 
 			// 获取最新课程的请求
 			case 4:
 				wettingDialog.show();
 				Log.d("获取最新课程：", "此处为最新课程的返回结果");
-				ClientSession.Instace().asynGetResponse(
-						// APPID pageNumber pageCounts
 
-						// 获取所有课程的列表
-						new CourseListRequest(reqPackId, reqPackType, "1"),
-						new IResponseReceiver() {
 
-							@Override
-							public void onResponse(BaseHttpResponse response,
-									BaseHttpRequest request, int rspCookie) {
-								CourseListResponse res = (CourseListResponse) response;
-								if (res.result.equals("1")) {
-									if (res.courseList.size() > 0) {
+				CoursePackApiStores lastestCoursePackApiStores = retrofit.create(CoursePackApiStores.class);
+				Call<CoursePackListBean> lastestCall = lastestCoursePackApiStores.getCoursePackList(
+						"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
+				lastestCall.enqueue(new retrofit2.Callback<CoursePackListBean>() {
+					@Override
+					public void onResponse(Response<CoursePackListBean> response) {
+						if (response.body().getResult() == 1) {
+							if (response.body().getData().size() > 0) {
 
-										coursePackArrayList.clear();
-										coursePackArrayList
-												.addAll(res.courseList);
-										mobClassListAdapter.clearList();// 清除原来的记录
-										mobClassListAdapter
-												.addList(res.courseList);
-										
-//										mAdAdapter.notifyDataSetChanged();
-										handlerRefreshList.sendEmptyMessage(3);
-										
-										if (!reqPackId.equals("-1")) {
-											try {
-												coursePackOp
-														.insertCoursePacks(res.courseList);
-											} catch (Exception e) {
-												// TODO Auto-generated catch
-												// block
-												e.printStackTrace();
-											}
-										}
+								coursePackArrayList.clear();
+								coursePackArrayList
+										.addAll(response.body().getData());
+								mobClassListAdapter.clearList();// 清除原来的记录
+								mobClassListAdapter
+										.addList(response.body().getData());
+
+								handlerRefreshList.sendEmptyMessage(3);
+
+								if (!reqPackId.equals("-1")) {
+									try {
+										coursePackOp
+												.insertCoursePacks(response.body().getData());
+									} catch (Exception e) {
+										// TODO Auto-generated catch
+										// block
+										e.printStackTrace();
 									}
 								}
-								handler.sendEmptyMessage(2);
-								wettingDialog.dismiss();
 							}
-						}, null, null);
+						}
+						handler.sendEmptyMessage(2);
+						wettingDialog.dismiss();
+					}
+
+					@Override
+					public void onFailure(Throwable t) {
+						handler.sendEmptyMessage(2);
+						wettingDialog.dismiss();
+					}
+				});
+
+
+//				ClientSession.Instace().asynGetResponse(
+//						// APPID pageNumber pageCounts
+//
+//						// 获取所有课程的列表
+//						new CourseListRequest(reqPackId, reqPackType, "1"),
+//						new IResponseReceiver() {
+//
+//							@Override
+//							public void onResponse(BaseHttpResponse response,
+//									BaseHttpRequest request, int rspCookie) {
+//								CourseListResponse res = (CourseListResponse) response;
+//								if (res.result.equals("1")) {
+//									if (res.courseList.size() > 0) {
+//
+//										coursePackArrayList.clear();
+//										coursePackArrayList
+//												.addAll(res.courseList);
+//										mobClassListAdapter.clearList();// 清除原来的记录
+//										mobClassListAdapter
+//												.addList(res.courseList);
+//
+//										handlerRefreshList.sendEmptyMessage(3);
+//
+//										if (!reqPackId.equals("-1")) {
+//											try {
+//												coursePackOp
+//														.insertCoursePacks(res.courseList);
+//											} catch (Exception e) {
+//												// TODO Auto-generated catch
+//												// block
+//												e.printStackTrace();
+//											}
+//										}
+//									}
+//								}
+//								handler.sendEmptyMessage(2);
+//								wettingDialog.dismiss();
+//							}
+//						}, null, null);
 				break;
 
 			// 获取上拉加载课程的请求
@@ -859,59 +1190,103 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				Log.d("请求列表的页码", reqPageNumber + "");
 				wettingDialog.show();
 				Log.d("获取上拉加载课程：", "此处为上拉加载课程的返回结果");
-				
-				ClientSession.Instace().asynGetResponse(
-				// APPID pageNumber pageCounts
 
-						// 获取上拉加载课程的列表,将当前获取的课程列表与上拉加载返回的课程列表做比较，
-						new CourseListRequest(reqPackId, reqPackType,
-								pageNum + ""), new IResponseReceiver() {
+				CoursePackApiStores pullUpCoursePackApiStores = retrofit.create(CoursePackApiStores.class);
+				Call<CoursePackListBean> pullUpCall = pullUpCoursePackApiStores.getCoursePackList(
+						"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
+				pullUpCall.enqueue(new retrofit2.Callback<CoursePackListBean>() {
+					@Override
+					public void onResponse(Response<CoursePackListBean> response) {
+						if (response.body().getResult() == 1) {
+							if (response.body().getData().size() > 0) {
 
-							@Override
-							public void onResponse(BaseHttpResponse response,
-									BaseHttpRequest request, int rspCookie) {
-								CourseListResponse res = (CourseListResponse) response;
-								if (res.result.equals("1")) {
-									if (res.courseList.size() > 0) {
-
-										boolean hasCoursePack = false;
-										for (int i = 0; i < res.courseList
-												.size(); i++) {
-											for (int j = 0; j < coursePackArrayList
-													.size(); j++) {
-												if (coursePackArrayList.get(j).id == res.courseList
-														.get(i).id) {
-													hasCoursePack = true;
-												}
-											}
-											if (hasCoursePack == false) {
-												coursePackArrayList
-														.add(res.courseList
-																.get(i));
-											}
-										}
-
-										mobClassListAdapter.clearList();// 清除原来的记录
-										mobClassListAdapter
-												.addList(coursePackArrayList);
-//										mAdAdapter.notifyDataSetChanged();
-										handlerRefreshList.sendEmptyMessage(3);
-										try {
-											// coursePackOp.deleteCoursePackData();
-											coursePackOp
-													.insertCoursePacks(coursePackArrayList);
-											// 这里保证插到数据库中的加载数据放到之前的数据后边
-											// coursePackOp.insertCoursePacks(res.courseList);
-										} catch (Exception e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
+								boolean hasCoursePack = false;
+								for (int i = 0; i < response.body().getData().size(); i++) {
+									for (int j = 0; j < coursePackArrayList
+											.size(); j++) {
+										if (coursePackArrayList.get(j).getId() == response.body().getData().get(i).getId()) {
+											hasCoursePack = true;
 										}
 									}
+									if (hasCoursePack == false) {
+										coursePackArrayList.add(response.body().getData().get(i));
+									}
 								}
+
+								mobClassListAdapter.clearList();// 清除原来的记录
+								mobClassListAdapter
+										.addList(coursePackArrayList);
 								handlerRefreshList.sendEmptyMessage(3);
-								wettingDialog.dismiss();
+								try {
+									coursePackOp.insertCoursePacks(coursePackArrayList);
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
 							}
-						}, null, null);
+						}
+						handlerRefreshList.sendEmptyMessage(3);
+						wettingDialog.dismiss();
+					}
+
+					@Override
+					public void onFailure(Throwable t) {
+						handlerRefreshList.sendEmptyMessage(3);
+						wettingDialog.dismiss();
+					}
+				});
+
+//				ClientSession.Instace().asynGetResponse(
+//				// APPID pageNumber pageCounts
+//
+//						// 获取上拉加载课程的列表,将当前获取的课程列表与上拉加载返回的课程列表做比较，
+//						new CourseListRequest(reqPackId, reqPackType,
+//								pageNum + ""), new IResponseReceiver() {
+//
+//							@Override
+//							public void onResponse(BaseHttpResponse response,
+//									BaseHttpRequest request, int rspCookie) {
+//								CourseListResponse res = (CourseListResponse) response;
+//								if (res.result.equals("1")) {
+//									if (res.courseList.size() > 0) {
+//
+//										boolean hasCoursePack = false;
+//										for (int i = 0; i < res.courseList
+//												.size(); i++) {
+//											for (int j = 0; j < coursePackArrayList
+//													.size(); j++) {
+//												if (coursePackArrayList.get(j).id == res.courseList
+//														.get(i).id) {
+//													hasCoursePack = true;
+//												}
+//											}
+//											if (hasCoursePack == false) {
+//												coursePackArrayList
+//														.add(res.courseList
+//																.get(i));
+//											}
+//										}
+//
+//										mobClassListAdapter.clearList();// 清除原来的记录
+//										mobClassListAdapter
+//												.addList(coursePackArrayList);
+//										handlerRefreshList.sendEmptyMessage(3);
+//										try {
+//											// coursePackOp.deleteCoursePackData();
+//											coursePackOp
+//													.insertCoursePacks(coursePackArrayList);
+//											// 这里保证插到数据库中的加载数据放到之前的数据后边
+//											// coursePackOp.insertCoursePacks(res.courseList);
+//										} catch (Exception e) {
+//											// TODO Auto-generated catch block
+//											e.printStackTrace();
+//										}
+//									}
+//								}
+//								handlerRefreshList.sendEmptyMessage(3);
+//								wettingDialog.dismiss();
+//							}
+//						}, null, null);
 				break;
 			case 6:
 				initSlideShowViewPicData();
@@ -925,8 +1300,8 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				if(coursePackTypes.size() != 0&&coursePackArrayList.size() != 0&&imageUrls.size() != 0){
 					if(classShowId == 0){
 						for(int i=0;i<coursePackTypes.size();i++){
-							CoursePackType cpt = coursePackTypes.get(i);
-							if(cpt.id == 21){
+							CourseTypeListBean.CourseTypeDataBean cpt = coursePackTypes.get(i);
+							if(cpt.getId() == 21){
 								classShowId = i;
 							}
 						}
@@ -960,10 +1335,10 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				break;
 			case 3:
 				if (mobClassListAdapter == null) {
-					
+
 					mobClassListAdapter = new MobClassListAdapter(mContext,
 							coursePackArrayList);
-					
+
 					actualListView.setAdapter(mAdAdapter);
 					mAdAdapter.refreshAds(actualListView, "44e16c0bd4cb49907163d8c4c8c6ad61", mRequestParameters);
 				} else {
@@ -1014,8 +1389,8 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 		}
 	};
 
-	
-	
+
+
 	//*******************************************************************************************
 	//**************************************以下为处理轮播图使用**************************************
 
@@ -1032,7 +1407,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 
 	/**
 	 * 异步任务,获取数据
-	 * 
+	 *
 	 */
 	class GetSlidePicListTask extends AsyncTask<String, Integer, Boolean> {
 
@@ -1157,7 +1532,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 									if(curPackId != 0){
 										startActivity(intent);
 									}
-									
+
 								}
 							});
 					// 将图片地址添加到轮播图中
@@ -1167,7 +1542,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 					top_news_viewpager.removeAllViews();
 					top_news_viewpager.addView(rollViewPager);
 				}
-				
+
 				break;
 
 			default:
@@ -1176,7 +1551,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 		}
 
 	};
-	
+
 	//**************************************以上为处理轮播图使用**************************************
 	//*******************************************************************************************
 

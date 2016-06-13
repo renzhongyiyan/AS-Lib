@@ -26,13 +26,13 @@ public class SongsResponse extends BaseJSONResponse {
                 NewsInfo lwd = new NewsInfo();
                 lwd.itemId = "3";
                 lwd.id = Integer.parseInt(temp.getString("SongId"));
-                lwd.picUrl = temp.getString("Pic");
+                lwd.picUrl = "http://static.iyuba.com/images/song/"+temp.getString("Pic");
                 lwd.time = temp.getString("CreatTime");
                 lwd.titleEn = temp.getString("Title");
                 lwd.singer = temp.getString("Singer");
                 lwd.readTimes = temp.getString("ReadCount");
                 lwd.announcer = temp.getString("Announcer");
-                lwd.title = temp.getString("Title");
+                lwd.title = "歌手 "+temp.getString("Singer")+"\n"+"播音 "+temp.getString("Announcer");
                 lwd.content = temp.getString("DescCn");
                 lwd.musicUrl = temp.getString("Sound");
 

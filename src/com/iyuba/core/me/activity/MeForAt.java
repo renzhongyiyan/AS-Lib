@@ -41,7 +41,7 @@ import com.iyuba.core.common.util.CheckGrade;
 import com.iyuba.core.common.util.ExeProtocol;
 import com.iyuba.core.common.util.Expression;
 import com.iyuba.core.common.widget.dialog.CustomToast;
-import com.iyuba.core.teacher.activity.SettingActivity;
+import com.iyuba.core.microclass.activity.SettingActivity;
 import com.iyuba.core.teacher.activity.QuesListActivity;
 import com.iyuba.core.teacher.activity.QuestionNotice;
 import com.iyuba.core.teacher.activity.TheQuesListActivity;

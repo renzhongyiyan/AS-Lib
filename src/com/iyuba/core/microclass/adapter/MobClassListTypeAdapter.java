@@ -1,6 +1,7 @@
 package com.iyuba.core.microclass.adapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,12 +13,13 @@ import android.widget.TextView;
 
 import com.iyuba.configation.Constant;
 import com.iyuba.core.common.thread.GitHubImageLoader;
+import com.iyuba.core.iyumooc.microclass.bean.CourseTypeListBean;
 import com.iyuba.core.microclass.sqlite.mode.CoursePackType;
 import com.iyuba.lib.R;
 
 public class MobClassListTypeAdapter extends BaseAdapter {
 	private Context mContext;
-	private ArrayList<CoursePackType> mList = new ArrayList<CoursePackType>();
+	private ArrayList<CourseTypeListBean.CourseTypeDataBean> mList = new ArrayList<>();
 	public boolean modeDelete = false;
 	private String allPicUrl;
 	
@@ -25,7 +27,7 @@ public class MobClassListTypeAdapter extends BaseAdapter {
 		mContext = context;
 	}
 	
-	public MobClassListTypeAdapter(Context context, ArrayList<CoursePackType> list) {
+	public MobClassListTypeAdapter(Context context, ArrayList<CourseTypeListBean.CourseTypeDataBean> list) {
 		mContext = context;
 		mList = list;
 	}
@@ -48,7 +50,7 @@ public class MobClassListTypeAdapter extends BaseAdapter {
 		return position;
 	}
 	
-	public void addList(ArrayList<CoursePackType> courseList){
+	public void addList(List<CourseTypeListBean.CourseTypeDataBean> courseList){
 		mList.addAll(courseList);
 		
 	}
@@ -60,7 +62,7 @@ public class MobClassListTypeAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		
-		final CoursePackType cpt = mList.get(position);
+		final CourseTypeListBean.CourseTypeDataBean cpt = mList.get(position);
 		ViewHolder viewHolder;
 		if(convertView == null){
 			LayoutInflater vi = (LayoutInflater)mContext
@@ -73,9 +75,9 @@ public class MobClassListTypeAdapter extends BaseAdapter {
 		}else{
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.title.setText(cpt.name);
+		viewHolder.title.setText(cpt.getName());
 		
-		allPicUrl = Constant.MOB_CLASS_PACK_TYPE_IMAGE+cpt.id+"b.png";
+		allPicUrl = Constant.MOB_CLASS_PACK_TYPE_IMAGE+cpt.getId()+"b.png";
 		//使用ImageLoaderConfiguration初始�?
 		GitHubImageLoader.Instace(mContext).setPic(allPicUrl, viewHolder.pic, R.drawable.nearby_no_icon);
 		

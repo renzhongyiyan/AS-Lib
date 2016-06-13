@@ -26,7 +26,7 @@ public class HeadNewsResponse extends BaseJSONResponse {
                 NewsInfo lwd = new NewsInfo();
                 lwd.itemId = "4";
                 lwd.id = Integer.parseInt(temp.getString("NewsId"));
-                lwd.picUrl = temp.getString("Pic");
+                lwd.picUrl = "http://static.iyuba.com/cms/news/image/"+temp.getString("Pic");
                 lwd.time = temp.getString("CreatTime");
                 lwd.titleEn = temp.getString("Title");
                 lwd.title = temp.getString("Title_cn");

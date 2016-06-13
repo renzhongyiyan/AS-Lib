@@ -115,7 +115,6 @@ public class ContentListResponse extends BaseJSONResponse {
 //		//获取教师信息和推荐的课程信息
 		try{				
 			jsonTeacherBody=jsonBody.getJSONObject("teacher");				
-			Log.e("ContentListResponse jsonTeacherBody", ""+jsonTeacherBody);
 		}catch (JSONException e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -184,24 +183,6 @@ public class ContentListResponse extends BaseJSONResponse {
 			recommendCourse.IsVideoDownload=0;
 			
 			recommendCourse.PackId = Integer.parseInt(PackId);
-			
-			Log.d("ContentListResponse Recommend 的描述内容******",
-			recommendCourse.btid+","
-			+recommendCourse.btname+","
-			+recommendCourse.id+","
-			+recommendCourse.titleName+","
-			+recommendCourse.cost+","
-			+recommendCourse.id+","
-			+recommendCourse.lesson+","
-			+recommendCourse.IsFree+","
-			+recommendCourse.AllProgress+","
-			+recommendCourse.IsAllDownload+","
-			+recommendCourse.AudioProgress+","
-			+recommendCourse.IsAudioDownload+","
-			+recommendCourse.VideoProgress+","
-			+recommendCourse.IsVideoDownload+","
-			+recommendCourse.PackId);
-			
 		}catch (JSONException e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -220,18 +201,11 @@ public class ContentListResponse extends BaseJSONResponse {
 					
 					try {
 						JSONObject jsonFirstTitle = ((JSONObject)data.opt(i));
-						Log.e("ContentListResponse jsonFirstTitle["+i+"]", ""+jsonFirstTitle);
-						try{			
-//							int tempBtId;
-//							String tempBtName;
-//							
-//							tempBtId=jsonFirstTitle.getInt("btid");		
-//							tempBtName=jsonFirstTitle.getString("btname");	
+						try{
 							btlist = jsonFirstTitle.getJSONArray("btlist");
 							if(btlist!=null&&btlist.length()!=0){
 								for(int j = 0;j<btlist.length();j++){
 									JSONObject jsonSecondTitle = ((JSONObject)btlist.opt(j));
-									Log.e("ContentListResponse jsonSecondTitle["+j+"]", ""+jsonSecondTitle);
 									CourseContent courseContent=new CourseContent();
 									courseContent.btid=jsonFirstTitle.getInt("btid");		
 									courseContent.btname=jsonFirstTitle.getString("btname");
@@ -256,23 +230,6 @@ public class ContentListResponse extends BaseJSONResponse {
 									
 									courseContent.PackId = Integer.parseInt(PackId);
 									courseList.add(courseContent);
-									
-									Log.d("ContentListResponse  courseContentList列表的描述内容******", 
-									courseContent.btid+","
-									+courseContent.btname+","
-									+courseContent.id+","
-									+courseContent.titleName+","
-									+courseContent.cost+","
-									+courseContent.id+","
-									+courseContent.lesson+","
-									+courseContent.IsFree+","
-									+courseContent.AllProgress+","
-									+courseContent.IsAllDownload+","
-									+courseContent.AudioProgress+","
-									+courseContent.IsAudioDownload+","
-									+courseContent.VideoProgress+","
-									+courseContent.IsVideoDownload+","
-									+courseContent.PackId);
 								}
 							}
 							

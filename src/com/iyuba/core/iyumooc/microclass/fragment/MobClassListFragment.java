@@ -30,29 +30,21 @@ import com.iyuba.configation.Constant;
 import com.iyuba.core.common.listener.OnActivityGroupKeyDown;
 import com.iyuba.core.common.manager.DataManager;
 import com.iyuba.core.common.manager.MobManager;
-import com.iyuba.core.common.network.ClientSession;
-import com.iyuba.core.common.network.IErrorReceiver;
-import com.iyuba.core.common.network.IResponseReceiver;
-import com.iyuba.core.common.protocol.BaseHttpRequest;
-import com.iyuba.core.common.protocol.BaseHttpResponse;
-import com.iyuba.core.common.protocol.ErrorResponse;
+import com.iyuba.core.common.util.MD5;
 import com.iyuba.core.common.util.NetWorkState;
 import com.iyuba.core.common.widget.RollViewPager;
 import com.iyuba.core.common.widget.dialog.CustomToast;
+import com.iyuba.core.iyumooc.microclass.API.CoursePackApiStores;
+import com.iyuba.core.iyumooc.microclass.API.CourseTypeApiStores;
 import com.iyuba.core.iyumooc.microclass.API.SlidePicApiStores;
+import com.iyuba.core.iyumooc.microclass.bean.CoursePackListBean;
+import com.iyuba.core.iyumooc.microclass.bean.CourseTypeListBean;
 import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.activity.MobileClassActivity;
 import com.iyuba.core.microclass.adapter.MobClassListAdapter;
 import com.iyuba.core.microclass.adapter.MobClassListTypeAdapter;
-import com.iyuba.core.microclass.protocol.CourseListRequest;
-import com.iyuba.core.microclass.protocol.CourseListResponse;
-import com.iyuba.core.microclass.protocol.CourseTypeListRequest;
-import com.iyuba.core.microclass.protocol.CourseTypeListResponse;
-import com.iyuba.core.microclass.sqlite.mode.CoursePack;
-import com.iyuba.core.microclass.sqlite.mode.CoursePackType;
 import com.iyuba.core.microclass.sqlite.op.CoursePackOp;
 import com.iyuba.core.microclass.sqlite.op.CoursePackTypeOp;
-import com.iyuba.lib.BuildConfig;
 import com.iyuba.lib.R;
 import com.youdao.sdk.nativeads.RequestParameters;
 import com.youdao.sdk.nativeads.RequestParameters.NativeAdAsset;
@@ -121,8 +113,8 @@ public class MobClassListFragment extends Fragment implements
 	private ArrayList<String> imageUrls = new ArrayList<String>();
 	// 用于存放滚动点的集合
 	private ArrayList<View> dot_list = new ArrayList<View>();
-	private ArrayList<CoursePack> coursePackArrayList = new ArrayList<CoursePack>();
-	private ArrayList<CoursePackType> coursePackTypes = new ArrayList<CoursePackType>();
+	private ArrayList<CoursePackListBean.CoursePackDataBean> coursePackArrayList = new ArrayList<>();
+	private ArrayList<CourseTypeListBean.CourseTypeDataBean> coursePackTypes = new ArrayList<>();
 
 	final EnumSet<NativeAdAsset> desiredAssets = EnumSet.of(
 			NativeAdAsset.TITLE,
@@ -183,7 +175,7 @@ public class MobClassListFragment extends Fragment implements
 		super.onResume();
 	}
 
-	public void initDefaultImageUrls(){
+	public void initDefaultImageUrls() {
 		DataManager.Instance().imageUrls.clear();
 		DataManager.Instance().imageUrls.add(PIC_BASE_URL + "upload/1430274693593.png");
 		DataManager.Instance().imageUrls.add(PIC_BASE_URL + "upload/1459324400736.png");
@@ -191,17 +183,17 @@ public class MobClassListFragment extends Fragment implements
 
 	}
 
-	public void initDefaultSlidePicData(){
+	public void initDefaultSlidePicData() {
 		DataManager.Instance().slideShowList.clear();
 		DataManager.Instance().slideShowList.add(
 				new SlideShowListBean.SlideShowDataBean("26", "8600", "托福听力",
-				"upload/1430274693593.png", "7", "听得好才能记得好"));
+						"upload/1430274693593.png", "7", "听得好才能记得好"));
 		DataManager.Instance().slideShowList.add(
 				new SlideShowListBean.SlideShowDataBean("803", "0", "雅思听力导学",
-				"upload/1459324400736.png", "61", "雅思听力导学"));
+						"upload/1459324400736.png", "61", "雅思听力导学"));
 		DataManager.Instance().slideShowList.add(
 				new SlideShowListBean.SlideShowDataBean("804", "0", "N1语法",
-				"upload/1459417381077.png", "61", "雅思口语入门"));
+						"upload/1459417381077.png", "61", "雅思口语入门"));
 
 	}
 
@@ -270,9 +262,9 @@ public class MobClassListFragment extends Fragment implements
 					public void onItemSelected(AdapterView<?> parent,
 											   View view, int position, long id) {
 						// TODO Auto-generated method stub
-						reqPackId = coursePackTypes.get(position).id + "";
-						reqPackType = coursePackTypes.get(position).type + "";
-						reqPackDesc = coursePackTypes.get(position).desc; // 对应的是轮播图片对应的请求字段，如"class.all"
+						reqPackId = coursePackTypes.get(position).getId() + "";
+						reqPackType = coursePackTypes.get(position).getType() + "";
+						reqPackDesc = coursePackTypes.get(position).getDesc(); // 对应的是轮播图片对应的请求字段，如"class.all"
 						pageNum = 1;
 						isLast = false;
 						handler.sendEmptyMessage(3);
@@ -304,20 +296,20 @@ public class MobClassListFragment extends Fragment implements
 			if (position > 1) {
 				mAdAdapter.getItem(position - 2);
 				// 之前是position-1，现在因为添加了ListView的Header，所以改成了position-2
-				curPackId = ((CoursePack) mAdAdapter.getItem(position - 2)).id;
-				curPackPrice = ((CoursePack) mAdAdapter.getItem(position - 2)).price;
+				curPackId = ((CoursePackListBean.CoursePackDataBean) mAdAdapter.getItem(position - 2)).getId();
+				curPackPrice = Double.parseDouble(((CoursePackListBean.CoursePackDataBean) mAdAdapter.getItem(position - 2)).getPrice());
 				MobManager.Instance().packid = curPackId;
-				MobManager.Instance().ownerid = ((CoursePack) mAdAdapter.getItem(position - 2)).ownerid;
+				MobManager.Instance().ownerid = Integer.parseInt(((CoursePackListBean.CoursePackDataBean) mAdAdapter.getItem(position - 2)).getOwnerid());
 				MobManager.Instance().appId = Constant.APPID;
-				MobManager.Instance().desc = ((CoursePack) mAdAdapter.getItem(position - 2)).desc;
+				MobManager.Instance().desc = ((CoursePackListBean.CoursePackDataBean) mAdAdapter.getItem(position - 2)).getDesc();
 				MobManager.Instance().curPackPrice = curPackPrice;
-				MobManager.Instance().CourseNum = ((CoursePack) mAdAdapter.getItem(position - 2)).classNum;
+				MobManager.Instance().CourseNum = ((CoursePackListBean.CoursePackDataBean) mAdAdapter.getItem(position - 2)).getClassNum();
 
 				intent.putExtra("packname",
-						((CoursePack) mAdAdapter.getItem(position - 2)).name);
+						((CoursePackListBean.CoursePackDataBean) mAdAdapter.getItem(position - 2)).getName());
 				intent.putExtra("position", position);
 				intent.putExtra("coursenum",
-						((CoursePack) mAdAdapter.getItem(position - 2)).classNum);
+						((CoursePackListBean.CoursePackDataBean) mAdAdapter.getItem(position - 2)).getClassNum());
 				intent.setClass(mContext, MobileClassActivity.class);
 				startActivity(intent);
 			}
@@ -326,55 +318,63 @@ public class MobClassListFragment extends Fragment implements
 
 	public void getPackTypeData() {
 
-		ClientSession.Instace().asynGetResponse(
-				// APPID pageNumber pageCounts
-				// 获取所有课程的列表
-				new CourseTypeListRequest(), new IResponseReceiver() {
+		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+		OkHttpClient client = new OkHttpClient.Builder()
+				.connectTimeout(10, TimeUnit.SECONDS)
+				.readTimeout(10, TimeUnit.SECONDS)
+				.addInterceptor(interceptor)
+				.build();
 
-					@Override
-					public void onResponse(BaseHttpResponse response,
-										   BaseHttpRequest request, int rspCookie) {
-						CourseTypeListResponse res = (CourseTypeListResponse) response;
-						if (res.result.equals("1")) {
-							if (res.courseTypeList.size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
-								// 则证明没有新的资讯类容，
-								// 无需刷新
-								// 以后可更改接口实现高效刷新
-								int flag = 0;
-								if (DataManager.Instance().courseTypeList
-										.size() == 0) {
-									flag = 1;
-								} else {
-									if (res.courseTypeList.size() > DataManager
-											.Instance().courseTypeList
-											.size()) {
-										flag = 1;
-									}
-								}
-								if (flag == 1) {
-									coursePackTypes.clear();
-									coursePackTypes.addAll(res.courseTypeList);
-									coursePackTypeOp.deleteCoursePackTypeData();
-									coursePackTypeOp.insertCoursePackType(coursePackTypes);
-									mobClassListTypeAdapter.clearList();// 清除原来的记录
-									mobClassListTypeAdapter.addList(res.courseTypeList);
-									handler.sendEmptyMessage(8);
-									handlerRefreshList.sendEmptyMessage(3);
+		Retrofit retrofit = new Retrofit.Builder()
+				.baseUrl("http://class.iyuba.com/")
+				.client(client)
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
 
-
-								}
+		CourseTypeApiStores courseTypeApiStores = retrofit.create(CourseTypeApiStores.class);
+		Call<CourseTypeListBean> call = courseTypeApiStores.getCourseTypeList(
+				"10103", "0", "806e43f1d3416670861ef3b187f6a27c");
+		call.enqueue(new Callback<CourseTypeListBean>() {
+			@Override
+			public void onResponse(Response<CourseTypeListBean> response) {
+				if (response.body().getResult() == 1) {
+					if (response.body().getData().size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
+						// 则证明没有新的资讯类容，
+						// 无需刷新
+						// 以后可更改接口实现高效刷新
+						int flag = 0;
+						if (DataManager.Instance().courseTypeList
+								.size() == 0) {
+							flag = 1;
+						} else {
+							if (response.body().getData().size() > DataManager
+									.Instance().courseTypeList
+									.size()) {
+								flag = 1;
 							}
 						}
-					}
-				}, new IErrorReceiver() {
+						if (flag == 1) {
+							coursePackTypes.clear();
+							coursePackTypes.addAll(response.body().getData());
+							coursePackTypeOp.deleteCoursePackTypeData();
+							coursePackTypeOp.insertCoursePackType(coursePackTypes);
+							mobClassListTypeAdapter.clearList();// 清除原来的记录
+							mobClassListTypeAdapter.addList(response.body().getData());
+							handler.sendEmptyMessage(8);
+							handlerRefreshList.sendEmptyMessage(3);
 
-					@Override
-					public void onError(ErrorResponse errorResponse,
-										BaseHttpRequest request, int rspCookie) {
-						// TODO Auto-generated method stub
-					}
 
-				}, null);
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable t) {
+
+			}
+		});
 
 	}
 
@@ -384,54 +384,65 @@ public class MobClassListFragment extends Fragment implements
 			handlerRefreshList.sendEmptyMessage(4);
 			return;
 		}
-		ClientSession.Instace().asynGetResponse(
-				// APPID pageNumber pageCounts
-				// 获取上拉加载课程的列表,将当前获取的课程列表与上拉加载返回的课程列表做比较，
-				new CourseListRequest(reqPackId, reqPackType,
-						pageNum + ""), new IResponseReceiver() {
-					@Override
-					public void onResponse(BaseHttpResponse response,
-										   BaseHttpRequest request, int rspCookie) {
-						CourseListResponse res = (CourseListResponse) response;
-						if (res.result.equals("1")) {
-							iLastPage = Integer.parseInt(res.lastPage);
-							if (iLastPage != pageNum) {
-								isLast = false;
-							} else if (iLastPage == pageNum || iLastPage == 0) {
-								isLast = true;
+
+		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+		OkHttpClient client = new OkHttpClient.Builder()
+				.connectTimeout(10, TimeUnit.SECONDS)
+				.readTimeout(10, TimeUnit.SECONDS)
+				.addInterceptor(interceptor)
+				.build();
+
+		Retrofit retrofit = new Retrofit.Builder()
+				.baseUrl("http://class.iyuba.com/")
+				.client(client)
+				.addConverterFactory(GsonConverterFactory.create())
+				.build();
+
+		CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
+		Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
+				"10102", reqPackId, "1", pageNum, 20, MD5.getMD5ofStr("10102class" + reqPackId));
+		call.enqueue(new Callback<CoursePackListBean>() {
+			@Override
+			public void onResponse(Response<CoursePackListBean> response) {
+				if (response != null && response.body().getResult() == 1) {
+					iLastPage = response.body().getLastPage();
+					if (iLastPage != pageNum) {
+						isLast = false;
+					} else if (iLastPage == pageNum || iLastPage == 0) {
+						isLast = true;
+					}
+					pageNum += 1;
+					if (response.body().getData().size() > 0) {
+						if (isClean) {
+							coursePackArrayList.clear();
+							coursePackArrayList.addAll(response.body().getData());
+							mobClassListAdapter.clearList();// 清除原来的记录
+							mobClassListAdapter.addList(response.body().getData());
+							handlerRefreshList.sendEmptyMessage(3);
+							if (reqPackId.equals("-2")) {
+								coursePackOp.deleteCoursePackData();
 							}
-							pageNum += 1;
-							if (res.courseList.size() > 0) {
-								if (isClean) {
-									coursePackArrayList.clear();
-									coursePackArrayList.addAll(res.courseList);
-									mobClassListAdapter.clearList();// 清除原来的记录
-									mobClassListAdapter.addList(res.courseList);
-									handlerRefreshList.sendEmptyMessage(3);
-									if (reqPackId.equals("-2")) {
-										coursePackOp.deleteCoursePackData();
-									}
-									coursePackOp.insertCoursePacks(coursePackArrayList);
-								} else {
-									mobClassListAdapter.clearList();// 清除原来的记录
-									coursePackArrayList.addAll(res.courseList);
-									mobClassListAdapter.addList(coursePackArrayList);
-								}
-								handlerRefreshList.sendEmptyMessage(3);
-								handler.sendEmptyMessage(2);
-							}
+							coursePackOp.insertCoursePacks(coursePackArrayList);
+						} else {
+							mobClassListAdapter.clearList();// 清除原来的记录
+							coursePackArrayList.addAll(response.body().getData());
+							mobClassListAdapter.addList(coursePackArrayList);
 						}
 						handlerRefreshList.sendEmptyMessage(3);
-
-					}
-				}, new IErrorReceiver() {
-					@Override
-					public void onError(ErrorResponse errorResponse, BaseHttpRequest request,
-										int rspCookie) {
-						// TODO Auto-generated method stub
 						handler.sendEmptyMessage(2);
 					}
-				}, null);
+				}
+				handlerRefreshList.sendEmptyMessage(3);
+			}
+
+			@Override
+			public void onFailure(Throwable t) {
+				handler.sendEmptyMessage(2);
+				handlerRefreshList.sendEmptyMessage(4);
+			}
+		});
+
 	}
 
 	private class GetPackTypeDataTask extends AsyncTask<Void, Void, String[]> {
@@ -546,36 +557,60 @@ public class MobClassListFragment extends Fragment implements
 					break;
 				// 联网取某个分类的课程
 				case 4:
-					ClientSession.Instace().asynGetResponse(
-							// APPID pageNumber pageCounts
-							// 获取所有课程的列表
-							new CourseListRequest(reqPackId, reqPackType, "1"),
-							new IResponseReceiver() {
-								@Override
-								public void onResponse(BaseHttpResponse response,
-													   BaseHttpRequest request, int rspCookie) {
-									CourseListResponse res = (CourseListResponse) response;
-									if (res.result.equals("1")) {
-										if (res.courseList.size() > 0) {
-											coursePackArrayList.clear();
-											coursePackArrayList.addAll(res.courseList);
-											mobClassListAdapter.clearList();// 清除原来的记录
-											mobClassListAdapter.addList(res.courseList);
-											handlerRefreshList.sendEmptyMessage(3);
-											if (!reqPackId.equals("-1")) {
-												try {
-													coursePackOp.insertCoursePacks(res.courseList);
-												} catch (Exception e) {
-													// TODO Auto-generated catch
-													// block
-													e.printStackTrace();
-												}
-											}
+					pageNum = 1;
+					HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+					interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+					OkHttpClient client = new OkHttpClient.Builder()
+							.connectTimeout(10, TimeUnit.SECONDS)
+							.readTimeout(10, TimeUnit.SECONDS)
+							.addInterceptor(interceptor)
+							.build();
+
+					Retrofit retrofit = new Retrofit.Builder()
+							.baseUrl("http://class.iyuba.com/")
+							.client(client)
+							.addConverterFactory(GsonConverterFactory.create())
+							.build();
+
+					CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
+					Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
+							"10102", reqPackId, "1", pageNum, 20, MD5.getMD5ofStr("10102class" + reqPackId));
+					call.enqueue(new retrofit2.Callback<CoursePackListBean>() {
+						@Override
+						public void onResponse(Response<CoursePackListBean> response) {
+							if (response.body().getResult() == 1) {
+								iLastPage = response.body().getLastPage();
+								if (iLastPage != pageNum) {
+									isLast = false;
+								} else if (iLastPage == pageNum || iLastPage == 0) {
+									isLast = true;
+								}
+								if (response.body().getData().size() > 0) {
+									coursePackArrayList.clear();
+									coursePackArrayList.addAll(response.body().getData());
+									mobClassListAdapter.clearList();// 清除原来的记录
+									mobClassListAdapter.addList(response.body().getData());
+									handlerRefreshList.sendEmptyMessage(3);
+									if (!reqPackId.equals("-1")) {
+										try {
+											coursePackOp.insertCoursePacks(response.body().getData());
+										} catch (Exception e) {
+											// TODO Auto-generated catch
+											// block
+											e.printStackTrace();
 										}
 									}
-									handler.sendEmptyMessage(2);
 								}
-							}, null, null);
+							}
+							handler.sendEmptyMessage(2);
+						}
+
+						@Override
+						public void onFailure(Throwable t) {
+							handler.sendEmptyMessage(2);
+						}
+					});
+
 					break;
 				case 6:
 					initSlideShowViewPicData();
@@ -589,8 +624,8 @@ public class MobClassListFragment extends Fragment implements
 					if (coursePackTypes.size() != 0 && coursePackArrayList.size() != 0 && imageUrls.size() != 0) {
 						if (classShowId == 0) {
 							for (int i = 0; i < coursePackTypes.size(); i++) {
-								CoursePackType cpt = coursePackTypes.get(i);
-								if (cpt.id == 21) {
+								CourseTypeListBean.CourseTypeDataBean cpt = coursePackTypes.get(i);
+								if (cpt.getId() == 21) {
 									classShowId = i;
 								}
 							}
@@ -753,10 +788,10 @@ public class MobClassListFragment extends Fragment implements
 		}
 	}
 
-	public ArrayList<String> getCoursePackIds(ArrayList<CoursePack> cpList) {
+	public ArrayList<String> getCoursePackIds(ArrayList<CoursePackListBean.CoursePackDataBean> cpList) {
 		ArrayList<String> cpIds = new ArrayList<>();
 		for (int i = 0; i < cpList.size(); i++) {
-			String tempId = coursePackArrayList.get(i).id + "";
+			String tempId = coursePackArrayList.get(i).getId() + "";
 			cpIds.add(tempId);
 		}
 		return cpIds;

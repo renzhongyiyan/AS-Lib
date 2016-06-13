@@ -80,8 +80,13 @@ public class AccountManager {
 		userName = nameAndPwd[0];
 		userPwd = nameAndPwd[1];
 		userInfo = new UserInfoOp(mContext).selectData(userId);
-		ConfigManager.Instance().putInt("isvip",
-				Integer.parseInt(userInfo.vipStatus));
+		if (userInfo != null) {
+			ConfigManager.Instance().putInt("isvip",
+					Integer.parseInt(userInfo.vipStatus));
+		}else{
+			ConfigManager.Instance().putInt("isvip", 0);
+		}
+
 	}
 
 	/**

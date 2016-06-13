@@ -29,7 +29,7 @@ public class ContextMenu extends LinearLayout {
 	private String[] operText;
 	private Context mContext;
 	private ResultIntCallBack mListener;
-	
+
 	public ContextMenu(Context context) {
 		super(context);
 		mContext = context;

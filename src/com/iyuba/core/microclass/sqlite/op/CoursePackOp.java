@@ -8,7 +8,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.iyuba.core.common.sqlite.db.DatabaseService;
-import com.iyuba.core.microclass.sqlite.mode.CoursePack;
+import com.iyuba.core.iyumooc.microclass.bean.CoursePackListBean;
 
 public class CoursePackOp extends DatabaseService {
 
@@ -31,7 +31,7 @@ public class CoursePackOp extends DatabaseService {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public synchronized void insertCoursePacks(List<CoursePack> courses){
+	public synchronized void insertCoursePacks(List<CoursePackListBean.CoursePackDataBean> courses){
 		if (courses != null && courses.size() != 0) {
 			String sqlString="insert or replace into " + TABLE_NAME_COURSEPACK + " (" + ID + ","
 					+ PRICE + "," + DESC + "," + NAME + ","
@@ -39,10 +39,10 @@ public class CoursePackOp extends DatabaseService {
 					+ REALPRICE + "," + VIEWCOUNT +") values(?,?,?,?,?,?,?,?,?)";
 			
 			for (int i = 0; i < courses.size(); i++) {
-				CoursePack course = courses.get(i);
-				Object[] objects=new Object[]{ course.id, course.price, course.desc,
-						course.name, course.ownerid,course.picUrl,course.classNum,
-						course.realprice,course.viewCount};
+				CoursePackListBean.CoursePackDataBean course = courses.get(i);
+				Object[] objects=new Object[]{ course.getId(), course.getPrice(), course.getDesc(),
+						course.getName(), course.getOwnerid(),course.getPic(),course.getClassNum(),
+						course.getRealprice(),course.getViewCount()};
 				importDatabase.openDatabase().execSQL(sqlString,objects);
 				
 				closeDatabase(null);
@@ -74,8 +74,8 @@ public class CoursePackOp extends DatabaseService {
 	 * 查找所有的移动课堂的课程包的信息
 	 * @return
 	 */
-	public synchronized ArrayList<CoursePack> findDataByAll() {
-		ArrayList<CoursePack> courses = new ArrayList<CoursePack>();
+	public synchronized ArrayList<CoursePackListBean.CoursePackDataBean> findDataByAll() {
+		ArrayList<CoursePackListBean.CoursePackDataBean> courses = new ArrayList<>();
 	
 		Cursor cursor = null;
 		try {
@@ -85,16 +85,16 @@ public class CoursePackOp extends DatabaseService {
 					"select *" + " from " + TABLE_NAME_COURSEPACK
 							, new String[] {});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-				CoursePack course = new CoursePack();
-				course.id = cursor.getInt(0);
-				course.price = cursor.getDouble(1);
-				course.desc = cursor.getString(2);
-				course.name = cursor.getString(3);
-				course.ownerid = cursor.getInt(4);
-				course.picUrl = cursor.getString(5);
-				course.classNum = cursor.getInt(6);
-				course.realprice = cursor.getDouble(7);
-				course.viewCount = cursor.getInt(8);
+				CoursePackListBean.CoursePackDataBean course = new CoursePackListBean.CoursePackDataBean();
+				course.setId(cursor.getInt(0));
+				course.setPrice(cursor.getString(1));
+				course.setDesc(cursor.getString(2));
+				course.setName(cursor.getString(3));
+				course.setOwnerid(cursor.getString(4));
+				course.setPic(cursor.getString(5));
+				course.setClassNum(cursor.getInt(6));
+				course.setRealprice(cursor.getString(7));
+				course.setViewCount(cursor.getInt(8));
 				courses.add(course);
 			}
 			cursor.close();
@@ -116,8 +116,8 @@ public class CoursePackOp extends DatabaseService {
 	 * 查找所有的移动课堂的课程包的信息
 	 * @return
 	 */
-	public synchronized ArrayList<CoursePack> findDataByOwnerId(String ownerId) {
-		ArrayList<CoursePack> courses = new ArrayList<CoursePack>();
+	public synchronized ArrayList<CoursePackListBean.CoursePackDataBean> findDataByOwnerId(String ownerId) {
+		ArrayList<CoursePackListBean.CoursePackDataBean> courses = new ArrayList<>();
 	
 		Cursor cursor = null;
 		try {
@@ -126,16 +126,16 @@ public class CoursePackOp extends DatabaseService {
 					"select *" + " from " + TABLE_NAME_COURSEPACK + " where " + OWNERID + "=" +ownerId
 							, new String[] {});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-				CoursePack course = new CoursePack();
-				course.id = cursor.getInt(0);
-				course.price = cursor.getDouble(1);
-				course.desc = cursor.getString(2);
-				course.name = cursor.getString(3);
-				course.ownerid = cursor.getInt(4);
-				course.picUrl = cursor.getString(5);
-				course.classNum = cursor.getInt(6);
-				course.realprice = cursor.getDouble(7);
-				course.viewCount = cursor.getInt(8);
+				CoursePackListBean.CoursePackDataBean course = new CoursePackListBean.CoursePackDataBean();
+				course.setId(cursor.getInt(0));
+				course.setPrice(cursor.getString(1));
+				course.setDesc(cursor.getString(2));
+				course.setName(cursor.getString(3));
+				course.setOwnerid(cursor.getString(4));
+				course.setPic(cursor.getString(5));
+				course.setClassNum(cursor.getInt(6));
+				course.setRealprice(cursor.getString(7));
+				course.setViewCount(cursor.getInt(8));
 				courses.add(course);
 			}
 			cursor.close();
@@ -156,9 +156,9 @@ public class CoursePackOp extends DatabaseService {
 	 * 
 	 * @return
 	 */
-	public synchronized ArrayList<CoursePack> findDataByPage(int count, int offset) {
+	public synchronized ArrayList<CoursePackListBean.CoursePackDataBean> findDataByPage(int count, int offset) {
 		
-		ArrayList<CoursePack> courses = new ArrayList<CoursePack>();
+		ArrayList<CoursePackListBean.CoursePackDataBean> courses = new ArrayList<>();
 		
 		Cursor cursor = null;
 		try {
@@ -167,16 +167,16 @@ public class CoursePackOp extends DatabaseService {
 					"select *" + " from " + TABLE_NAME_COURSEPACK + " Limit " + count + " Offset " + offset
 							, new String[] {});
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-				CoursePack course = new CoursePack();
-				course.id = cursor.getInt(0);
-				course.price = cursor.getDouble(1);
-				course.desc = cursor.getString(2);
-				course.name = cursor.getString(3);
-				course.ownerid = cursor.getInt(4);
-				course.picUrl = cursor.getString(5);
-				course.classNum = cursor.getInt(6);
-				course.realprice = cursor.getDouble(7);
-				course.viewCount = cursor.getInt(8);
+				CoursePackListBean.CoursePackDataBean course = new CoursePackListBean.CoursePackDataBean();
+				course.setId(cursor.getInt(0));
+				course.setPrice(cursor.getString(1));
+				course.setDesc(cursor.getString(2));
+				course.setName(cursor.getString(3));
+				course.setOwnerid(cursor.getString(4));
+				course.setPic(cursor.getString(5));
+				course.setClassNum(cursor.getInt(6));
+				course.setRealprice(cursor.getString(7));
+				course.setViewCount(cursor.getInt(8));
 				courses.add(course);
 			}
 			cursor.close();

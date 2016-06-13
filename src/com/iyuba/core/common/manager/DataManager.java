@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.w3c.dom.Text;
 
 import com.iyuba.core.discover.sqlite.mode.BlogContent;
+import com.iyuba.core.iyumooc.microclass.bean.CoursePackListBean;
+import com.iyuba.core.iyumooc.microclass.bean.CourseTypeListBean;
 import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.sqlite.mode.CourseContent;
 import com.iyuba.core.microclass.sqlite.mode.CoursePack;
@@ -37,8 +39,8 @@ public class DataManager {
 //	public ArrayList<FavoriteWord> favWordList=null;//收藏的单词的列表 
 //	public ArrayList<TitleInfo> favTitleInfoList=null;//收藏的文章列表
 //	public ArrayList<BlogContent> blogList=new ArrayList<BlogContent>();//资讯列表
-	public ArrayList<CoursePack> courseList = new ArrayList<CoursePack>();//移动课堂课程列表
-	public ArrayList<CoursePackType> courseTypeList = new ArrayList<CoursePackType>();
+	public ArrayList<CoursePackListBean.CoursePackDataBean> courseList = new ArrayList<>();//移动课堂课程列表
+	public ArrayList<CourseTypeListBean.CourseTypeDataBean> courseTypeList = new ArrayList<>();
 	public User user=null;
 	public ArrayList<CourseContent> courseContentList = new ArrayList<CourseContent>();//移动课堂内容列表
 	public ArrayList<CourseContent> downloadCourseContentList = new ArrayList<CourseContent>();//某个包中已下载的移动课堂内容列表
