@@ -46,6 +46,8 @@ import com.iyuba.core.common.widget.BackPlayer;
 import com.iyuba.core.common.widget.dialog.CustomToast;
 import com.iyuba.core.microclass.protocol.AddCreditsRequest;
 import com.iyuba.core.microclass.protocol.AddCreditsResponse;
+import com.iyuba.core.microclass.protocol.MbTextRequest;
+import com.iyuba.core.microclass.protocol.MbTextResponse;
 import com.iyuba.core.microclass.protocol.UploadStudyRecordRequest;
 import com.iyuba.core.microclass.protocol.UploadStudyRecordResponse;
 import com.iyuba.core.microclass.protocol.ViewCountTitleRequest;
@@ -177,6 +179,9 @@ public class MobClassBase extends BasisActivity {
 
 		try {
 			mbList = mobClassResOp.findSpecialCourseResourceData(TitleId);
+			if(mbList == null || mbList.size() == 0){
+				handler.sendEmptyMessage(11);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -210,6 +215,16 @@ public class MobClassBase extends BasisActivity {
 	}
 
 	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		if(vv != null && bLocalPlayAvai){
+			vv.start();
+			makeupStartPointStudyInfo(studyRecordInfo);
+		}
+	}
+
+	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
@@ -222,23 +237,18 @@ public class MobClassBase extends BasisActivity {
 	}
 
 	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		if(vv != null && bLocalPlayAvai){
-			vv.start();
-			makeupStartPointStudyInfo(studyRecordInfo);
-		}
-	}
-
-
-	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		vv.stopPlayback();
+		// 移除所有的callback和msg
+		mTimer.cancel();
+		handler.removeCallbacksAndMessages(null);
+		videoHandler.removeCallbacksAndMessages(null);
+		handleProgress.removeCallbacksAndMessages(null);
 
 	}
+
 
 	public void initData() {
 		OwnerId = MobManager.Instance().ownerid + "";
@@ -469,6 +479,33 @@ public class MobClassBase extends BasisActivity {
 
 	public void uploadStudyRecordInfo(StudyRecordInfo studyRecordInfo) {
 		new UploadStudyRecordTask().execute(studyRecordInfo);
+	}
+
+	private void getMbTextInfo(String titleid, String packid) {
+		ExeProtocol.exe(new MbTextRequest(titleid , packid ),
+				new ProtocolResponse() {
+					@Override
+					public void finish(BaseHttpResponse bhr) {
+						// TODO Auto-generated method stub
+						Looper.prepare();
+						MbTextResponse res = (MbTextResponse) bhr;
+						if (res.result.equals("1")) {
+							mbList.clear();
+							mbList.addAll(res.mbTextList);
+							mobClassResOp.insertMbText(res.mbTextList);
+						}else{
+							handler.sendEmptyMessage(10);
+						}
+						Looper.loop();
+					}
+
+					@Override
+					public void error() {
+						// TODO Auto-generated method stub
+						Log.d("MbTextResponse", "Response error");
+						handler.sendEmptyMessage(10);
+					}
+				});
 	}
 
 	private void initPlayer() {
@@ -896,8 +933,15 @@ public class MobClassBase extends BasisActivity {
 				case 9:
 					Toast.makeText(mContext, "您已分享过该课程，请换个课程！", Toast.LENGTH_SHORT).show();
 					break;
+				case 10:
+					CustomToast.showToast(mContext, "网络状况较差,请稍后重试……");
+					break;
+				case 11:
+					getMbTextInfo(TitleId,PackId);
+					break;
 			}
 		}
+
 	};
 
 	private class AddCreditsTask extends AsyncTask<Void, Void, String[]> {

@@ -21,13 +21,16 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.iyuba.configation.Constant;
+import com.iyuba.core.common.activity.Web;
 import com.iyuba.core.common.listener.OnActivityGroupKeyDown;
+import com.iyuba.core.common.manager.AccountManager;
 import com.iyuba.core.common.manager.DataManager;
 import com.iyuba.core.common.manager.MobManager;
 import com.iyuba.core.common.util.MD5;
@@ -91,6 +94,8 @@ public class MobClassListFragment extends Fragment implements
 	private LinearLayout top_news_viewpager;
 	// 轮播图片指引(圆点)的布局
 	private LinearLayout dots_ll;
+	// 轮播图描述文字
+	private TextView tv_desc_title;
 
 	private View view;
 	private View backView;
@@ -111,6 +116,8 @@ public class MobClassListFragment extends Fragment implements
 	private List<SlideShowListBean.SlideShowDataBean> ssCourseList = new ArrayList<SlideShowListBean.SlideShowDataBean>();
 	// 用于存放图片地址的集合
 	private ArrayList<String> imageUrls = new ArrayList<String>();
+	// 用于存放标题内容的集合
+	private ArrayList<String> titleList = new ArrayList<String>();
 	// 用于存放滚动点的集合
 	private ArrayList<View> dot_list = new ArrayList<View>();
 	private ArrayList<CoursePackListBean.CoursePackDataBean> coursePackArrayList = new ArrayList<>();
@@ -183,6 +190,14 @@ public class MobClassListFragment extends Fragment implements
 
 	}
 
+	public void initDefaultTitleList() {
+		DataManager.Instance().titleList.clear();
+		DataManager.Instance().titleList.add("听得好才能记得好");
+		DataManager.Instance().titleList.add("雅思听力导学");
+		DataManager.Instance().titleList.add("雅思口语入门");
+
+	}
+
 	public void initDefaultSlidePicData() {
 		DataManager.Instance().slideShowList.clear();
 		DataManager.Instance().slideShowList.add(
@@ -210,6 +225,8 @@ public class MobClassListFragment extends Fragment implements
 				.findViewById(R.id.top_sliding_viewpager);
 		dots_ll = (LinearLayout) layout_roll_view
 				.findViewById(R.id.dots_ll_ongoing);
+		tv_desc_title = (TextView) layout_roll_view
+				.findViewById(R.id.top_news_title);
 
 		mobClassListAdapter = new MobClassListAdapter(mContext,
 				coursePackArrayList);
@@ -715,6 +732,7 @@ public class MobClassListFragment extends Fragment implements
 						ssCourseList.clear();
 						ssCourseList.addAll(response.body().getData());
 						imageUrls.clear();
+						titleList.clear();
 						for (int i = 0; i < response.body().getData()
 								.size(); i++) {
 							if (!imageUrls
@@ -727,6 +745,12 @@ public class MobClassListFragment extends Fragment implements
 								Log.e("SlideShowCourseList" + i,
 										response.body().getData().get(i).getName());
 							}
+							if (!titleList
+									.contains(response.body().getData()
+											.get(i).getDesc1())) {
+								titleList.add(response.body().getData()
+										.get(i).getDesc1());
+							}
 						}
 					}
 					//添加底部的点、为轮播图添加点击处理事件
@@ -734,9 +758,12 @@ public class MobClassListFragment extends Fragment implements
 				} else {
 					Log.e("执行轮播图片请求异常：", "异常中222！！！");
 					imageUrls.clear();
+					titleList.clear();
 					initDefaultImageUrls();
-					imageUrls.addAll(DataManager.Instance().imageUrls);
+					initDefaultTitleList();
 
+					imageUrls.addAll(DataManager.Instance().imageUrls);
+					titleList.addAll(DataManager.Instance().titleList);
 					ssCourseList.clear();
 					initDefaultSlidePicData();
 					ssCourseList.addAll(DataManager.Instance().slideShowList);
@@ -750,9 +777,11 @@ public class MobClassListFragment extends Fragment implements
 			public void onFailure(Throwable t) {
 				Log.e("执行轮播图片请求异常：", "异常中333！！！");
 				imageUrls.clear();
+				titleList.clear();
 				initDefaultImageUrls();
+				initDefaultTitleList();
 				imageUrls.addAll(DataManager.Instance().imageUrls);
-
+				titleList.addAll(DataManager.Instance().titleList);
 				ssCourseList.clear();
 				initDefaultSlidePicData();
 				ssCourseList.addAll(DataManager.Instance().slideShowList);
@@ -829,6 +858,12 @@ public class MobClassListFragment extends Fragment implements
 										MobileClassActivity.class);
 								if (curPackId != 0 && isContainsClick) {
 									startActivity(intent);
+								}else if(curPackId == 0 && ssCourse.getName()!=null){
+									intent.setClass(mContext, Web.class);
+									intent.putExtra("url", ssCourse.getName());
+									intent.putExtra("title",
+											ssCourse.getDesc1());
+									startActivity(intent);
 								}
 
 							}
@@ -836,6 +871,7 @@ public class MobClassListFragment extends Fragment implements
 						// 将图片地址添加到轮播图中
 						rollViewPager.initSlideShowCourseList(ssCourseList);
 						rollViewPager.initImgUrl(imageUrls);
+						rollViewPager.initTitle(titleList,tv_desc_title);
 						rollViewPager.startRoll();
 						top_news_viewpager.removeAllViews();
 						top_news_viewpager.addView(rollViewPager);
@@ -849,6 +885,7 @@ public class MobClassListFragment extends Fragment implements
 						});
 						// 将图片地址添加到轮播图中
 						rollViewPager.initImgUrl(imageUrls);
+						rollViewPager.initTitle(titleList,tv_desc_title);
 						rollViewPager.startRoll();
 						top_news_viewpager.removeAllViews();
 						top_news_viewpager.addView(rollViewPager);

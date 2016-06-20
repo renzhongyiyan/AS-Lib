@@ -3,6 +3,7 @@ package com.iyuba.core.microclass.activity;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -29,8 +30,8 @@ import com.iyuba.lib.R;
 public class DelCourseDataActivity extends Activity {
 
 	private Context mContext;
-	private ArrayList<DelCourseDataInfo> delCourseDataInfos = new ArrayList<DelCourseDataInfo>();
-	private ArrayList<CourseContent> allCourseContents = new ArrayList<CourseContent>();
+	private ArrayList<DelCourseDataInfo> delCourseDataInfos = new ArrayList<>();
+	private ArrayList<CourseContent> allCourseContents = new ArrayList<>();
 	private DeleCourseDataListAdapter deleDataListAdapter;
 	private CourseContentOp courseContentOp;
 
@@ -106,9 +107,7 @@ public class DelCourseDataActivity extends Activity {
 			File[] files=file.listFiles();
 			if(files!=null){
 				resFileList=new ArrayList<File>();
-				for(int i=0;i<files.length;i++){
-					resFileList.add(files[i]);
-				}
+				Collections.addAll(resFileList, files);
 			}
 		}
 	}

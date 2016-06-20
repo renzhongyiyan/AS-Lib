@@ -1,15 +1,7 @@
 package com.iyuba.core.microclass.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -22,35 +14,22 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
-import com.iyuba.core.common.activity.Web;
 import com.iyuba.core.common.listener.ProtocolResponse;
 import com.iyuba.core.common.manager.AccountManager;
 import com.iyuba.core.common.manager.DataManager;
 import com.iyuba.core.common.manager.MobManager;
 import com.iyuba.core.common.protocol.BaseHttpResponse;
 import com.iyuba.core.common.util.ExeProtocol;
-import com.iyuba.core.common.util.MD5;
 import com.iyuba.core.common.util.NetWorkState;
 import com.iyuba.core.common.widget.dialog.CustomDialog;
 import com.iyuba.core.common.widget.dialog.WaittingDialog;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshViewHeader;
 import com.iyuba.core.common.widget.pulltorefresh.PullToRefreshViewHeader.OnHeaderRefreshListener;
-import com.iyuba.core.downloadprovider.downloads.DownloadInfoSimp;
-import com.iyuba.core.downloadprovider.downloads.DownloadManagerProxy;
-import com.iyuba.core.downloadprovider.downloads.DownloadState;
-import com.iyuba.core.downloadprovider.downloads.providers.DownloadManager;
-import com.iyuba.core.microclass.activity.MobClassBase;
 import com.iyuba.core.microclass.adapter.MobClassContentExpandListAdapter;
-import com.iyuba.core.microclass.protocol.CheckAmountRequest;
-import com.iyuba.core.microclass.protocol.CheckAmountResponse;
 import com.iyuba.core.microclass.protocol.ContentListRequest;
 import com.iyuba.core.microclass.protocol.ContentListResponse;
 import com.iyuba.core.microclass.protocol.GetPayedCourseInfoRequest;
 import com.iyuba.core.microclass.protocol.GetPayedCourseInfoResponse;
-import com.iyuba.core.microclass.protocol.PayCourseAmountRequest;
-import com.iyuba.core.microclass.protocol.PayCourseAmountResponse;
-import com.iyuba.core.microclass.protocol.ViewCountPackRequest;
-import com.iyuba.core.microclass.protocol.ViewCountPackResponse;
 import com.iyuba.core.microclass.sqlite.mode.CourseContent;
 import com.iyuba.core.microclass.sqlite.mode.FirstTitleInfo;
 import com.iyuba.core.microclass.sqlite.mode.MbText;
@@ -59,6 +38,9 @@ import com.iyuba.core.microclass.sqlite.mode.SecondTitleInfo;
 import com.iyuba.core.microclass.sqlite.op.CourseContentOp;
 import com.iyuba.core.microclass.sqlite.op.MobClassResOp;
 import com.iyuba.lib.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ContentListFragment extends Fragment{
 
@@ -91,8 +73,6 @@ public class ContentListFragment extends Fragment{
 	private ArrayList<SecondTitleInfo> courseContentSecTitle = new ArrayList<SecondTitleInfo>();
 	private ArrayList<CourseContent> btCourseContentList = new ArrayList<CourseContent>();
 
-	DownloadManager mDownloadManager;
-	DownloadManagerProxy proxy;
 	@Override
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
@@ -104,9 +84,6 @@ public class ContentListFragment extends Fragment{
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
 
-		mDownloadManager = new DownloadManager(mContext.getContentResolver(),
-				mContext.getPackageName());
-		proxy = DownloadManagerProxy.getInstance(mContext);
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -155,14 +132,6 @@ public class ContentListFragment extends Fragment{
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-//		for(int i = 0;i < courseContentList.size();i++){
-//			DownloadInfoSimp info = proxy.query(courseContentList.get(i).id);
-//			if (info != null && info.state == DownloadState.STATUS_RUNNING) {
-//				if(proxy != null){
-//					proxy.removeDownload(courseContentList.get(i).id);
-//				}
-//			}
-//		}
 	}
 	@Override
 	public void onDetach() {
@@ -242,7 +211,7 @@ public class ContentListFragment extends Fragment{
 								Looper.prepare();
 								GetPayedCourseInfoResponse res = (GetPayedCourseInfoResponse) bhr;
 								if (res.result.equals("1")) {
-									Log.d("GetPayedCourseInfo的结果为1", "结果为1");
+									Log.w("ContentListFragment:", "GetPayedCourseInfo结果为1");
 									payedCourseRecord.clear();
 									payedCourseRecord.addAll(res.pcrList);
 									CostedPrice = 0.0;
@@ -253,6 +222,10 @@ public class ContentListFragment extends Fragment{
 												.parseDouble(payedCourseRecord
 														.get(count).Amount);
 									}
+								}else{
+									handler.sendEmptyMessage(1);
+									handler.sendEmptyMessage(4);
+									handler.sendEmptyMessage(7);
 								}
 
 								handlerRequest.sendEmptyMessage(1);
@@ -261,8 +234,10 @@ public class ContentListFragment extends Fragment{
 							@Override
 							public void error() {
 								// TODO Auto-generated method stub
-								Log.d("PayedCourseResponse", "Response error");
 								handler.sendEmptyMessage(1);
+								handler.sendEmptyMessage(4);
+								handler.sendEmptyMessage(7);
+								Log.w("ContentListFragment:", "GetPayedCourseInfo Error!");
 							}
 						});
 				break;
@@ -277,6 +252,7 @@ public class ContentListFragment extends Fragment{
 									Looper.prepare();
 									ContentListResponse res = (ContentListResponse) bhr;
 									if (res.result.equals("1")) {
+										Log.w("ContentListFragment:", "ContentList结果为1");
 										try {
 											Message msgvc = new Message();
 											msgvc.arg1 = res.cpdi.viewCount;
@@ -321,20 +297,30 @@ public class ContentListFragment extends Fragment{
 										handler.sendEmptyMessage(1);
 										handler.sendEmptyMessage(7);
 										handler.sendEmptyMessage(3);
+									}else{
+										handler.sendEmptyMessage(1);
+										handler.sendEmptyMessage(4);
+										handler.sendEmptyMessage(7);
 									}
 									Looper.loop();
 								}
+
 								@Override
 								public void error() {
 									// TODO Auto-generated method stub
-									Log.d("ContentListResponse","Response error");
+									Log.d("ContentListResponse","ContentList error");
 									handler.sendEmptyMessage(1);
+									handler.sendEmptyMessage(4);
+									handler.sendEmptyMessage(7);
 								}
 							});
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					handler.sendEmptyMessage(1);
+					handler.sendEmptyMessage(4);
+					handler.sendEmptyMessage(7);
+					Log.w("ContentListFragment:", "ContentList Error!");
 				}
 			break;
 			case 2:
@@ -344,35 +330,6 @@ public class ContentListFragment extends Fragment{
 			case 4:
 				break;
 			case 5:
-				break;
-			//增加包浏览量
-			case 6:
-				try {
-					ExeProtocol.exe(new ViewCountPackRequest(String.valueOf(PackId)), 
-							new ProtocolResponse(){
-							@Override
-							public void finish(BaseHttpResponse bhr) {
-								// TODO Auto-generated method stub
-								Looper.prepare();
-								ViewCountPackResponse res = (ViewCountPackResponse) bhr;
-								if (res.ResultCode.equals("1")) {
-									Toast.makeText(mContext, "获取浏览量正确！",Toast.LENGTH_SHORT).show();
-								} else {
-									Toast.makeText(mContext, "获取浏览量出错！",Toast.LENGTH_SHORT).show();
-								}
-								Looper.loop();
-							}
-							@Override
-							public void error() {
-								// TODO Auto-generated method stub
-								handler.sendEmptyMessage(1);
-							}
-						});
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					handler.sendEmptyMessage(1);
-				}
 				break;
 			case 7:
 				if(DataManager.Instance().downloadCourseContentList != null 
@@ -436,10 +393,9 @@ public class ContentListFragment extends Fragment{
 				}
 				break;
 			case 4:
+				Toast.makeText(mContext,"网络状况较差,请稍后重试……",Toast.LENGTH_SHORT).show();
 				break;
 			case 5:
-				break;
-			case 6:
 				break;
 			case 7:
 				refreshCourseContentView.onHeaderRefreshComplete();

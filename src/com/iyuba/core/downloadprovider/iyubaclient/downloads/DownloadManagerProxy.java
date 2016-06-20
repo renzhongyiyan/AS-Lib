@@ -109,7 +109,9 @@ public class DownloadManagerProxy {
 	}
 	
 	public void removeDownload(int voaId) {
-		mDownloadManager.remove(idMap.get(voaId));
+		if(idMap !=null && idMap.get(voaId) != null){
+			mDownloadManager.remove(idMap.get(voaId));
+		}
 	}
 
 	public DownloadInfoSimp query(int voaId) {

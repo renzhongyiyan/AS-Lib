@@ -447,8 +447,7 @@ public class MobileClassActivity extends BasisActivity {
 								@Override
 								public void error() {
 									// TODO Auto-generated method stub
-									Log.d("ContentListResponse",
-											"Response error");
+									Log.d("ContentListResponse", "Response error");
 								}
 							});
 				} catch (Exception e) {
@@ -482,8 +481,6 @@ public class MobileClassActivity extends BasisActivity {
 								handlerRequest.sendEmptyMessage(3);
 								handler.sendEmptyMessage(1);
 								
-							} else {
-								Toast.makeText(mContext, "获取评星等级出错！",0);
 							}
 							Looper.loop();
 						}
@@ -543,9 +540,7 @@ public class MobileClassActivity extends BasisActivity {
 								ViewCountPackResponse res = (ViewCountPackResponse) bhr;
 
 								if (res.ResultCode.equals("1")) {
-									Toast.makeText(mContext, "获取浏览量正确！",1000);
-								} else {
-									Toast.makeText(mContext, "获取浏览量出错！",1000);
+									Log.w("MobileClassActivity:", "ViewCount结果为1");
 								}
 								Looper.loop();
 							}
@@ -581,7 +576,7 @@ public class MobileClassActivity extends BasisActivity {
 //				wettingDialog.dismiss();
 				break;
 			case 2:
-				Toast.makeText(mContext, R.string.play_check_network, 1000).show();
+				Toast.makeText(mContext, R.string.play_check_network, Toast.LENGTH_SHORT).show();
 				break;
 			case 4:
 				new Thread(runnableClassBgImage).start();
@@ -622,8 +617,6 @@ public class MobileClassActivity extends BasisActivity {
 								Log.e("starts:", stars+"");
 								Log.e("userCounts:", userCounts+"");
 								Log.e("scroingStars:", scroingStars+"");
-							} else {
-								Toast.makeText(mContext, "获取评星等级出错！",0);
 							}
 							Looper.loop();
 						}
@@ -658,8 +651,6 @@ public class MobileClassActivity extends BasisActivity {
 					if (res.resultCode.equals("511")) {
 						stars = res.starCounts;
 						Log.d("starts:", stars+"");
-					} else {
-						Toast.makeText(mContext, "获取评星等级出错！",0);
 					}
 					Looper.loop();
 				}

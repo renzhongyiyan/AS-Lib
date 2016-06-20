@@ -1,5 +1,7 @@
 package com.iyuba.core.microclass.protocol;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,7 +26,7 @@ public class MbTextRequest extends BaseJSONRequest{
 		this.packId = packid;
 		setAbsoluteURI("http://class.iyuba.com/getClass.iyuba?protocol=10003&id="+this.id
 				+"&sign="+MD5.getMD5ofStr("10003class"+this.id));
-		System.out.println("http://class.iyuba.com/getClass.iyuba?protocol=10003&id="+this.id
+		Log.w("MbTextRequest:","http://class.iyuba.com/getClass.iyuba?protocol=10003&id="+this.id
 				+"&sign="+MD5.getMD5ofStr("10003class"+this.id));
 	}
 	

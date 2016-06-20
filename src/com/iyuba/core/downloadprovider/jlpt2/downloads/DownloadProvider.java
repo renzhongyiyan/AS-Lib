@@ -19,6 +19,7 @@ package com.iyuba.core.downloadprovider.jlpt2.downloads;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -112,9 +113,7 @@ public final class DownloadProvider extends ContentProvider {
     private static HashSet<String> sAppReadableColumnsSet;
     static {
 	sAppReadableColumnsSet = new HashSet<String>();
-	for (int i = 0; i < sAppReadableColumnsArray.length; ++i) {
-	    sAppReadableColumnsSet.add(sAppReadableColumnsArray[i]);
-	}
+		Collections.addAll(sAppReadableColumnsSet, sAppReadableColumnsArray);
     }
 
     /** The database that lies underneath this content provider */

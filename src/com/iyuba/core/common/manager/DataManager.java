@@ -54,5 +54,6 @@ public class DataManager {
 
 	public ArrayList<SlideShowListBean.SlideShowDataBean> slideShowList = new ArrayList<>();
 	public ArrayList<String> imageUrls = new ArrayList<>();
+	public ArrayList<String> titleList = new ArrayList<>();
 }
 

@@ -96,11 +96,11 @@ public class DeleCourseDataListAdapter extends BaseAdapter {
 		viewHolder.tvCourseName.setText(tmp.CourseName);
 		viewHolder.tvDataSize.setText(tmp.strSize);
 		
-		if (ediCondList.get(position).switchState == 0) {
+		if (position < ediCondList.size() && ediCondList.get(position).switchState == 0) {
 			viewHolder.ivDelCourse.setVisibility(View.INVISIBLE);
 		} else {
 			viewHolder.ivDelCourse.setVisibility(View.VISIBLE);
-			if (ediCondList.get(position).switchState == 1) {
+			if (position < ediCondList.size() && ediCondList.get(position).switchState == 1) {
 				viewHolder.ivDelCourse.setImageResource(R.drawable.delete_course_normal);
 			} else {
 				viewHolder.ivDelCourse.setImageResource(R.drawable.delete_course_selected);

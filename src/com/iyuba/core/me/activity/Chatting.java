@@ -305,7 +305,7 @@ public class Chatting extends BasisActivity {
 				chatContent.setSelection(0);
 				break;
 			case 6:
-				Toast.makeText(mContext, "+"+jiFen+"积分！", 3000).show();
+				Toast.makeText(mContext, "+"+jiFen+"积分！", Toast.LENGTH_SHORT).show();
 				break;
 			case 10:
 				// 发送私信
