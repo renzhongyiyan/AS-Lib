@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/.." />
+            <option value="$PROJECT_DIR$/../HeadNewsLib" />
+            <option value="$PROJECT_DIR$/../MobCommonLibraries" />
+            <option value="$PROJECT_DIR$/../MultiThreadDownloader" />
+            <option value="$PROJECT_DIR$/../NineOldAndroidLibrary" />
+            <option value="$PROJECT_DIR$/../OneKeyShareNew" />
+            <option value="$PROJECT_DIR$/../PullToRefresh-library" />
+            <option value="$PROJECT_DIR$/../SMSSDK" />
+            <option value="$PROJECT_DIR$/../ShareSDK" />
+            <option value="$PROJECT_DIR$/../UniversalMusicPlayer" />
+            <option value="$PROJECT_DIR$/../appRetrofit" />
+            <option value="$PROJECT_DIR$/../configation" />
+            <option value="$PROJECT_DIR$/../configationForClient" />
+            <option value="$PROJECT_DIR$/../http233" />
+            <option value="$PROJECT_DIR$/../iYuLive" />
+            <option value="$PROJECT_DIR$/../iYuMicroClass" />
+            <option value="$PROJECT_DIR$/../iyuMooc" />
+            <option value="$PROJECT_DIR$/../iyuba" />
+            <option value="$PROJECT_DIR$/../iyubaZhongZhi" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/../library" />
+            <option value="$PROJECT_DIR$/../libraryMultiThreadDownload" />
+            <option value="$PROJECT_DIR$/../test-jcenter-lib" />
+            <option value="$PROJECT_DIR$/../testJcenterLib" />
+            <option value="$PROJECT_DIR$/../wheel" />
+          </set>
+        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

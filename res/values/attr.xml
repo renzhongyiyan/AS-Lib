@@ -2,11 +2,11 @@
 <resources>
 
     <declare-styleable name="circleProgressBar">
-        <attr name="circleColor" format="color" />
-        <attr name="circleProgressColor" format="color" />
+        <attr name="circleColor" format="color"/>
+        <attr name="circleProgressColor" format="color"/>
         <attr name="circleWidth" format="dimension"></attr>
-        <attr name="textColor" format="color" />
-        <attr name="textSize" format="dimension" />
+        <attr name="textColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
         <attr name="max" format="integer"></attr>
         <attr name="textIsDisplayable" format="boolean"></attr>
         <attr name="style">
@@ -15,9 +15,47 @@
         </attr>
     </declare-styleable>
     <declare-styleable name="CircularImageView">
-        <attr name="border_thickness" format="dimension" />
-        <attr name="border_outside_color" format="color" />
-        <attr name="border_inside_color" format="color" />
-    	</declare-styleable>
+        <attr name="border_thickness" format="dimension"/>
+        <attr name="border_outside_color" format="color"/>
+        <attr name="border_inside_color" format="color"/>
+    </declare-styleable>
+    <declare-styleable name="myswiperefreshlayout">
+        <attr name="direction">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+            <enum name="both" value="2" />
+        </attr>
+    </declare-styleable>
 
+    <declare-styleable name="dotview">
+        <attr name="dotview_size" format="dimension" />
+        <attr name="dotview_color" format="color" />
+    </declare-styleable>
+    <declare-styleable name="ChangeColorIconView">
+        <attr name="cci_icon" format="reference" />
+        <attr name="cci_color" format="color" />
+        <attr name="cci_text" format="string" />
+        <attr name="cci_text_color" format="color" />
+        <attr name="cci_text_size" format="dimension" />
+        <attr name="cci_alpha" format="float"/>
+    </declare-styleable>
+    <declare-styleable name="PageIndicator">
+        <attr name="pi_strokecolor" format="color" />
+        <attr name="pi_fillcolor" format="color" />
+        <attr name="pi_hightlightcolor" format="color" />
+        <attr name="pi_stroke" format="dimension" />
+        <attr name="pi_radius" format="dimension" />
+        <attr name="pi_count" format="integer" />
+        <attr name="pi_circlepadding" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="TabIndicator">
+        <attr name="tab_item_count" format="integer"/>
+        <attr name="tab_shape">
+            <enum name="TRIANGLE" value="0"></enum>
+            <enum name="LINE" value="1"></enum>
+        </attr>
+        <attr name="tab_normal_color" format="color" />
+        <attr name="tab_highlight_color" format="color" />
+        <attr name="tab_indicator_color" format="color" />
+    </declare-styleable>
 </resources>

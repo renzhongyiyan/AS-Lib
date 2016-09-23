@@ -62,7 +62,6 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 		mContext = context;
 		setAbilityTypeCatalog();
 		setAppTypeCatalog();
-
 	}
 
 	@Override
@@ -338,7 +337,6 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			return format.format(date);
 		}
-
 	}
 
 	public  void setAbilityTypeCatalog(){
@@ -447,7 +445,6 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 				break;
 
 			}
-
 		}
 	};
 

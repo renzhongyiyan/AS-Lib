@@ -29,6 +29,7 @@ import com.iyuba.core.discover.activity.SearchFriend;
 import com.iyuba.core.discover.activity.SearchWord;
 import com.iyuba.core.discover.activity.WordCollection;
 import com.iyuba.core.discover.activity.mob.SimpleMobClassList;
+import com.iyuba.core.iyulive.activity.FindCourseActivity;
 import com.iyuba.core.teacher.activity.FindTeacherActivity;
 import com.iyuba.core.teacher.activity.TeacherBaseInfo;
 import com.iyuba.headnewslib.HeadlineActivity;
@@ -42,6 +43,7 @@ import com.iyuba.lib.R;
  */
 public class DiscoverFragment extends Fragment {
 	private Context mContext;
+	private View iyulive;
 	private View headline,news, exam, mob, all, searchWord, findFriend, vibrate,
 			collectWord, saying, back, discover_search_teacher,
 			discover_search_certeacher, discover_search_circlefriend,
@@ -68,6 +70,8 @@ public class DiscoverFragment extends Fragment {
 		// TODO Auto-generated method stub
 		back = root.findViewById(R.id.button_back);
 		back.setVisibility(View.GONE);
+		iyulive = root.findViewById(R.id.iyulive);
+		iyulive.setOnClickListener(ocl);
 		headline = root.findViewById(R.id.headline);
 		headline.setOnClickListener(ocl);
 		news = root.findViewById(R.id.news);
@@ -111,9 +115,7 @@ public class DiscoverFragment extends Fragment {
 
 		} else {
 			discover_search_certeacher.setVisibility(View.VISIBLE);
-
 		}
-
 	}
 
 	private OnClickListener ocl = new OnClickListener() {
@@ -126,6 +128,10 @@ public class DiscoverFragment extends Fragment {
 			if(id == R.id.headline){
 				intent = new Intent(mContext,HeadlineActivity.class);
 				startActivity(intent);
+			}else if(id == R.id.iyulive){
+				intent = new Intent(mContext, FindCourseActivity.class);
+				startActivity(intent);
+
 			}else if (id == R.id.news) {
 				intent = new Intent(mContext, AppGround.class);
 				intent.putExtra("title", R.string.discover_news);

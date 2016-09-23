@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/backlayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    <RelativeLayout
+        android:id="@+id/r1_coursetitle"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/titlebar_lightgray_bg" >
+        
+		<Spinner
+            android:id="@+id/titleSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:drawSelectorOnTop="true"/>
+   	</RelativeLayout>
+
+	<android.support.v4.widget.SwipeRefreshLayout
+		android:id="@+id/microclass_swipe_refresh_widget"
+		android:layout_below="@id/r1_coursetitle"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<android.support.v7.widget.RecyclerView
+			android:id="@+id/microclass_recyclerview"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
+
+	</android.support.v4.widget.SwipeRefreshLayout>
+</RelativeLayout>

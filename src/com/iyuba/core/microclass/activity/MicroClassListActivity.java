@@ -34,31 +34,24 @@ import com.iyuba.core.common.listener.OnActivityGroupKeyDown;
 import com.iyuba.core.common.manager.DataManager;
 import com.iyuba.core.common.manager.MobManager;
 import com.iyuba.core.common.network.ClientSession;
-import com.iyuba.core.common.network.IErrorReceiver;
 import com.iyuba.core.common.network.IResponseReceiver;
 import com.iyuba.core.common.protocol.BaseHttpRequest;
 import com.iyuba.core.common.protocol.BaseHttpResponse;
-import com.iyuba.core.common.protocol.ErrorResponse;
 import com.iyuba.core.common.util.ExeRefreshTime;
 import com.iyuba.core.common.util.MD5;
 import com.iyuba.core.common.util.NetWorkState;
 import com.iyuba.core.common.widget.RollViewPager;
 import com.iyuba.core.common.widget.dialog.CustomToast;
-import com.iyuba.core.iyumooc.microclass.API.CoursePackApiStores;
-import com.iyuba.core.iyumooc.microclass.API.CourseTypeApiStores;
+import com.iyuba.core.iyumooc.microclass.API.CoursePackApi;
+import com.iyuba.core.iyumooc.microclass.API.CourseTypeApi;
 import com.iyuba.core.iyumooc.microclass.bean.CoursePackListBean;
 import com.iyuba.core.iyumooc.microclass.bean.CourseTypeListBean;
 import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
 import com.iyuba.core.microclass.adapter.MobClassListAdapter;
 import com.iyuba.core.microclass.adapter.MobClassListTypeAdapter;
-import com.iyuba.core.microclass.protocol.CourseListRequest;
-import com.iyuba.core.microclass.protocol.CourseListResponse;
-import com.iyuba.core.microclass.protocol.CourseTypeListRequest;
-import com.iyuba.core.microclass.protocol.CourseTypeListResponse;
 import com.iyuba.core.microclass.protocol.SlideShowCourseListRequest;
 import com.iyuba.core.microclass.protocol.SlideShowCourseListResponse;
 import com.iyuba.core.microclass.sqlite.mode.CoursePack;
-import com.iyuba.core.microclass.sqlite.mode.CoursePackType;
 import com.iyuba.core.microclass.sqlite.mode.SlideShowCourse;
 import com.iyuba.core.microclass.sqlite.op.CoursePackOp;
 import com.iyuba.core.microclass.sqlite.op.CoursePackTypeOp;
@@ -319,7 +312,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
-		CourseTypeApiStores courseTypeApiStores = retrofit.create(CourseTypeApiStores.class);
+		CourseTypeApi courseTypeApiStores = retrofit.create(CourseTypeApi.class);
 		Call<CourseTypeListBean> call = courseTypeApiStores.getCourseTypeList(
 				"10103","0", "806e43f1d3416670861ef3b187f6a27c");
 		call.enqueue(new Callback<CourseTypeListBean>() {
@@ -446,7 +439,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
-		CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
+		CoursePackApi coursePackApiStores = retrofit.create(CoursePackApi.class);
 		Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
 				"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
 		call.enqueue(new Callback<CoursePackListBean>() {
@@ -577,7 +570,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
-		CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
+		CoursePackApi coursePackApiStores = retrofit.create(CoursePackApi.class);
 		Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
 				"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
 		call.enqueue(new Callback<CoursePackListBean>() {
@@ -799,7 +792,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 			case 0:
 				wettingDialog.show();
 
-				CourseTypeApiStores courseTypeApiStores = retrofit.create(CourseTypeApiStores.class);
+				CourseTypeApi courseTypeApiStores = retrofit.create(CourseTypeApi.class);
 				Call<CourseTypeListBean> callCourseType = courseTypeApiStores.getCourseTypeList(
 						"10103","0", "806e43f1d3416670861ef3b187f6a27c");
 				callCourseType.enqueue(new retrofit2.Callback<CourseTypeListBean>() {
@@ -914,7 +907,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 			case 1:
 				wettingDialog.show();
 
-				CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
+				CoursePackApi coursePackApiStores = retrofit.create(CoursePackApi.class);
 				Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
 						"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
 				call.enqueue(new retrofit2.Callback<CoursePackListBean>() {
@@ -1100,7 +1093,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				Log.d("获取最新课程：", "此处为最新课程的返回结果");
 
 
-				CoursePackApiStores lastestCoursePackApiStores = retrofit.create(CoursePackApiStores.class);
+				CoursePackApi lastestCoursePackApiStores = retrofit.create(CoursePackApi.class);
 				Call<CoursePackListBean> lastestCall = lastestCoursePackApiStores.getCoursePackList(
 						"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
 				lastestCall.enqueue(new retrofit2.Callback<CoursePackListBean>() {
@@ -1191,7 +1184,7 @@ public class MicroClassListActivity extends Activity implements OnActivityGroupK
 				wettingDialog.show();
 				Log.d("获取上拉加载课程：", "此处为上拉加载课程的返回结果");
 
-				CoursePackApiStores pullUpCoursePackApiStores = retrofit.create(CoursePackApiStores.class);
+				CoursePackApi pullUpCoursePackApiStores = retrofit.create(CoursePackApi.class);
 				Call<CoursePackListBean> pullUpCall = pullUpCoursePackApiStores.getCoursePackList(
 						"10102",reqPackId,"1",pageNum,20, MD5.getMD5ofStr("10102class"+reqPackId));
 				pullUpCall.enqueue(new retrofit2.Callback<CoursePackListBean>() {

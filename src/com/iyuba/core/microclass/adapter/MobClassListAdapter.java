@@ -102,10 +102,8 @@ public class MobClassListAdapter extends BaseAdapter {
 		}
 		
 		allPicUrl = Constant.MOB_CLASS_PACK_IMAGE+cp.getPic()+".jpg";
-		//使用ImageLoaderConfiguration初始�?
 		GitHubImageLoader.Instace(mContext).setPic(allPicUrl, viewHolder.pic, R.drawable.nearby_no_icon);
 		
-		//GitHubImageLoader.Instace(mContext).setPic(allPicUrl, viewHolder.pic,R.drawable.nearby_no_icon);
 		return convertView;
 	}
 

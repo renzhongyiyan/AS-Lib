@@ -21,12 +21,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,7 +46,7 @@ import com.iyuba.core.common.widget.DividerItemDecoration;
 import com.iyuba.core.common.widget.dialog.CustomDialog;
 import com.iyuba.core.common.widget.dialog.CustomToast;
 import com.iyuba.core.common.widget.dialog.WaittingDialog;
-import com.iyuba.core.iyumooc.teacher.API.TeacherApiStores;
+import com.iyuba.core.iyumooc.teacher.API.QuestionListApi;
 import com.iyuba.core.iyumooc.teacher.adapter.QuestionListAdapter;
 import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
 import com.iyuba.core.teacher.activity.QuesDetailActivity;
@@ -204,8 +202,6 @@ public class HomeFragment extends Fragment {
 //				StaggeredGridLayoutManager.VERTICAL);
 
 		mRecyclerView.setLayoutManager(layoutManager);
-
-
 		mRecyclerView.setHasFixedSize(true);
 		quesAdapter = new QuestionListAdapter(mContext);
 		quesAdapter.clearList();
@@ -499,7 +495,7 @@ public class HomeFragment extends Fragment {
 				.addConverterFactory(GsonConverterFactory.create())
 				.build();
 
-		TeacherApiStores apiStores = retrofit.create(TeacherApiStores.class);
+		QuestionListApi apiStores = retrofit.create(QuestionListApi.class);
 		Call<QuestionListBean> call = apiStores.getQuesList("json", 3, quesAbilityType, quesAppType, 1, -1);
 		call.enqueue(new Callback<QuestionListBean>() {
 			@Override
@@ -564,7 +560,7 @@ public class HomeFragment extends Fragment {
 				.addConverterFactory(GsonConverterFactory.create())
 
 				.build();
-		TeacherApiStores apiStores = retrofit.create(TeacherApiStores.class);
+		QuestionListApi apiStores = retrofit.create(QuestionListApi.class);
 		Call<QuestionListBean> call = apiStores.getQuesList("json", 3, quesAbilityType, quesAppType, pageNum, -1);
 		call.enqueue(new Callback<QuestionListBean>() {
 			@Override

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../HeadNewsLib/HeadNewsLib.iml" filepath="$PROJECT_DIR$/../HeadNewsLib/HeadNewsLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../MobCommonLibraries/MobCommonLibraries.iml" filepath="$PROJECT_DIR$/../MobCommonLibraries/MobCommonLibraries.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../MultiThreadDownloader/MultiThreadDownloader.iml" filepath="$PROJECT_DIR$/../MultiThreadDownloader/MultiThreadDownloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../NineOldAndroidLibrary/NineOldAndroidLibrary.iml" filepath="$PROJECT_DIR$/../NineOldAndroidLibrary/NineOldAndroidLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../OneKeyShareNew/OneKeyShareNew.iml" filepath="$PROJECT_DIR$/../OneKeyShareNew/OneKeyShareNew.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../PullToRefresh-library/PullToRefresh-library.iml" filepath="$PROJECT_DIR$/../PullToRefresh-library/PullToRefresh-library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Renzhy Workspace.iml" filepath="$PROJECT_DIR$/../Renzhy Workspace.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../SMSSDK/SMSSDK.iml" filepath="$PROJECT_DIR$/../SMSSDK/SMSSDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ShareSDK/ShareSDK.iml" filepath="$PROJECT_DIR$/../ShareSDK/ShareSDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../UniversalMusicPlayer/UniversalMusicPlayer.iml" filepath="$PROJECT_DIR$/../UniversalMusicPlayer/UniversalMusicPlayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../appRetrofit/appRetrofit.iml" filepath="$PROJECT_DIR$/../appRetrofit/appRetrofit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../configation/configation.iml" filepath="$PROJECT_DIR$/../configation/configation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../configationForClient/configationForClient.iml" filepath="$PROJECT_DIR$/../configationForClient/configationForClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../http233/http233.iml" filepath="$PROJECT_DIR$/../http233/http233.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../iYuLive/iYuLive.iml" filepath="$PROJECT_DIR$/../iYuLive/iYuLive.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../iYuMicroClass/iYuMicroClass.iml" filepath="$PROJECT_DIR$/../iYuMicroClass/iYuMicroClass.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../iyuMooc/iyuMooc.iml" filepath="$PROJECT_DIR$/../iyuMooc/iyuMooc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../iyuba/iyuba.iml" filepath="$PROJECT_DIR$/../iyuba/iyuba.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../iyubaZhongZhi/iyubaZhongZhi.iml" filepath="$PROJECT_DIR$/../iyubaZhongZhi/iyubaZhongZhi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib.iml" filepath="$PROJECT_DIR$/lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../library/library.iml" filepath="$PROJECT_DIR$/../library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../libraryMultiThreadDownload/libraryMultiThreadDownload.iml" filepath="$PROJECT_DIR$/../libraryMultiThreadDownload/libraryMultiThreadDownload.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../test-jcenter-lib/test-jcenter-lib.iml" filepath="$PROJECT_DIR$/../test-jcenter-lib/test-jcenter-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../testJcenterLib/testJcenterLib.iml" filepath="$PROJECT_DIR$/../testJcenterLib/testJcenterLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wheel/wheel.iml" filepath="$PROJECT_DIR$/../wheel/wheel.iml" />
+    </modules>
+  </component>
+</project>

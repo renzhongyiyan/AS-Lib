@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="swipe_hint">请再用力拖拽</string>
 
     <string name="head">这里是HeadView</string>
     <string name="pull_to_refresh">下拉刷新</string>
@@ -372,6 +373,7 @@
     <string name="discover_search_friend">找朋友</string>
     <string name="discover_message">消息中心</string>
     <string name="discover_vibrate">摇一摇</string>
+    <string name="discover_iyulive">爱语学堂</string>
     <string name="discover_headline">英语头条</string>
     <string name="discover_title">发现</string>
     <string name="discover_app">应用广场</string>
@@ -668,4 +670,74 @@
     <string name="mood_info">写点什么吧....</string>
     <string name="discover_qlist">问题列表</string>
 
+    <!--Toast提示信息-->
+    <string name="alert_exit">再按一次退出程序</string>
+    <string name="alert_network_error">网络请求似乎出了点状况……</string>
+    <string name="alert_already_last_page">已经是最后一页</string>
+    <string name="generic_server_down">服务器连接超时</string>
+    <string name="no_internet">没有网络连接</string>
+    <string name="load_local_data">加载本地数据</string>
+    <string name="generic_error">服务异常</string>
+    <string name="data_error">数据解析异常</string>
+    <string name="net_speed_slow">请切换至更优质网络使用本功能</string>
+    <string name="bug_exit">很抱歉，程序出现异常，即将退出</string>
+    <string name="pay_ok">支付成功</string>
+    <string name="ok">确认</string>
+    <string name="dial">呼叫</string>
+
+    <!--Fragment中的标题文字-->
+    <string name="fragment_find_course">发现课堂</string>
+    <string name="fragment_personal_course">我的课堂</string>
+    <string name="fragment_personal_account">我的账户</string>
+    <string name="list_doubleclick_to_head">双击列表返回头部</string>
+    <!--发现课程-->
+    <string name="loading_and_waitting">正在加载数据，请稍候…</string>
+    <!--直播课程详情页面的介绍文字-->
+    <string name="course_content_apply_deadline">距报名结束倒计时:</string>
+    <string name="course_content_apply_num">4428</string>
+    <string name="course_content_apply_num_tip">人已报名</string>
+    <string name="course_content_course_name">六级暑假定制班</string>
+    <string name="course_content_curr_price">￥199.0</string>
+    <string name="course_content_old_price">￥460.0</string>
+    <string name="course_content_teacher_name">考神团队</string>
+    <string name="course_content_duration_tip">课程总时长:</string>
+    <string name="course_content_duration">100小时</string>
+    <string name="course_content_date_tip">上课时间:</string>
+    <string name="course_content_date">2016-07-13</string>
+    <string name="course_content_start_date">2016-07-13</string>
+    <string name="course_content_date_to">至</string>
+    <string name="course_content_date_end">2016-08-08</string>
+    <string name="course_content_validity_tip">有效期:</string>
+    <string name="course_content_validity">2016-08-31 23:59</string>
+    <string name="course_content_apply_now">立即报名</string>
+    <!--购买课程-->
+    <string name="buy_course_pay_tip">需支付</string>
+    <string name="buy_course_to_pay">去支付</string>
+    <string name="buy_course_pay_type_select">选择支付方式</string>
+    <string name="buy_course_iyubi">爱语币</string>
+    <string name="buy_course_paypal">支付宝</string>
+    <string name="buy_course_recharge">充值</string>
+    <string name="buy_iyubi">购买爱语币</string>
+    <string name="buy_course_pay">支付</string>
+    <string name="buy_course">购买课程</string>
+    <string name="buy_balance_not_enough">余额不足</string>
+    <string name="buy_balance_not_enough_tip">当前购买需要支付 %1$d 爱语币,您的余额为 %2$d,不足以支付,是否充值？</string>
+    <string name="buy_course_enough_tip">您需要支付 %1$d 爱语币购买该课程，是否确认购买?</string>
+    <string name="buy_course_balance_now">支付成功,您现在的语币余额是 %1$s</string>
+    <string name="buy_course_already_owned">您已购买本课程</string>
+    <string name="buy_course_error">购买操作有误,请稍后再次尝试</string>
+    <string name="request_iyubi_error">爱语币刷新错误,请重新登录</string>
+    <string name="request_iyubi_fail">爱语币请求失败,请稍后重试</string>
+    <!--直播课程详情页面的介绍文字-->
+    <string name="live_content_desc">课程介绍</string>
+    <string name="live_teacher_desc">名师介绍</string>
+    <string name="live_suitable_people">适用人群</string>
+    <string name="live_content_desc_str">课程介绍内容</string>
+    <string name="live_teacher_desc_str">名师介绍内容</string>
+    <string name="live_suitable_people_str">适用人群内容</string>
+    <!--直播列表文字-->
+    <string name="live_apply_first">请先报名</string>
+    <string name="live_apply_first_tip">报名后才可以观看课程哟~</string>
+    <string name="live_login_first">请先登录</string>
+    <string name="live_login_first_tip">亲,您还没有登录哟~</string>
 </resources>

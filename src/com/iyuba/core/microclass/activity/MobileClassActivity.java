@@ -280,7 +280,6 @@ public class MobileClassActivity extends BasisActivity {
 		listButton = (TextView) findViewById(R.id.course_button_list);
 		descButton = (TextView) findViewById(R.id.course_button_desc);
 		commentButton = (TextView) findViewById(R.id.course_button_comment);
-		
 	}
 	
 	public void setView(){

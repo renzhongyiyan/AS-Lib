@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,20 +28,16 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.iyuba.configation.Constant;
 import com.iyuba.core.common.activity.Web;
-import com.iyuba.core.common.listener.OnActivityGroupKeyDown;
-import com.iyuba.core.common.manager.AccountManager;
 import com.iyuba.core.common.manager.DataManager;
 import com.iyuba.core.common.manager.MobManager;
 import com.iyuba.core.common.util.MD5;
 import com.iyuba.core.common.util.NetWorkState;
 import com.iyuba.core.common.widget.RollViewPager;
 import com.iyuba.core.common.widget.dialog.CustomToast;
-import com.iyuba.core.iyumooc.microclass.API.CoursePackApiStores;
-import com.iyuba.core.iyumooc.microclass.API.CourseTypeApiStores;
-import com.iyuba.core.iyumooc.microclass.API.SlidePicApiStores;
 import com.iyuba.core.iyumooc.microclass.bean.CoursePackListBean;
 import com.iyuba.core.iyumooc.microclass.bean.CourseTypeListBean;
 import com.iyuba.core.iyumooc.microclass.bean.SlideShowListBean;
+import com.iyuba.core.iyumooc.microclass.network.MicroClassRequestFactory;
 import com.iyuba.core.microclass.activity.MobileClassActivity;
 import com.iyuba.core.microclass.adapter.MobClassListAdapter;
 import com.iyuba.core.microclass.adapter.MobClassListTypeAdapter;
@@ -59,18 +54,12 @@ import com.youdao.sdk.nativeads.YouDaoNativeAdRenderer;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.GsonConverterFactory;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
-public class MobClassListFragment extends Fragment implements
-		OnActivityGroupKeyDown {
+public class MobClassListFragment extends Fragment {
 
 	private final static String PIC_BASE_URL = "http://app.iyuba.com/dev/";
 
@@ -113,13 +102,13 @@ public class MobClassListFragment extends Fragment implements
 	private MobClassListTypeAdapter mobClassListTypeAdapter;
 
 	// 用于存放轮播图信息的集合
-	private List<SlideShowListBean.SlideShowDataBean> ssCourseList = new ArrayList<SlideShowListBean.SlideShowDataBean>();
+	private List<SlideShowListBean.SlideShowDataBean> ssCourseList = new ArrayList<>();
 	// 用于存放图片地址的集合
-	private ArrayList<String> imageUrls = new ArrayList<String>();
+	private ArrayList<String> imageUrls = new ArrayList<>();
 	// 用于存放标题内容的集合
-	private ArrayList<String> titleList = new ArrayList<String>();
+	private ArrayList<String> titleList = new ArrayList<>();
 	// 用于存放滚动点的集合
-	private ArrayList<View> dot_list = new ArrayList<View>();
+	private ArrayList<View> dot_list = new ArrayList<>();
 	private ArrayList<CoursePackListBean.CoursePackDataBean> coursePackArrayList = new ArrayList<>();
 	private ArrayList<CourseTypeListBean.CourseTypeDataBean> coursePackTypes = new ArrayList<>();
 
@@ -298,12 +287,6 @@ public class MobClassListFragment extends Fragment implements
 		initSlideShowViewPicData();
 	}
 
-	@Override
-	public boolean onSubActivityKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	private OnItemClickListener oItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -335,39 +318,23 @@ public class MobClassListFragment extends Fragment implements
 
 	public void getPackTypeData() {
 
-		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-		OkHttpClient client = new OkHttpClient.Builder()
-				.connectTimeout(10, TimeUnit.SECONDS)
-				.readTimeout(10, TimeUnit.SECONDS)
-				.addInterceptor(interceptor)
-				.build();
-
-		Retrofit retrofit = new Retrofit.Builder()
-				.baseUrl("http://class.iyuba.com/")
-				.client(client)
-				.addConverterFactory(GsonConverterFactory.create())
-				.build();
-
-		CourseTypeApiStores courseTypeApiStores = retrofit.create(CourseTypeApiStores.class);
-		Call<CourseTypeListBean> call = courseTypeApiStores.getCourseTypeList(
-				"10103", "0", "806e43f1d3416670861ef3b187f6a27c");
+		Call<CourseTypeListBean> call = MicroClassRequestFactory
+				.getCourseTypeApi().getCourseTypeList("10103", "0", "806e43f1d3416670861ef3b187f6a27c");
 		call.enqueue(new Callback<CourseTypeListBean>() {
 			@Override
 			public void onResponse(Response<CourseTypeListBean> response) {
-				if (response.body().getResult() == 1) {
+				if (response != null && response.body() != null
+						&& response.body().getResult() == 1) {
 					if (response.body().getData().size() > 0) {// 第一条记录如果和数据路里面的存储的记录相同
 						// 则证明没有新的资讯类容，
 						// 无需刷新
 						// 以后可更改接口实现高效刷新
 						int flag = 0;
-						if (DataManager.Instance().courseTypeList
-								.size() == 0) {
+						if (DataManager.Instance().courseTypeList.size() == 0) {
 							flag = 1;
 						} else {
 							if (response.body().getData().size() > DataManager
-									.Instance().courseTypeList
-									.size()) {
+									.Instance().courseTypeList.size()) {
 								flag = 1;
 							}
 						}
@@ -380,8 +347,6 @@ public class MobClassListFragment extends Fragment implements
 							mobClassListTypeAdapter.addList(response.body().getData());
 							handler.sendEmptyMessage(8);
 							handlerRefreshList.sendEmptyMessage(3);
-
-
 						}
 					}
 				}
@@ -402,27 +367,14 @@ public class MobClassListFragment extends Fragment implements
 			return;
 		}
 
-		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-		OkHttpClient client = new OkHttpClient.Builder()
-				.connectTimeout(10, TimeUnit.SECONDS)
-				.readTimeout(10, TimeUnit.SECONDS)
-				.addInterceptor(interceptor)
-				.build();
-
-		Retrofit retrofit = new Retrofit.Builder()
-				.baseUrl("http://class.iyuba.com/")
-				.client(client)
-				.addConverterFactory(GsonConverterFactory.create())
-				.build();
-
-		CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
-		Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
+		Call<CoursePackListBean> call = MicroClassRequestFactory
+				.getCoursePackApi().getCoursePackList(
 				"10102", reqPackId, "1", pageNum, 20, MD5.getMD5ofStr("10102class" + reqPackId));
 		call.enqueue(new Callback<CoursePackListBean>() {
 			@Override
 			public void onResponse(Response<CoursePackListBean> response) {
-				if (response != null && response.body().getResult() == 1) {
+				if (response != null && response.body() != null
+						&& response.body().getResult() == 1) {
 					iLastPage = response.body().getLastPage();
 					if (iLastPage != pageNum) {
 						isLast = false;
@@ -575,27 +527,14 @@ public class MobClassListFragment extends Fragment implements
 				// 联网取某个分类的课程
 				case 4:
 					pageNum = 1;
-					HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-					interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-					OkHttpClient client = new OkHttpClient.Builder()
-							.connectTimeout(10, TimeUnit.SECONDS)
-							.readTimeout(10, TimeUnit.SECONDS)
-							.addInterceptor(interceptor)
-							.build();
 
-					Retrofit retrofit = new Retrofit.Builder()
-							.baseUrl("http://class.iyuba.com/")
-							.client(client)
-							.addConverterFactory(GsonConverterFactory.create())
-							.build();
-
-					CoursePackApiStores coursePackApiStores = retrofit.create(CoursePackApiStores.class);
-					Call<CoursePackListBean> call = coursePackApiStores.getCoursePackList(
+					Call<CoursePackListBean> call = MicroClassRequestFactory.getCoursePackApi().getCoursePackList(
 							"10102", reqPackId, "1", pageNum, 20, MD5.getMD5ofStr("10102class" + reqPackId));
 					call.enqueue(new retrofit2.Callback<CoursePackListBean>() {
 						@Override
 						public void onResponse(Response<CoursePackListBean> response) {
-							if (response.body().getResult() == 1) {
+							if (response != null && response.body() != null
+									&& response.body().getResult() == 1) {
 								iLastPage = response.body().getLastPage();
 								if (iLastPage != pageNum) {
 									isLast = false;
@@ -704,29 +643,13 @@ public class MobClassListFragment extends Fragment implements
 	 */
 	private void initSlideShowViewPicData() {
 		// 一步任务获取图片
-		Log.e("准备发送一次轮播图片的请求：", "准备发送！！！");
-		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-		OkHttpClient.Builder client = new OkHttpClient.Builder()
-				.connectTimeout(5, TimeUnit.SECONDS)
-				.readTimeout(5, TimeUnit.SECONDS)
-				.addInterceptor(interceptor);
-
-		Retrofit retrofit = new Retrofit.Builder()
-				//这里建议：- Base URL: 总是以/结尾；- @Url: 不要以/开头
-				.baseUrl("http://app.iyuba.com/")
-				.client(client.build())
-				.addConverterFactory(GsonConverterFactory.create())
-				.build();
-
-		SlidePicApiStores apiStores = retrofit.create(SlidePicApiStores.class);
-		Call<SlideShowListBean> call = apiStores.getSlidePicList(reqPackDesc);
+		Call<SlideShowListBean> call = MicroClassRequestFactory.getSlidePicApi().getSlidePicList(reqPackDesc);
 		call.enqueue(new Callback<SlideShowListBean>() {
 			@Override
 			public void onResponse(Response<SlideShowListBean> response) {
 
-				if (response.body().getData() != null && response.body().getData().size() != 0) {
+				if (response != null && response.body() != null
+						&& response.body().getData() != null && response.body().getData().size() != 0) {
 
 					if (response.body().getResult().equals("1")) {
 						ssCourseList.clear();
@@ -858,7 +781,7 @@ public class MobClassListFragment extends Fragment implements
 										MobileClassActivity.class);
 								if (curPackId != 0 && isContainsClick) {
 									startActivity(intent);
-								}else if(curPackId == 0 && ssCourse.getName()!=null){
+								} else if (curPackId == 0 && ssCourse.getName() != null) {
 									intent.setClass(mContext, Web.class);
 									intent.putExtra("url", ssCourse.getName());
 									intent.putExtra("title",
@@ -871,7 +794,7 @@ public class MobClassListFragment extends Fragment implements
 						// 将图片地址添加到轮播图中
 						rollViewPager.initSlideShowCourseList(ssCourseList);
 						rollViewPager.initImgUrl(imageUrls);
-						rollViewPager.initTitle(titleList,tv_desc_title);
+						rollViewPager.initTitle(titleList, tv_desc_title);
 						rollViewPager.startRoll();
 						top_news_viewpager.removeAllViews();
 						top_news_viewpager.addView(rollViewPager);
@@ -885,7 +808,7 @@ public class MobClassListFragment extends Fragment implements
 						});
 						// 将图片地址添加到轮播图中
 						rollViewPager.initImgUrl(imageUrls);
-						rollViewPager.initTitle(titleList,tv_desc_title);
+						rollViewPager.initTitle(titleList, tv_desc_title);
 						rollViewPager.startRoll();
 						top_news_viewpager.removeAllViews();
 						top_news_viewpager.addView(rollViewPager);
