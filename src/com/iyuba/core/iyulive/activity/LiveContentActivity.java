@@ -34,6 +34,8 @@ import com.iyuba.core.iyulive.bean.LiveContentBean;
 import com.iyuba.core.iyulive.bean.LivePackListBean;
 import com.iyuba.core.iyulive.bean.LivePayedItem;
 import com.iyuba.core.iyulive.bean.LivePayedRecordXML;
+import com.iyuba.core.iyulive.fragment.LiveDescFragment;
+import com.iyuba.core.iyulive.fragment.LiveListFragment;
 import com.iyuba.core.iyulive.listener.ILiveAvailableListener;
 import com.iyuba.core.iyulive.listener.ILiveDescListener;
 import com.iyuba.core.iyulive.listener.ILiveListListener;
@@ -58,6 +60,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.facebook.stetho.R.styleable.Toolbar;
+
 
 /**
  * 作者：renzhy on 16/7/12 11:17
@@ -69,8 +73,8 @@ public class LiveContentActivity extends AppCompatActivity implements Observable
 	private Context context;
 	private BasePagerAdapter adapter;
 	private ArrayList<Fragment> fragments;
-//	private LiveDescFragment liveDescFragment;
-//	private LiveListFragment liveListFragment;
+	private LiveDescFragment liveDescFragment;
+	private LiveListFragment liveListFragment;
 	private ILiveDescListener fragmentDescListener;
 	private ILiveListListener fragmentListListener;
 	private ILiveAvailableListener fragmentAvailableListener;
@@ -154,13 +158,13 @@ public class LiveContentActivity extends AppCompatActivity implements Observable
 		context = this;
 		livePayedItemDB = new LivePayedItem();
 		fragments = new ArrayList<>();
-//		liveDescFragment = new LiveDescFragment();
-//		liveListFragment = new LiveListFragment();
-//		fragments.add(liveDescFragment);
-//		fragments.add(liveListFragment);
-//		setFragmentDescListener(liveDescFragment);
-//		setFragmentListListener(liveListFragment);
-//		setFragmentAvailableListener(liveListFragment);
+		liveDescFragment = new LiveDescFragment();
+		liveListFragment = new LiveListFragment();
+		fragments.add(liveDescFragment);
+		fragments.add(liveListFragment);
+		setFragmentDescListener(liveDescFragment);
+		setFragmentListListener(liveListFragment);
+		setFragmentAvailableListener(liveListFragment);
 
 		simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		currentCal = new GregorianCalendar();
@@ -307,8 +311,8 @@ public class LiveContentActivity extends AppCompatActivity implements Observable
 		adapter = new BasePagerAdapter(getSupportFragmentManager(), TITLES, fragments);
 		viewPager.setAdapter(adapter);
 		viewPager.setOnPageChangeListener(listener);
-//		tabLayout.setupWithViewPager(viewPager);
-//		tabLayoutSticky.setupWithViewPager(viewPager);
+		tabLayout.setupWithViewPager(viewPager);
+		tabLayoutSticky.setupWithViewPager(viewPager);
 
 		observableScrollView.setScrollViewCallbacks(this);
 		observableScrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -427,7 +431,7 @@ public class LiveContentActivity extends AppCompatActivity implements Observable
 						if(livePackId == Integer.parseInt(response.body().getListPayedRecord().get(0).getPackId())){
 							LivePayedItem livePayedItem = new LivePayedItem();
 							livePayedItem.setUid("0");
-//							livePayedItem.setUid(AccountManager.Instace(context).getUserId());
+							livePayedItem.setUid(AccountManager.Instace(context).USERID);
 							livePayedItem.setPackId(response.body().getListPayedRecord().get(0).getPackId());
 							livePayedItem.setProductId(response.body().getListPayedRecord().get(0).getProductId());
 							livePayedItem.setAmount(response.body().getListPayedRecord().get(0).getAmount());
