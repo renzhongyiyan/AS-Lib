@@ -151,9 +151,9 @@ public class FindCourseActivity extends AppCompatActivity implements MySwipeRefr
 		findCourseAdapter.setOnItemClickListener(new FindCourseAdapter.OnRecyclerViewItemClickListener() {
 			@Override
 			public void onItemClick(View view, int position) {
-//				startActivity(LiveContentActivity.getIntent2Me(
-//						context,
-//						livePackDataBeanArrayList.get(position)));
+				startActivity(LiveContentActivity.getIntent2Me(
+						context,
+						livePackDataBeanArrayList.get(position)));
 			}
 
 			@Override

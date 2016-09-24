@@ -58,4 +58,15 @@
         <attr name="tab_highlight_color" format="color" />
         <attr name="tab_indicator_color" format="color" />
     </declare-styleable>
+
+    <!--直播模块中用到的attribute-->
+    <declare-styleable name="roundedimageview">
+        <attr name="border_thickness_num" format="dimension" />
+        <attr name="border_inside_color_rd" format="color" />
+        <attr name="border_progress_color" format="color" />
+        <attr name="border_outside_color_rd" format="color"></attr>
+        <attr name="show_image" format="boolean"></attr>
+    </declare-styleable>
+
+
 </resources>
