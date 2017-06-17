@@ -433,12 +433,52 @@
                     android:orientation="vertical" >
 
                     <RelativeLayout
+                        android:id="@+id/study_ranking"
+                        android:layout_width="fill_parent"
+                        android:layout_height="50dp" >
+
+                        <ImageView
+                            android:id="@+id/iv_study_ranking"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="10dp"
+                            android:src="@drawable/study_ranking" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_margin="10dp"
+                            android:layout_toRightOf="@id/iv_study_ranking"
+                            android:drawablePadding="5dp"
+                            android:gravity="center"
+                            android:text="@string/study_ranking"
+                            android:textColor="#444444"
+                            android:textSize="17sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="10dp"
+                            android:src="@drawable/go" />
+                    </RelativeLayout>
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:background="#dcdcdc" />
+
+                    <RelativeLayout
                         android:id="@+id/intel_userinfo"
                         android:layout_width="fill_parent"
                         android:layout_height="50dp" >
 
                         <ImageView
-                            android:id="@+id/iv_mine_que_myque2"
+                            android:id="@+id/iv_intel_myinfo"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_alignParentLeft="true"
@@ -451,7 +491,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
-                            android:layout_toRightOf="@id/iv_mine_que_myque2"
+                            android:layout_toRightOf="@id/iv_intel_myinfo"
                             android:drawablePadding="5dp"
                             android:gravity="center"
                             android:text="@string/userinfo_complete"
@@ -478,7 +518,7 @@
                         android:layout_height="50dp" >
 
                         <ImageView
-                            android:id="@+id/iv_mine_que_myque2"
+                            android:id="@+id/iv_intel_goal"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_alignParentLeft="true"
@@ -491,7 +531,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
-                            android:layout_toRightOf="@id/iv_mine_que_myque2"
+                            android:layout_toRightOf="@id/iv_intel_goal"
                             android:drawablePadding="5dp"
                             android:gravity="center"
                             android:text="@string/intel_learning_goal"
@@ -518,7 +558,7 @@
                         android:layout_height="50dp" >
 
                         <ImageView
-                            android:id="@+id/iv_mine_que_myque2"
+                            android:id="@+id/iv_intel_result"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_alignParentLeft="true"
@@ -531,7 +571,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
-                            android:layout_toRightOf="@id/iv_mine_que_myque2"
+                            android:layout_toRightOf="@id/iv_intel_result"
                             android:drawablePadding="5dp"
                             android:gravity="center"
                             android:text="@string/intel_learning_result"
@@ -558,7 +598,7 @@
                         android:layout_height="50dp" >
 
                         <ImageView
-                            android:id="@+id/iv_mine_que_myque2"
+                            android:id="@+id/iv_intel_test"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_alignParentLeft="true"
@@ -571,7 +611,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
-                            android:layout_toRightOf="@id/iv_mine_que_myque2"
+                            android:layout_toRightOf="@id/iv_intel_test"
                             android:drawablePadding="5dp"
                             android:gravity="center"
                             android:text="@string/intel_test_result"
@@ -598,7 +638,7 @@
                         android:layout_height="50dp" >
 
                         <ImageView
-                            android:id="@+id/iv_mine_que_myque2"
+                            android:id="@+id/iv_intel_word"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_alignParentLeft="true"
@@ -611,7 +651,7 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_margin="10dp"
-                            android:layout_toRightOf="@id/iv_mine_que_myque2"
+                            android:layout_toRightOf="@id/iv_intel_word"
                             android:drawablePadding="5dp"
                             android:gravity="center"
                             android:text="@string/intel_word_result"
@@ -626,6 +666,7 @@
                             android:layout_marginRight="10dp"
                             android:src="@drawable/go" />
                     </RelativeLayout>
+
                 </LinearLayout>
             </LinearLayout>
             

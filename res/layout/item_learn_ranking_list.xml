@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_learning_ranking_order"
+        android:layout_width="26dp"
+        android:layout_height="46dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/study_ranking_order"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_learning_ranking_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@id/iv_learning_ranking_order">
+
+        <com.iyuba.core.common.widget.circularimageview.CircularImageView
+            android:id="@+id/iv_learn_ranking_userimage"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/defaultavatar"/>
+
+        <TextView
+            android:id="@+id/tv_learn_ranking_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/iv_learn_ranking_userimage"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:text="Username"
+            android:textSize="14sp"
+            android:textColor="@color/gray"/>
+
+        <TextView
+            android:id="@+id/tv_learn_ranking_total_words"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/iv_learn_ranking_userimage"
+            android:layout_below="@id/tv_learn_ranking_username"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
+            android:text="TotalWords"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textStyle="bold|italic"/>
+
+        <TextView
+            android:id="@+id/tv_learn_ranking_total_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/iv_learn_ranking_userimage"
+            android:layout_below="@id/tv_learn_ranking_total_words"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
+            android:text="TotalTime"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textStyle="bold|italic"/>
+
+    </RelativeLayout>
+</RelativeLayout>

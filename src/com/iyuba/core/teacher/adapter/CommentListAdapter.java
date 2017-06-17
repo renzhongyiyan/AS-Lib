@@ -88,6 +88,7 @@ public class CommentListAdapter extends BaseAdapter {
 			viewHolder = new ViewHolder();
 			viewHolder.userIcon = (ImageView) convertView.findViewById(R.id.user_icon);
 			viewHolder.userName = (TextView) convertView.findViewById(R.id.user_name);
+			viewHolder.vipStatus = (ImageView) convertView.findViewById(R.id.cmt_item_vip_status);
 			viewHolder.commentInfo = (TextView) convertView.findViewById(R.id.comment_info);
 			viewHolder.commentDisc = (TextView) convertView.findViewById(R.id.comment_disc);
 			viewHolder.otherContentc=(ImageView) convertView.findViewById(R.id.other_contentc);
@@ -99,7 +100,12 @@ public class CommentListAdapter extends BaseAdapter {
 		comment.time=comment.time.substring(0,19);
 		viewHolder.userName.setText(comment.username);
 		viewHolder.commentInfo.setText(comment.time);
-		
+
+		if(comment.vipStatus != 0){
+			viewHolder.vipStatus.setVisibility(View.VISIBLE);
+		}else{
+			viewHolder.vipStatus.setVisibility(View.INVISIBLE);
+		}
 		
 		if(comment.type == 1) {
 			viewHolder.otherContentc.setVisibility(View.GONE);
@@ -227,6 +233,7 @@ public class CommentListAdapter extends BaseAdapter {
 	public class ViewHolder {
 		ImageView userIcon;
 		TextView userName;
+		ImageView vipStatus;
 		TextView commentInfo;
 		TextView commentDisc;
 		ImageView otherContentc;

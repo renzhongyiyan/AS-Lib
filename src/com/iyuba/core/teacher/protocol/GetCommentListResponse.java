@@ -42,6 +42,7 @@ public class GetCommentListResponse  extends BaseJSONResponse {
 						item.qid = jsonObject.getInt("questionid");
 						item.uid = jsonObject.getInt("authorid");
 						item.username = jsonObject.getString("username");
+						item.vipStatus = jsonObject.getInt("vip");
 						item.userimg = jsonObject.getString("imgsrc");
 						item.time = jsonObject.getString("answertime");
  						item.answer = jsonObject.getString("answer");

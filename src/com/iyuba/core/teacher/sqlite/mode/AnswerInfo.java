@@ -6,6 +6,7 @@ public class AnswerInfo {
 	public int uid;
 	public String username;
 	public String userimg;
+	public int vipStatus;
 	public String time;
 	public String location;
 	public int agreeCount;

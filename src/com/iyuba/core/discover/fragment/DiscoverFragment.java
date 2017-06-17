@@ -54,8 +54,7 @@ public class DiscoverFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
-		
-//		CustomToast.showToast(mContext, "DiscoverFragment---------->onCreate()");
+//		HeadlinesRuntimeManager.setApplicationContext(this);
 	}
 	
 	@Override

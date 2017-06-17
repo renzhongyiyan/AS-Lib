@@ -227,6 +227,7 @@ public class HomeFragment extends Fragment {
 				Intent intent = new Intent();
 				intent.setClass(mContext, QuesDetailActivity.class);
 				intent.putExtra("qid",quesList.get(position).getQuestionid()+"");
+				intent.putExtra("vip",quesList.get(position).getVip()+"");
 				startActivity(intent);
 			}
 
@@ -481,6 +482,7 @@ public class HomeFragment extends Fragment {
 
 		int quesAppType = ConfigManager.Instance().loadInt("quesAppType");
 		int quesAbilityType = ConfigManager.Instance().loadInt("quesAbilityType");
+		int quesSort = ConfigManager.Instance().loadInt("quesSort");
 
 		HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 		interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -496,7 +498,7 @@ public class HomeFragment extends Fragment {
 				.build();
 
 		QuestionListApi apiStores = retrofit.create(QuestionListApi.class);
-		Call<QuestionListBean> call = apiStores.getQuesList("json", 3, quesAbilityType, quesAppType, 1, -1);
+		Call<QuestionListBean> call = apiStores.getQuesList("json", 3, quesAbilityType, quesAppType, 1, -1,quesSort);
 		call.enqueue(new Callback<QuestionListBean>() {
 			@Override
 			public void onResponse(Response<QuestionListBean> response) {
@@ -540,6 +542,7 @@ public class HomeFragment extends Fragment {
 	public void getFooterData() {
 		int quesAppType = ConfigManager.Instance().loadInt("quesAppType");
 		int quesAbilityType = ConfigManager.Instance().loadInt("quesAbilityType");
+		int quesSort = ConfigManager.Instance().loadInt("quesSort");
 
 		if (isLast) {
 			handler.sendEmptyMessage(4);
@@ -561,7 +564,7 @@ public class HomeFragment extends Fragment {
 
 				.build();
 		QuestionListApi apiStores = retrofit.create(QuestionListApi.class);
-		Call<QuestionListBean> call = apiStores.getQuesList("json", 3, quesAbilityType, quesAppType, pageNum, -1);
+		Call<QuestionListBean> call = apiStores.getQuesList("json", 3, quesAbilityType, quesAppType, pageNum, -1,quesSort);
 		call.enqueue(new Callback<QuestionListBean>() {
 			@Override
 			public void onResponse(Response<QuestionListBean> response) {

@@ -182,6 +182,12 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 
 		viewHolder.quesName.setText(ques.getUsername());
 
+		if(ques.getVip() != 0){
+			viewHolder.quesVip.setVisibility(View.VISIBLE);
+		}else {
+			viewHolder.quesVip.setVisibility(View.INVISIBLE);
+		}
+
 		if (ques.getCreatetime() == null || "null".equals(ques.getCreatetime())) {
 			ques.setCreatetime("");
 		}
@@ -227,7 +233,6 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 
 			ImageLoader.getInstance().displayImage("http://www.iyuba.com/question/"
 					+ ques.getImg().replaceAll("_b.jpg", "_s.jpg"), viewHolder.quesPic);
-
 
 			viewHolder.quesPic.setOnClickListener(new OnClickListener() {
 
@@ -379,6 +384,7 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 		public ImageView quesRecommend;
 		public ImageView quesIcon;
 		public TextView quesName;
+		public ImageView quesVip;
 		public TextView quesInfo;
 		public ImageView answerIcon;
 		public TextView isAnswer;
@@ -399,6 +405,8 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 					.findViewById(R.id.ques_icon);
 			quesName = (TextView) itemView
 					.findViewById(R.id.ques_name);
+			quesVip = (ImageView) itemView
+					.findViewById(R.id.user_vip_status);
 			quesInfo = (TextView) itemView
 					.findViewById(R.id.ques_info);
 			answerIcon = (ImageView) itemView

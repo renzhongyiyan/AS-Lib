@@ -22,11 +22,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.iyuba.configation.Constant;
+import com.iyuba.core.common.activity.Web;
 import com.iyuba.core.common.base.BasisActivity;
 import com.iyuba.core.common.base.CrashApplication;
 import com.iyuba.core.common.listener.ProtocolResponse;
 import com.iyuba.core.common.manager.AccountManager;
+import com.iyuba.core.common.manager.DataManager;
 import com.iyuba.core.common.manager.SocialDataManager;
+import com.iyuba.core.common.network.ClientSession;
+import com.iyuba.core.common.network.IResponseReceiver;
+import com.iyuba.core.common.protocol.BaseHttpRequest;
 import com.iyuba.core.common.protocol.BaseHttpResponse;
 import com.iyuba.core.common.protocol.message.RequestAddAttention;
 import com.iyuba.core.common.protocol.message.RequestBasicUserInfo;
@@ -40,10 +45,18 @@ import com.iyuba.core.common.setting.SettingConfig;
 import com.iyuba.core.common.sqlite.mode.UserInfo;
 import com.iyuba.core.common.thread.GitHubImageLoader;
 import com.iyuba.core.common.util.ExeProtocol;
+import com.iyuba.core.common.util.MD5;
 import com.iyuba.core.common.util.ReadBitmap;
 import com.iyuba.core.common.widget.dialog.CustomDialog;
 import com.iyuba.core.common.widget.dialog.CustomToast;
 import com.iyuba.core.common.widget.dialog.WaittingDialog;
+import com.iyuba.core.discover.activity.BlogActivity1;
+import com.iyuba.core.discover.activity.PersonalBlogActivity;
+import com.iyuba.core.discover.protocol.BlogRequest;
+import com.iyuba.core.discover.protocol.BlogResponse;
+import com.iyuba.core.discover.protocol.PersonalBlogRequest;
+import com.iyuba.core.discover.protocol.PersonalBlogResponse;
+import com.iyuba.core.discover.sqlite.mode.FreshContent;
 import com.iyuba.core.me.adapter.NewDoingsListAdapter;
 import com.iyuba.core.me.sqlite.mode.NewDoingsInfo;
 import com.iyuba.core.teacher.activity.QuesDetailActivity;
@@ -190,16 +203,18 @@ public class PersonalHome extends BasisActivity implements OnScrollListener {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
+					final int position, long id) {
 				// TODO Auto-generated method stub
 				if(((NewDoingsInfo)doingsListAdapter.getItem(position)).idtype.equals("doid")){
 					Intent intent = new Intent(mContext, ReplyDoing.class);
 					intent.putExtra("doid", ((NewDoingsInfo)doingsListAdapter.getItem(position)).id);
+					intent.putExtra("vipstatus",((NewDoingsInfo)doingsListAdapter.getItem(position)).vip);
 					startActivity(intent);
 				}else if(((NewDoingsInfo)doingsListAdapter.getItem(position)).idtype.equals("questionid")){
 					Intent intent = new Intent();
 					intent.setClass(mContext, QuesDetailActivity.class);
 					intent.putExtra("qid",((NewDoingsInfo)doingsListAdapter.getItem(position)).id);
+					intent.putExtra("vip",((NewDoingsInfo)doingsListAdapter.getItem(position)).vip);
 					startActivity(intent);
 				}else if(((NewDoingsInfo)doingsListAdapter.getItem(position)).idtype.equals("picid")){
 					String  pic="";
@@ -210,6 +225,32 @@ public class PersonalHome extends BasisActivity implements OnScrollListener {
 //					intent.putExtra("pic", pic.replace("-s.jpg", ".jpg"));
 					intent.putExtra("pic", pic);
 					mContext.startActivity(intent);
+				}else if(((NewDoingsInfo)doingsListAdapter.getItem(position)).idtype.equals("blogid")){
+//					Intent intent = new Intent();
+//					intent.setClass(mContext, Web.class);
+//					intent.putExtra("url", "http://api.iyuba.com.cn/v2/api.iyuba?protocol=200065&sign="
+//							+ MD5.getMD5ofStr("20006"+((NewDoingsInfo)doingsListAdapter.getItem(position)).id+"iyubaV2")+"&blogId="
+//							+ ((NewDoingsInfo)doingsListAdapter.getItem(position)).id+"&id=242141");
+//					intent.putExtra("title", Constant.APPName);
+//					startActivity(intent);
+
+					ClientSession.Instace().asynGetResponse(
+							new PersonalBlogRequest(
+									((NewDoingsInfo)doingsListAdapter.getItem(position)).id),
+							new IResponseReceiver() {
+								@Override
+								public void onResponse(BaseHttpResponse response,
+													   BaseHttpRequest request, int rspCookie) {
+									PersonalBlogResponse res = (PersonalBlogResponse) response;
+//									DataManager.Instance().blogContent = res.blogContent;
+									Intent intent = new Intent(mContext,
+											PersonalBlogActivity.class);
+									intent.putExtra("subject",((NewDoingsInfo)doingsListAdapter.getItem(position)).body);
+									intent.putExtra("deadline",((NewDoingsInfo)doingsListAdapter.getItem(position)).dateline);
+									intent.putExtra("message",res.message);
+									startActivity(intent);
+								}
+							}, null, null);
 				}
 				
 			}
@@ -443,7 +484,7 @@ public class PersonalHome extends BasisActivity implements OnScrollListener {
 				CustomToast.showToast(mContext, R.string.action_no_more);
 				break;
 			case 13:
-				Toast.makeText(mContext, "关注成功"+"+"+jiFen+"积分！", 3000).show();
+				Toast.makeText(mContext, "关注成功"+"+"+jiFen+"积分！", Toast.LENGTH_SHORT).show();
 				break;
 			case 20:
 				ExeProtocol.exe(new RequestBasicUserInfo(currentuid,

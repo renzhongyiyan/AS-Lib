@@ -103,6 +103,21 @@ public class GitHubImageLoader {
 	}
 
 	/**
+	 * 从url下载图片在ImageView中显示
+	 *
+	 * @param url      图片地址
+	 * @param pic      图片所在ImageView
+	 * @param drawable 未加载时的默认图片
+	 */
+	public void setRawPic(String url, ImageView pic, int drawable) {
+		options = new DisplayImageOptions.Builder().showImageOnLoading(drawable)
+				.showImageForEmptyUri(drawable).delayBeforeLoading(1000)
+				.showImageOnFail(drawable).cacheInMemory(true).cacheOnDisk(true)
+				.build();
+		imageLoader.displayImage(url, pic, options);
+	}
+
+	/**
 	 * 对新闻图片的下载（需指定默认图片drawable）
 	 */
 	public void setPic(String url, ImageView pic, int drawable) {

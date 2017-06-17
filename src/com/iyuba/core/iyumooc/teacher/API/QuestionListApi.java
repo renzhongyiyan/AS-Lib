@@ -15,5 +15,6 @@ public interface QuestionListApi {
 	@GET("question/getQuestionList.jsp")
 	Call<QuestionListBean> getQuesList(@Query("format") String format, @Query("type") int type,
 									   @Query("category1") int category1, @Query("category2") int category2,
-									   @Query("pageNum") int pageNum, @Query("isanswered") int isanswered );
+									   @Query("pageNum") int pageNum, @Query("isanswered") int isanswered ,
+									   @Query("sort") int sort);
 }

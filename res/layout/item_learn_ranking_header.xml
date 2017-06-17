@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/rl_learning_ranking_champion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/rl_learning_ranking_champion_avatar"
+            android:layout_width="120dp"
+            android:layout_height="95dp"
+            android:layout_centerHorizontal="true">
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="95dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/study_ranking_champion_bg"/>
+
+            <com.iyuba.core.common.widget.circularimageview.CircularImageView
+                android:id="@+id/iv_champion_user_image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="3dp"
+                android:background="@drawable/defaultavatar"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/study_ranking_champion_logo"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

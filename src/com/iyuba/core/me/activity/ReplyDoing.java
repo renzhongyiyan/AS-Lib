@@ -69,6 +69,7 @@ public class ReplyDoing extends BasisActivity implements OnScrollListener {
 	private ImageView doings_userPortrait;
 	private TextView doings_username, doings_time, doings_message,
 			doings_replyNum;
+	private ImageView doings_vip_status;
 	private ListView doings_commentlist;
 	private DoingsCommentAdapter doingsCommentListAdapter;
 	private CustomDialog waitingDialog;
@@ -83,7 +84,7 @@ public class ReplyDoing extends BasisActivity implements OnScrollListener {
 	private RelativeLayout emotionShow;
 	private String sendStr;
 	private DoingsCommentInfo item = new DoingsCommentInfo();
-	private String doid;
+	private String doid,vipstatus;
 	private static String fromUid, fromMsg, orignUid, orignMsg;
 
 	@Override
@@ -95,6 +96,7 @@ public class ReplyDoing extends BasisActivity implements OnScrollListener {
 		CrashApplication.getInstance().addActivity(this);
 		waitingDialog = WaittingDialog.showDialog(mContext);
 		doid = getIntent().getStringExtra("doid");
+		vipstatus = getIntent().getStringExtra("vipstatus");
 		handler.sendEmptyMessage(30);
 	}
 
@@ -132,6 +134,7 @@ public class ReplyDoing extends BasisActivity implements OnScrollListener {
 		backButton = (Button) findViewById(R.id.button_back);
 		doings_userPortrait = (ImageView) findViewById(R.id.doings_userPortrait);
 		doings_username = (TextView) findViewById(R.id.doings_username);
+		doings_vip_status = (ImageView) findViewById(R.id.reply_vip_status);
 		doings_time = (TextView) findViewById(R.id.doings_time);
 		doings_message = (TextView) findViewById(R.id.doings_message);
 		doings_replyNum = (TextView) findViewById(R.id.doings_replynum);
@@ -162,7 +165,14 @@ public class ReplyDoing extends BasisActivity implements OnScrollListener {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
+
 		doings_username.setText(doingsInfo.username);
+		if(!vipstatus.equals("0")){
+			doings_vip_status.setVisibility(View.VISIBLE);
+		}else{
+			doings_vip_status.setVisibility(View.INVISIBLE);
+		}
+
 		handler.sendEmptyMessage(100);
 		doings_replyNum.setText(doingsInfo.replynum);
 		handler.sendEmptyMessage(100);
@@ -354,7 +364,7 @@ public class ReplyDoing extends BasisActivity implements OnScrollListener {
 				CustomToast.showToast(mContext, R.string.action_fail);
 				break;
 			case 7:
-				Toast.makeText(mContext, "+"+jiFen+"积分！", 3000).show();
+				Toast.makeText(mContext, "+"+jiFen+"积分！", Toast.LENGTH_SHORT).show();
 				break;
 			case 20:
 				// 发送评论

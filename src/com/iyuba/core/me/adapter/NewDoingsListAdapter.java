@@ -97,6 +97,7 @@ public class NewDoingsListAdapter extends BaseAdapter {
 					.findViewById(R.id.doingslist_userPortrait);
 			viewHolder.username = (TextView) convertView
 					.findViewById(R.id.doingslist_username);
+			viewHolder.userVipStatus = (ImageView) convertView.findViewById(R.id.doing_item_vip_status);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
@@ -138,7 +139,13 @@ public class NewDoingsListAdapter extends BaseAdapter {
 //				e.printStackTrace();
 //			}
 //		}
-		
+
+		if((!curDoings.vip.equals("0")) && curDoings.idtype.equals("doid")){
+			viewHolder.userVipStatus.setVisibility(View.VISIBLE);
+		}else{
+			viewHolder.userVipStatus.setVisibility(View.INVISIBLE);
+		}
+
 		viewHolder.username.setText(curDoings.username);
 		long time = Long.parseLong(curDoings.dateline) * 1000;
 		viewHolder.time.setText(DateFormat.format("yyyy-MM-dd kk:mm", time));
@@ -149,6 +156,7 @@ public class NewDoingsListAdapter extends BaseAdapter {
 
 	class ViewHolder {
 		TextView username;
+		ImageView userVipStatus;
 		TextView time;
 		TextView replyNum;
 //		TextView message;

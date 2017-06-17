@@ -100,6 +100,8 @@ import com.iyuba.lib.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
+import static com.iyuba.lib.R.drawable.vip;
+
 public class QuesDetailActivity extends Activity {
 	private Context mContext;
 	AnswerType answerType = new AnswerType();
@@ -107,6 +109,7 @@ public class QuesDetailActivity extends Activity {
 	private ImageView btnShare;
 	private ImageView userIcon;
 	private TextView userName;
+	private ImageView userVipStatus;
 	private TextView questInfo;
 	private TextView attention;
 	private TextView quesDisc;
@@ -118,6 +121,9 @@ public class QuesDetailActivity extends Activity {
 	private View commentView;
 	private TextView studentTag;
 	private ListView commentListview;
+
+	private String theQid;
+	private String quesVip;
 
 	private int inputMode = 0;// 默认为文字输入，0文字，1语音
 	private ImageView setMode;
@@ -206,7 +212,8 @@ public class QuesDetailActivity extends Activity {
 		uid = AccountManager.Instace(mContext).userId;
 		username = AccountManager.Instace(mContext).userName;
 		Intent intent = getIntent();
-		String theQid = intent.getStringExtra("qid");
+		theQid = intent.getStringExtra("qid");
+		quesVip = intent.getStringExtra("vip");
 		if (theQid == null)
 			theQid = "1";
 		qid = Integer.parseInt(theQid);
@@ -231,6 +238,7 @@ public class QuesDetailActivity extends Activity {
 		btnShare = (ImageView) findViewById(R.id.btn_share);
 		userIcon = (ImageView) findViewById(R.id.user_icon);
 		userName = (TextView) findViewById(R.id.user_name);
+		userVipStatus = (ImageView) findViewById(R.id.user_vip_status);
 		questInfo = (TextView) findViewById(R.id.quest_info);
 		attention = (TextView) findViewById(R.id.attention);
 		quesDisc = (TextView) findViewById(R.id.ques_disc);
@@ -1128,6 +1136,13 @@ public class QuesDetailActivity extends Activity {
 
 	public void initQuestion() {
 		// question = QuestionManager.getInstance().question;
+
+		if(quesVip != null && !quesVip.equals("0")){
+			userVipStatus.setVisibility(View.VISIBLE);
+		}else{
+			userVipStatus.setVisibility(View.INVISIBLE);
+		}
+
 		GitHubImageLoader.Instace(mContext)
 				.setCirclePic(question.getUid(), userIcon);
 		userName.setText(question.getUsername() + "");

@@ -46,6 +46,7 @@ public class GetTeacherInfoResponse extends BaseJSONResponse {
 							item.category1= jsonObject.getString("category1");
 							item.category2= jsonObject.getString("category2");
 							item.attachment= jsonObject.getString("attachment");
+							item.flag = jsonObject.getString("flag");
 							item.tlevel= jsonObject.getString("tlevel");
 					}	 
 					  	 

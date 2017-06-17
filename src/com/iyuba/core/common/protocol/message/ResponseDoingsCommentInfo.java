@@ -87,6 +87,7 @@ public class ResponseDoingsCommentInfo extends VOABaseJsonResponse {
 						doingsCommentInfo.upid = jsonObject.getString("upid");
 						doingsCommentInfo.username = jsonObject
 								.getString("username");
+						doingsCommentInfo.vip = jsonObject.getString("vip");
 						doingsCommentlist.add(doingsCommentInfo);
 					} catch (JSONException e) {
 						// TODO: handle exception

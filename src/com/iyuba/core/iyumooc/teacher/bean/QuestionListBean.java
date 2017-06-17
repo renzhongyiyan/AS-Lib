@@ -68,6 +68,7 @@ public class QuestionListBean {
 		private String uid;
 		private String username;
 		private String imgsrc;
+		private int vip;
 		private int answercount;
 		private int commentcount;
 		private int agreecount;
@@ -132,6 +133,14 @@ public class QuestionListBean {
 
 		public void setImgsrc(String imgsrc) {
 			this.imgsrc = imgsrc;
+		}
+
+		public int getVip() {
+			return vip;
+		}
+
+		public void setVip(int vip) {
+			this.vip = vip;
 		}
 
 		public int getAnswercount() {

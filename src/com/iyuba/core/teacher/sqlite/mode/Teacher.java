@@ -22,6 +22,7 @@ public class Teacher {
 	public String  category1;
 	public String  category2;
 	public String  attachment;
+	public String flag;
 	public String  tlevel;
 
 }

@@ -15,6 +15,7 @@ public class DoingsCommentInfo {
 	public String message;
 	public String uid;// 回复人id
 	public String id;// 回复内容id标识
+	public String vip;
 	public String username;// 回复人
 	public String upid;// 上一层回复标识(回复的id)
 	public String grade;// 楼层

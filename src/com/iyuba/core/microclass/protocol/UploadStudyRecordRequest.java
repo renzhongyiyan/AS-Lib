@@ -14,9 +14,18 @@ import com.iyuba.core.microclass.sqlite.mode.StudyRecordInfo;
 
 public class UploadStudyRecordRequest extends BaseJSONRequest{
 
+	private static final String TAG = "UploadStudyRecordReq";
+
 	public UploadStudyRecordRequest(StudyRecordInfo studyRecordInfo){
 		try {
 			setAbsoluteURI("http://daxue.iyuba.com/ecollege/updateStudyRecord.jsp?format=json&uid="+studyRecordInfo.uid
+					+"&BeginTime="+URLEncoder.encode(studyRecordInfo.BeginTime,"UTF-8")+"&EndTime="+URLEncoder.encode(studyRecordInfo.EndTime,"UTF-8")
+					+"&Lesson="+URLEncoder.encode(URLEncoder.encode(studyRecordInfo.Lesson, "UTF-8"), "UTF-8")
+					+"&LessonId="+studyRecordInfo.LessonId+"&EndFlg="+studyRecordInfo.EndFlg+"&platform="+URLEncoder.encode(studyRecordInfo.Device, "UTF-8")
+					+"&IP="+studyRecordInfo.IP+"&appName="+studyRecordInfo.appName+"&appId="+studyRecordInfo.appId
+					+"&DeviceId="+studyRecordInfo.DeviceId+"&testNumber="+studyRecordInfo.TestNumber);
+
+			Log.d(TAG,"http://daxue.iyuba.com/ecollege/updateStudyRecord.jsp?format=json&uid="+studyRecordInfo.uid
 					+"&BeginTime="+URLEncoder.encode(studyRecordInfo.BeginTime,"UTF-8")+"&EndTime="+URLEncoder.encode(studyRecordInfo.EndTime,"UTF-8")
 					+"&Lesson="+URLEncoder.encode(URLEncoder.encode(studyRecordInfo.Lesson, "UTF-8"), "UTF-8")
 					+"&LessonId="+studyRecordInfo.LessonId+"&EndFlg="+studyRecordInfo.EndFlg+"&platform="+URLEncoder.encode(studyRecordInfo.Device, "UTF-8")

@@ -94,6 +94,7 @@ public class ResponseNewDoingsInfo extends VOABaseJsonResponse {
 						doingsInfo.title = jsonObject.getString("title");
 						doingsInfo.username = jsonObject.getString("username");
 //						doingsInfo.audio =  jsonObject.getString("audio");
+						doingsInfo.vip = jsonObject.getString("vip");
 						doingsInfo.idtype = jsonObject.getString("idtype");
 						doingsInfo.replynum = jsonObject.getString("replynum");
 						doingsInfo.image = jsonObject.getString("image");

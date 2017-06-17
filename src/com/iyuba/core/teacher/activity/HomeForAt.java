@@ -46,6 +46,7 @@ import com.iyuba.core.common.widget.dialog.CustomDialog;
 import com.iyuba.core.common.widget.dialog.CustomToast;
 import com.iyuba.core.common.widget.dialog.WaittingDialog;
 import com.iyuba.core.iyumooc.teacher.bean.QuestionListBean;
+import com.iyuba.core.me.sqlite.mode.NewDoingsInfo;
 import com.iyuba.core.teacher.adapter.QuestionListAdapter;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesRequest;
 import com.iyuba.core.teacher.protocol.DeleteAnswerQuesResponse;
@@ -228,6 +229,7 @@ public class HomeForAt extends Activity{
 				Intent intent = new Intent();
 				intent.setClass(mContext, QuesDetailActivity.class);
 				intent.putExtra("qid", quesList.get(arg2).getQuestionid() + "");
+				intent.putExtra("vip",quesList.get(arg2).getVip()+"");
 				startActivity(intent);
 			}
 		});

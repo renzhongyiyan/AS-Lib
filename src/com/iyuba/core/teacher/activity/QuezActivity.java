@@ -564,7 +564,6 @@ public class QuezActivity extends Activity {
 
 				if(!askuid.equals("")){
 					uri =uri +"&tuid="+askuid;
-
 				}
 				Log.e("iyuba", uri);
 

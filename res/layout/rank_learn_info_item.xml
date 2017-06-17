@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <!-- 图标-->
+        <ImageView
+            android:id="@+id/rank_logo_image"
+            android:layout_width="20dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/rank_gold"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/rank_logo_text"
+            android:layout_width="20dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:gravity="center"
+            android:background="@drawable/bg_sign_today"
+            android:text="4"
+            android:textColor="#FF4F14" />
+
+        <!--用户头像 -->
+        <com.iyuba.core.common.widget.circularimageview.CircularImageView
+            android:id="@+id/user_image"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/rank_logo_image"
+            android:src="@drawable/rank_blue" />
+
+        <TextView
+            android:id="@+id/user_image_text"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/rank_logo_image"
+            android:gravity="center"
+            android:background="@drawable/rank_blue"
+            android:text="C"
+            android:textColor="@color/whitesmoke"
+            android:textSize="12sp" />
+        <!-- -->
+
+        <TextView
+            android:id="@+id/rank_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@+id/user_image"
+            android:textSize="15sp"
+            android:text="sllbsjj" />
+
+        <LinearLayout
+            android:id="@+id/ll_user_learn_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/rank_user_name"
+            android:layout_toRightOf="@id/user_image"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/learn_time_sign"/>
+            <TextView
+                android:id="@+id/tv_learn_ranking_total_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_gravity="center_vertical"
+                android:text="1小时2分3秒"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_user_learn_essay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_below="@id/rank_user_name"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/ll_user_learn_time"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/learn_essay_sign"/>
+            <TextView
+                android:id="@+id/tv_learn_ranking_total_essay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_gravity="center_vertical"
+                android:text="21"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_user_learn_words"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_below="@id/rank_user_name"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/ll_user_learn_essay"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/learn_words_sign"/>
+            <TextView
+                android:id="@+id/tv_learn_ranking_total_words"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_gravity="center_vertical"
+                android:text="888"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

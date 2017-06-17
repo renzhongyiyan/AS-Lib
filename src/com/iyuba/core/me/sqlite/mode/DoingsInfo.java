@@ -19,6 +19,7 @@ public class DoingsInfo {
 	public String ip;// 发布时的ip
 	public String replynum;// 回复数
 	public String username;
+	public String vip;
 	public String uid;
 	public Bitmap userBitmap;
 

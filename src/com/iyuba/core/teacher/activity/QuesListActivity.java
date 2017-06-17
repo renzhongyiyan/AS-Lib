@@ -198,6 +198,7 @@ public class QuesListActivity extends ListActivity implements
 				Intent intent = new Intent();
 				intent.setClass(mContext, QuesDetailActivity.class);
 				intent.putExtra("qid", quesList.get(arg2).getQuestionid() + "");
+				intent.putExtra("vip",quesList.get(arg2).getVip()+"");
 				startActivity(intent);
 			}
 		});

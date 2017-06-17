@@ -57,12 +57,16 @@ import com.iyuba.core.me.activity.AttentionCenter;
 import com.iyuba.core.me.activity.FansCenter;
 import com.iyuba.core.me.activity.InfoFullFillActivity;
 import com.iyuba.core.me.activity.IntelLearningActivity;
+import com.iyuba.core.me.activity.LearnRankActivity;
 import com.iyuba.core.me.activity.LearnResultActivity;
 import com.iyuba.core.me.activity.MessageCenter;
 import com.iyuba.core.me.activity.NewVipCenterActivity;
 import com.iyuba.core.me.activity.NoticeCenter;
 import com.iyuba.core.me.activity.PersonalHome;
 import com.iyuba.core.me.activity.PersonalSignatureList;
+import com.iyuba.core.me.activity.RankActivity;
+import com.iyuba.core.me.activity.StudyRankingActivity;
+import com.iyuba.core.me.activity.TestRankActivity;
 import com.iyuba.core.me.activity.TestResultActivity;
 import com.iyuba.core.me.activity.WordResultActivity;
 import com.iyuba.core.teacher.activity.SettingActivity;
@@ -91,7 +95,7 @@ public class MeFragment extends Fragment {
 	private View attentionView, fansView, notificationView, integralView,
 			discover_rqlist, discover_qnotice, discover_myq, discover_mysub,
 			discover_iyubaset,intel_learn_goal, intel_userinfo, intel_result,
-			intel_word_result,intel_test_result;
+			intel_word_result,intel_test_result,study_ranking;
 	private UserInfo userInfo;
 	private View root;
 //	private boolean showLocal;
@@ -393,7 +397,8 @@ public class MeFragment extends Fragment {
 		discover_myq = root.findViewById(R.id.discover_myq);
 		discover_mysub = root.findViewById(R.id.discover_mysub);
 		discover_iyubaset = root.findViewById(R.id.ll_layout_setting);
-		
+
+		study_ranking = root.findViewById(R.id.study_ranking);
 		intel_userinfo = root.findViewById(R.id.intel_userinfo);
 		intel_learn_goal = root.findViewById(R.id.intel_goal);
 		intel_result = root.findViewById(R.id.intel_result);
@@ -435,6 +440,7 @@ public class MeFragment extends Fragment {
 		discover_myq.setOnClickListener(ocl);
 		discover_mysub.setOnClickListener(ocl);
 		discover_iyubaset.setOnClickListener(ocl);
+		study_ranking.setOnClickListener(ocl);
 		intel_userinfo.setOnClickListener(ocl);
 		intel_learn_goal.setOnClickListener(ocl);
 		intel_result.setOnClickListener(ocl);
@@ -616,7 +622,14 @@ public class MeFragment extends Fragment {
 				intent = new Intent();
 				intent.setClass(mContext, SettingActivity.class);
 				startActivity(intent);
-			}else if (id == R.id.intel_userinfo) {
+			}else if(id == R.id.study_ranking){
+				intent = new Intent();
+//				intent.setClass(mContext, TestRankActivity.class);
+//				intent.setClass(mContext, LearnRankActivity.class);
+//				intent.setClass(mContext, RankActivity.class);
+				intent.setClass(mContext, StudyRankingActivity.class);
+				startActivity(intent);
+			} else if (id == R.id.intel_userinfo) {
 				intent = new Intent();
 				intent.setClass(mContext, InfoFullFillActivity.class);
 				startActivity(intent);

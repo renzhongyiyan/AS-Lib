@@ -27,6 +27,8 @@ import com.iyuba.core.me.sqlite.mode.DoingsCommentInfo;
 import com.iyuba.core.me.sqlite.mode.Emotion;
 import com.iyuba.lib.R;
 
+import static android.view.View.VISIBLE;
+
 public class DoingsCommentAdapter extends BaseAdapter {
 	private Context mContext;
 	public ArrayList<DoingsCommentInfo> mList = new ArrayList<DoingsCommentInfo>();
@@ -93,6 +95,8 @@ public class DoingsCommentAdapter extends BaseAdapter {
 					.findViewById(R.id.doingslist_userPortrait);
 			viewHolder.username = (TextView) convertView
 					.findViewById(R.id.doingslist_username);
+			viewHolder.userVipStatus = (ImageView) convertView
+					.findViewById(R.id.doingslist_vip_status);
 			viewHolder.replyCommentNum = (TextView) convertView
 					.findViewById(R.id.doingslist_replyNum);
 			convertView.setTag(viewHolder);
@@ -122,6 +126,13 @@ public class DoingsCommentAdapter extends BaseAdapter {
 			}
 		}
 		viewHolder.username.setText(mList.get(position).username);
+
+		if(!mList.get(position).vip.equals("0")){
+			viewHolder.userVipStatus.setVisibility(VISIBLE);
+		}else {
+			viewHolder.userVipStatus.setVisibility(View.INVISIBLE);
+		}
+
 		if (mList.get(position).userBitmap != null) {
 			viewHolder.userImageView
 					.setImageBitmap(mList.get(position).userBitmap);
@@ -148,6 +159,7 @@ public class DoingsCommentAdapter extends BaseAdapter {
 
 	class ViewHolder {
 		TextView username;
+		ImageView userVipStatus;
 		TextView time;
 		TextView message;
 		ImageView userImageView;

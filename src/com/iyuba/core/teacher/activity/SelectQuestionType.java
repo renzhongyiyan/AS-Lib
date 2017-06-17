@@ -4,18 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.iyuba.configation.ConfigManager;
 import com.iyuba.lib.R;
+import com.iyuba.mobcommonlibraries.MainActivity;
 
 public class SelectQuestionType extends Activity{
 
@@ -25,9 +30,11 @@ public class SelectQuestionType extends Activity{
 	private Button btnOkSelect;
 	private GridView gvAppType;
 	private GridView gvAbilityType;
-	
+	private Spinner spQuesSort;
+
 	private int quesAbilityType;
 	private int quesAppType;
+	private int quesSort;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -37,7 +44,7 @@ public class SelectQuestionType extends Activity{
 		mContext = this;
 		
 		findViewsById();
-		
+		setSortState();
 		setViewsListener();
 		
 	}
@@ -62,6 +69,7 @@ public class SelectQuestionType extends Activity{
 	
 	private void getQuesTypeData(){
 		quesAbilityType=ConfigManager.Instance().loadInt("quesAbilityType");
+		quesSort = ConfigManager.Instance().loadInt("quesSort");
 		
 		if(ConfigManager.Instance().loadInt("quesAppType") !=0 ){
 			quesAppType=ConfigManager.Instance().loadInt("quesAppType") - 100;
@@ -77,6 +85,12 @@ public class SelectQuestionType extends Activity{
 		btnOkSelect = (Button) findViewById(R.id.btn_ok_select_type);
 		gvAppType = (GridView) findViewById(R.id.gv_ques_app_type);
 		gvAbilityType = (GridView) findViewById(R.id.gv_ques_ability_type);
+		spQuesSort = (Spinner) findViewById(R.id.spinner_ques_sort_type);
+	}
+
+	private void setSortState(){
+		getQuesTypeData();
+		spQuesSort.setSelection(quesSort);
 	}
 	
 	private void setViewsListener(){
@@ -94,7 +108,21 @@ public class SelectQuestionType extends Activity{
 //		gvAppType.setOnItemClickListener(onGVAppTypeItemClickListener);  
 		
 		gvAbilityType.setAdapter(new AbilityTypeTextViewAdapter(mContext));  
-//		gvAbilityType.setOnItemClickListener(onGVAbilityTypeItemClickListener); 
+//		gvAbilityType.setOnItemClickListener(onGVAbilityTypeItemClickListener);
+
+		spQuesSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				quesSort = position;
+				ConfigManager.Instance().putInt("quesSort", quesSort);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
 	}
 	
 	OnClickListener onTVCloseClickListener = new OnClickListener() {

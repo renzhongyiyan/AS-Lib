@@ -13,6 +13,7 @@ public class NewDoingsInfo {
 
 	public String id;		// 动态id,有可能是问题ID，日志ID等等
 	public String uid;		//用户ID
+	public String vip;		//用户Vip状态
 	public String body;		//获取用户动态的内容
 	public String feedid;	//对应的唯一ID
 	public String title;	//标题

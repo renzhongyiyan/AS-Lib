@@ -32,13 +32,15 @@ import com.iyuba.core.common.protocol.BaseHttpResponse;
 import com.iyuba.core.common.protocol.message.RequestUpdateState;
 import com.iyuba.core.common.protocol.message.ResponseUpdateState;
 import com.iyuba.core.common.util.ExeProtocol;
+import com.iyuba.core.common.widget.dialog.CustomDialog;
 import com.iyuba.core.common.widget.dialog.CustomToast;
+import com.iyuba.core.common.widget.dialog.WaittingDialog;
 import com.iyuba.core.me.sqlite.mode.Emotion;
 import com.iyuba.lib.R;
 
 /**
  * 更改心情
- * 
+ *
  * @author 陈彤
  * @version 1.0
  */
@@ -53,6 +55,7 @@ public class WriteState extends BasisActivity {
 	private RelativeLayout rlShow;
 	private int[] imageIds = new int[30];
 	private GridView emotion_GridView;
+	private CustomDialog cd;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class WriteState extends BasisActivity {
 		count.setText(String.valueOf(maxLength));
 		rlShow = (RelativeLayout) findViewById(R.id.rl_show);
 		emotion_GridView = (GridView) rlShow.findViewById(R.id.grid_emotion);
+		cd = WaittingDialog.showDialog(mContext);
 		face = (ImageView) findViewById(R.id.face);
 		face.setOnClickListener(new OnClickListener() {
 
@@ -77,7 +81,7 @@ public class WriteState extends BasisActivity {
 				if (rlShow.getVisibility() == View.GONE) {
 					((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
 							.hideSoftInputFromWindow(WriteState.this
-									.getCurrentFocus().getWindowToken(),
+											.getCurrentFocus().getWindowToken(),
 									InputMethodManager.HIDE_NOT_ALWAYS);
 					rlShow.setVisibility(View.VISIBLE);
 					initEmotion();
@@ -87,7 +91,7 @@ public class WriteState extends BasisActivity {
 
 								@Override
 								public void onItemClick(AdapterView<?> arg0,
-										View arg1, int arg2, long arg3) {
+														View arg1, int arg2, long arg3) {
 									Bitmap bitmap = null;
 									bitmap = BitmapFactory.decodeResource(
 											getResources(), imageIds[arg2
@@ -145,13 +149,13 @@ public class WriteState extends BasisActivity {
 
 			@Override
 			public void beforeTextChanged(CharSequence charSequence, int i,
-					int i2, int i3) {
+										  int i2, int i3) {
 
 			}
 
 			@Override
 			public void onTextChanged(CharSequence charSequence, int i, int i2,
-					int i3) {
+									  int i3) {
 				mTemp = charSequence;
 			}
 
@@ -184,9 +188,10 @@ public class WriteState extends BasisActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				rlShow.setVisibility(View.GONE);
+				handler.sendEmptyMessage(4);
 				((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
 						.hideSoftInputFromWindow(WriteState.this
-								.getCurrentFocus().getWindowToken(),
+										.getCurrentFocus().getWindowToken(),
 								InputMethodManager.HIDE_NOT_ALWAYS);
 				ExeProtocol.exe(
 						new RequestUpdateState(
@@ -202,8 +207,10 @@ public class WriteState extends BasisActivity {
 								int code = Integer
 										.parseInt(responseUpdateState.result);
 								if (code == 351) {
+									handler.sendEmptyMessage(5);
 									handler.sendEmptyMessage(1);
 								} else {
+									handler.sendEmptyMessage(5);
 									handler.sendEmptyMessage(2);
 								}
 							}
@@ -211,6 +218,7 @@ public class WriteState extends BasisActivity {
 							@Override
 							public void error() {
 								// TODO Auto-generated method stub
+								handler.sendEmptyMessage(5);
 								handler.sendEmptyMessage(3);
 							}
 						});
@@ -223,19 +231,25 @@ public class WriteState extends BasisActivity {
 		public void handleMessage(final Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
-			case 0:
-				CustomToast.showToast(mContext, R.string.me_over_fix);
-				break;
-			case 1:
-				CustomToast.showToast(mContext, R.string.me_state_success);
-				onBackPressed();
-				break;
-			case 2:
-				CustomToast.showToast(mContext, R.string.me_state_fail);
-				break;
-			case 3:
-				CustomToast.showToast(mContext, R.string.check_network);
-				break;
+				case 0:
+					CustomToast.showToast(mContext, R.string.me_over_fix);
+					break;
+				case 1:
+					CustomToast.showToast(mContext, R.string.me_state_success);
+					onBackPressed();
+					break;
+				case 2:
+					CustomToast.showToast(mContext, R.string.me_state_fail);
+					break;
+				case 3:
+					CustomToast.showToast(mContext, R.string.check_network);
+					break;
+				case 4:
+					cd.show();
+					break;
+				case 5:
+					cd.dismiss();
+					break;
 			}
 		}
 	};
@@ -244,7 +258,7 @@ public class WriteState extends BasisActivity {
 		SimpleAdapter simpleAdapter = new SimpleAdapter(this,
 				Emotion.initEmotion(),
 				R.layout.team_layout_single_expression_cell,
-				new String[] { "image" }, new int[] { R.id.image });
+				new String[]{"image"}, new int[]{R.id.image});
 		emotion_GridView.setAdapter(simpleAdapter);
 		emotion_GridView.setNumColumns(7);
 	}

@@ -57,6 +57,7 @@ public class ContentListFragment extends Fragment{
 	private double packPrice;
 	private double CostedPrice = 0; // 购买课程已经花的钱
 	private double curCourseCost;
+
 	private CustomDialog wettingDialog;
 	private MobClassResOp mobClassResOp;
 	private CourseContentOp courseContentOp;
@@ -64,7 +65,8 @@ public class ContentListFragment extends Fragment{
 	private ExpandableListView expandableListView;
 	private MobClassContentExpandListAdapter mobELAdapter;
 	ArrayList<HashMap<String,Object>> groupData=null;
-    ArrayList<ArrayList<HashMap<String,Object>>> childData=null; 
+    ArrayList<ArrayList<HashMap<String,Object>>> childData=null;
+	
     private ArrayList<MbText> mbTextList = new ArrayList<MbText>();
     private ArrayList<CourseContent> courseContentList = new ArrayList<CourseContent>();
 	private ArrayList<PayedCourseRecord> payedCourseRecord = new ArrayList<PayedCourseRecord>();

@@ -104,5 +104,13 @@
         <item>是</item>
         <item>否</item>
     </string-array>
-   
+    <string-array name="ques_sort_type">
+        <item>按时间排序</item>
+        <item>按精华排序</item>
+    </string-array>
+    <string-array name="study_ranking_type">
+        <item>今天</item>
+        <item>本周</item>
+        <item>本月</item>
+    </string-array>
 </resources>

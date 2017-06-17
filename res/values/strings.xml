@@ -585,6 +585,7 @@
     <string name="intel_learning_goal">智能化学习目标</string>
     <string name="intel_learning_result">智能化学习成果</string>
     <string name="intel_word_result">单词大数据</string>
+    <string name="study_ranking">排行榜</string>
     <string name="intel_test_result">智能化测试成果</string>
     <string name="eng_level">英语等级</string>
     <string name="under_test">待测</string>
@@ -601,6 +602,10 @@
     <string name="identity">身 份</string>
     <string name="education">学 历</string>
     <string name="school">学 校</string>
+
+    <string name="ranking_by_day">当日数据0时重计</string>
+    <string name="ranking_by_week">本周数据周末0时重计</string>
+    <string name="ranking_by_month">本月数据月末0时重计</string>
 
     <!-- 名师堂中用的字段 -->
     <string name="integral_notification_text">积分</string>
@@ -658,6 +663,7 @@
     <string name="teacher_info_weeixin">微信:</string>
     <string name="teacher_info_cert">最高学历:</string>
     <string name="teacher_info_desc">自我评价:</string>
+    <string name="teacher_check_state">审核状态:</string>
     <string name="teacher_info_city">所在城市:</string>
     <string name="teacher_info_goodm">擅长模块:</string>
     <string name="teacher_info_goodt">擅长课程类别:</string>

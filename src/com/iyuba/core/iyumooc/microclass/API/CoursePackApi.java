@@ -12,7 +12,7 @@ import retrofit2.http.Query;
  * 邮箱：renzhongyigoo@gmail.com
  */
 public interface CoursePackApi {
-	//protocol=10102&id=-2&type=1&pageNumber=1&pageCounts=20&sign=8df637ceecb3148d091d06c680561b24
+	//http://class.iyuba.com/getClass.iyuba?protocol=10102&id=-2&type=1&pageNumber=1&pageCounts=20&sign=8df637ceecb3148d091d06c680561b24
 	@GET("getClass.iyuba")
 	Call<CoursePackListBean> getCoursePackList(@Query("protocol") String protocol,@Query("id") String id,
 											   @Query("type") String type,@Query("pageNumber") int pageNumber,
