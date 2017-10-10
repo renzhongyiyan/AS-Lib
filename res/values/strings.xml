@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--分答字符串-->
+    <string name="want_to_answer">我要回答</string>
+    <string name="want_to_comment">评论一下</string>
+    <string name="ques_detail_comment_num">评论(%s)</string>
+    <string name="ques_detail_answer_num">老师(%s)</string>
+    <string name="want_to_submit">提交</string>
+
     <string name="swipe_hint">请再用力拖拽</string>
 
     <string name="head">这里是HeadView</string>
@@ -608,6 +615,8 @@
     <string name="ranking_by_month">本月数据月末0时重计</string>
 
     <!-- 名师堂中用的字段 -->
+    <string name="select_ask_ques_type">选择标签</string>
+    <string name="i_wanna_ask_ques">我要提问</string>
     <string name="integral_notification_text">积分</string>
     <string name="discover_myques">我的问题</string>
     <string name="discover_mysubq">我的回复</string>
@@ -632,7 +641,8 @@
     <string name="ques_next">下一步</string>
     <string name="photo">拍照</string>
     <string name="ques_words_tip">剩余输入字数140</string>
-    <string name="ques_tip">您可以添加图片或文字来提问</string>
+    <!--<string name="ques_tip">您可以添加图片或文字来提问</string>-->
+    <string name="ques_tip">请输入文字(140字以内)</string>
     <string name="show_big_pic">看大图</string>
     <string name="network_error">网络错误</string>
     <string name="no_data">没有数据</string>
@@ -675,6 +685,10 @@
     <string name="publish_ms">发表</string>
     <string name="mood_info">写点什么吧....</string>
     <string name="discover_qlist">问题列表</string>
+
+    <string name="pay_qlist_title">问答</string>
+    <string name="reward_area">悬赏区</string>
+    <string name="discuss_area">讨论区</string>
 
     <!--Toast提示信息-->
     <string name="alert_exit">再按一次退出程序</string>

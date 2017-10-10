@@ -42,8 +42,8 @@ import java.util.List;
 public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapter.ViewHolder> {
 	private Context mContext;
 	private ArrayList<QuestionListBean.QuestionDataBean> mList = new ArrayList<QuestionListBean.QuestionDataBean>();
-	public	HashMap<String ,String> abilityTypeCatalog=new HashMap<String, String>();
-	public	HashMap<String ,String> appTypeCatalog=new HashMap<String, String>();
+	public	HashMap<String ,String> abilityTypeCatalog=new HashMap<>();
+	public	HashMap<String ,String> appTypeCatalog=new HashMap<>();
 
 	private OnRecyclerViewItemClickListener mOnItemClickListener = null;
 
@@ -358,7 +358,7 @@ public class QuestionListAdapter extends RecyclerView.Adapter<QuestionListAdapte
 	}
 
 	public  void setAppTypeCatalog(){
-		appTypeCatalog=new HashMap<String, String>();
+		appTypeCatalog=new HashMap<>();
 		appTypeCatalog.put("0", "其他");
 		appTypeCatalog.put("101", "VOA");
 		appTypeCatalog.put("102", "BBC");

@@ -20,9 +20,9 @@ public class GetChatListResponse extends BaseJSONResponse {
 	public String total;
 	public String message;
 	public QuestionListBean.QuestionDataBean item=new QuestionListBean.QuestionDataBean();
-	public List<AnswerInfo> infoList = new ArrayList<AnswerInfo>();
-	public List<List<Chat>> chatList = new ArrayList<List<Chat>>();
-	public	HashMap<String ,String> cat1=new HashMap<String, String>();
+	public List<AnswerInfo> infoList = new ArrayList<>();
+	public List<List<Chat>> chatList = new ArrayList<>();
+	public	HashMap<String ,String> cat1=new HashMap<>();
 	@Override
 	protected boolean extractBody(JSONObject headerEleemnt, String bodyElement) {
 		JSONObject jsonBody = null;

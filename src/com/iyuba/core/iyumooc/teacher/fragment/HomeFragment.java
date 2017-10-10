@@ -90,8 +90,8 @@ public class HomeFragment extends Fragment {
 
 	private QuestionListAdapter quesAdapter;
 	private View root;
-	private ArrayList<QuestionListBean.QuestionDataBean> quesList = new ArrayList<QuestionListBean.QuestionDataBean>();
-	private ArrayList<QuestionListBean.QuestionDataBean> localQuesList = new ArrayList<QuestionListBean.QuestionDataBean>();
+	private ArrayList<QuestionListBean.QuestionDataBean> quesList = new ArrayList<>();
+	private ArrayList<QuestionListBean.QuestionDataBean> localQuesList = new ArrayList<>();
 	public int pageNum = 1;
 	boolean isLast = false;
 	private QuestionOp questionOp;

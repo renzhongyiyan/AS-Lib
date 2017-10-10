@@ -45,9 +45,11 @@
 
     <FrameLayout
         android:id="@+id/ll_queslist_mainbody"
-        android:layout_below="@id/title_part"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
         
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_layout"

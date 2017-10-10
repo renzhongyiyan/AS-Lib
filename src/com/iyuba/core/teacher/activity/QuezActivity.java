@@ -682,10 +682,10 @@ public class QuezActivity extends Activity {
 				q.isSelect=true;
 			}
 			qtList.add(q);
-
 		}
 		qtAdapter=new QuestionTypeListAdapter(mContext,qtList);
 		listview2.setAdapter(qtAdapter);
+
 		qtAdapter.notifyDataSetChanged();
 	}
 

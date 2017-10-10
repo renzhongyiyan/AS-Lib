@@ -745,32 +745,6 @@ public class QuesDetailActivity extends Activity {
 		 oks.setTitle("爱语吧客户端");
 		 oks.setUrl(shareQuestionTitleUrl);
 		 
-//		 oks.setCallback(new PlatformActionListener() {
-//
-//			@Override
-//			public void onError(Platform arg0, int arg1, Throwable arg2) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//
-//			@Override
-//			public void onComplete(Platform arg0, int arg1, HashMap<String, Object> arg2) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//
-//			@Override
-//			public void onCancel(Platform arg0, int arg1) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//		});
-		 
-//		 oks.setText("测试分享文字 http://www.baidu.com");
-//		 oks.setTitle("分享");
-//		 oks.setImageUrl("http://f1.sharesdk.cn/imgs/2014/02/26/owWpLZo_638x960.jpg");
-//		 oks.setUrl("http://www.baidu.com");
-		 
 		// 启动分享GUI
 		 oks.show(this);
 	}

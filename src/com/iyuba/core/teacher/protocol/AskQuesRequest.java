@@ -43,8 +43,8 @@ public class AskQuesRequest extends BaseJSONRequest {
 			
 		if(!askuid.equals("")) 
 			uri = uri +"&tuid="+askuid;
-		 
-	
+
+
 		Log.e("iyuba", uri);
 		setAbsoluteURI(uri);
 	}

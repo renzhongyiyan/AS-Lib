@@ -133,4 +133,14 @@
         <item name="android:button">@drawable/checkbox_agree_style</item>
     </style>
 
+    <style name="PayQListTabLayout" parent="Base.Widget.Design.TabLayout">
+        <item name="tabTextColor">#595959</item>
+        <item name="tabSelectedTextColor">@color/page_title_selected</item>
+        <item name="tabIndicatorColor">@color/page_title_selected</item>
+        <item name="tabBackground">@color/pay_qlist_tab_bg</item>
+        <item name="tabIndicatorHeight">3dp</item>
+        <item name="tabPaddingStart">40dp</item>
+        <item name="tabPaddingEnd">40dp</item>
+    </style>
+
 </resources>

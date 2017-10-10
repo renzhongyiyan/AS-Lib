@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+    <RelativeLayout
+        android:id="@+id/payqlist_title_part"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/titlebar_lightgray_bg">
+        <ImageView
+            android:id="@+id/iv_ques_state_notifica"
+            android:layout_width="18dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/question_state_notification"/>
+
+        <TextView
+            android:id="@+id/tv_payqlist_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/pay_qlist_title"
+            android:textColor="#ffffff"
+            android:textSize="18sp"/>
+        
+        <ImageView
+            android:id="@+id/iv_qlist_more"
+            android:layout_width="28dp"
+            android:layout_height="18dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/pay_qlist_more"/>
+    </RelativeLayout>
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tablayout_payqlist"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        style="@style/PayQListTabLayout"
+        android:background="@color/pay_qlist_tab_bg"
+        android:layout_below="@id/payqlist_title_part"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_payqlist"
+        android:layout_below="@id/tablayout_payqlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+</RelativeLayout>

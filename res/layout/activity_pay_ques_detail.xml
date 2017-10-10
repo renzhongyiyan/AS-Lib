@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+
+    <RelativeLayout
+        android:id="@+id/title_part"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="#ffffff">
+
+        <LinearLayout
+            android:id="@+id/ll_iv_back"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp">
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="11dp"
+                android:layout_height="19dp"
+                android:src="@drawable/ask_ques_back"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/ques_detail_tag"
+            android:textColor="#2c2c2c"
+            android:textSize="18sp"/>
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/iv_dividing_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/title_part"
+        android:src="#bababa"/>
+
+    <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
+        android:id="@+id/observable_sv_ques_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/iv_dividing_line"
+        android:layout_marginBottom="55dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_reward_payquestion_list"/>
+
+            <include layout="@layout/layout_question_praise"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#b7b7b7"/>
+
+            <include layout="@layout/layout_question_answer"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#b7b7b7"/>
+
+            <include layout="@layout/layout_question_comment"/>
+
+
+        </LinearLayout>
+    </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:id="@+id/ll_reply_mode_to_user"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/list_divider"
+            android:focusable="false"
+            android:orientation="horizontal">
+
+            <com.flyco.roundview.RoundTextView
+                android:id="@+id/rtv_answer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:gravity="center_horizontal"
+                android:text="@string/want_to_answer"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:rv_backgroundColor="#fa5534"
+                app:rv_backgroundPressColor="@color/text_gray_color"
+                app:rv_cornerRadius="@dimen/corner_radius_big"/>
+
+            <com.flyco.roundview.RoundTextView
+                android:id="@+id/rtv_comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:gravity="center_horizontal"
+                android:text="@string/want_to_comment"
+                android:textColor="@color/gray"
+                android:textSize="16sp"
+                app:rv_backgroundColor="@color/white"
+                app:rv_backgroundPressColor="@color/text_gray_color"
+                app:rv_cornerRadius="@dimen/corner_radius_big"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_reply_content_to_user"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/list_divider"
+            android:focusable="false"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:id="@+id/rl_reply"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="5"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/border"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/et_reply_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="#00000000"
+                    android:hint="来评论评论"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textCursorDrawable="@null"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
+
+            <com.flyco.roundview.RoundTextView
+                android:id="@+id/rtv_submit"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:text="@string/want_to_submit"
+                android:textColor="@color/gray"
+                android:textSize="16sp"
+                app:rv_backgroundColor="@color/white"
+                app:rv_backgroundPressColor="@color/text_gray_color"
+                app:rv_cornerRadius="@dimen/corner_radius_big"/>
+        </LinearLayout>
+    </FrameLayout>
+</RelativeLayout>
